@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulado AC1 · Sétimo Período</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --panel: #0f1420;
+    --panel-2: #1a2333;
+    --border: #1e2a44;
+    --border-hover: #2d4166;
+    --accent: #3b82f6;
+    --accent-2: #60a5fa;
+    --accent-3: #1d4ed8;
+    --accent-glow: rgba(59,130,246,.35);
+    --text: #f8fafc;
+    --muted: #64748b;
+    --muted-2: #94a3b8;
+    --ok: #10b981;
+    --ok-glow: rgba(16,185,129,.3);
+    --err: #ef4444;
+    --err-glow: rgba(239,68,68,.3);
+    --warn: #f59e0b;
+    --sidebar-w: 300px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "cv02","cv03","cv04","cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(circle at 15% 20%, rgba(59,130,246,.08) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, rgba(29,78,216,.06) 0%, transparent 50%),
+      var(--bg);
+    min-height: 100vh;
+  }
+  [hidden] { display: none !important; }
+
+  aside.sidebar {
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: linear-gradient(180deg, rgba(15,20,32,.6), rgba(0,0,0,.9));
+    border-right: 1px solid var(--border);
+    padding: 60px 20px 24px;
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0;
+    overflow-y: auto;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    transition: transform .35s cubic-bezier(.4,.2,.2,1);
+  }
+  body.sidebar-hidden aside.sidebar { transform: translateX(-100%); }
+  main {
+    margin-left: var(--sidebar-w);
+    transition: margin-left .35s cubic-bezier(.4,.2,.2,1);
+    min-height: 100vh;
+    padding: 48px 60px 80px;
+  }
+  body.sidebar-hidden main { margin-left: 0; }
+  body.no-transition aside.sidebar,
+  body.no-transition main { transition: none !important; }
+
+  .sidebar-toggle {
+    position: fixed;
+    top: 14px; left: 14px;
+    z-index: 100;
+    width: 36px; height: 36px;
+    padding: 0;
+    background: rgba(15,20,32,.85);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted-2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+    backdrop-filter: blur(8px);
+    font-family: inherit;
+  }
+  .sidebar-toggle:hover {
+    color: var(--accent-2); border-color: var(--accent);
+    background: rgba(59,130,246,.15);
+  }
+  .sidebar-toggle svg { transition: transform .35s cubic-bezier(.4,.2,.2,1); }
+  body.sidebar-hidden .sidebar-toggle svg { transform: rotate(180deg); }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted-2); text-decoration: none;
+    font-size: 12px; font-weight: 500; letter-spacing: .5px;
+    padding: 8px 12px; border-radius: 8px;
+    border: 1px solid transparent;
+    align-self: flex-start;
+    transition: all .2s;
+  }
+  .back-link:hover { color: var(--accent-2); background: var(--panel); border-color: var(--border); }
+  .back-link svg { transition: transform .2s; }
+  .back-link:hover svg { transform: translateX(-2px); }
+
+  .brand {
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand h1 {
+    margin: 0; font-family: 'Space Grotesk', sans-serif;
+    font-size: 30px; letter-spacing: 3px; font-weight: 700;
+    background: linear-gradient(135deg,#60a5fa 0%,#3b82f6 50%,#1d4ed8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1;
+  }
+  .brand .sub {
+    color: var(--muted); font-size: 10px;
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-top: 8px; font-weight: 500;
+  }
+
+  /* Overview of questions in sidebar */
+  .q-list-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); padding: 0 12px 10px; font-weight: 600;
+  }
+  .q-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    padding: 0 4px 20px;
+  }
+  .q-cell {
+    width: 100%; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px; font-weight: 600;
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--muted-2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .q-cell:hover { border-color: var(--border-hover); color: var(--text); }
+  .q-cell.current { background: linear-gradient(135deg, var(--accent-3), var(--accent)); color:#fff; border-color: transparent; box-shadow: 0 4px 12px var(--accent-glow); }
+  .q-cell.correct { background: rgba(16,185,129,.15); color: var(--ok); border-color: var(--ok); }
+  .q-cell.wrong { background: rgba(239,68,68,.15); color: var(--err); border-color: var(--err); }
+  .q-cell.current.correct { background: var(--ok); color: #fff; box-shadow: 0 4px 12px var(--ok-glow); }
+  .q-cell.current.wrong { background: var(--err); color: #fff; box-shadow: 0 4px 12px var(--err-glow); }
+
+  /* Main content */
+  .toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+  }
+  .crumb {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent-2);
+    font-weight: 600;
+  }
+  .actions { display: flex; gap: 8px; }
+  .btn {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 16px; border-radius: 10px;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .btn:hover { background: var(--panel-2); border-color: var(--border-hover); }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; border-color: transparent; font-weight: 600;
+    box-shadow: 0 8px 20px var(--accent-glow);
+  }
+  .btn.primary:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: .35; cursor: not-allowed; }
+
+  .progress-bar {
+    height: 4px; background: var(--panel);
+    border-radius: 999px; overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-3), var(--accent), var(--accent-2));
+    transition: width .3s ease;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .question-card {
+    max-width: 820px;
+    margin: 0 auto;
+    animation: fadeUp .35s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .q-number {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(59,130,246,.12);
+    border: 1px solid rgba(59,130,246,.35);
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-2);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .q-enun {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #e2e8f0;
+    margin-bottom: 28px;
+    background: linear-gradient(145deg, #0f1420, #0a0e18);
+    border: 1px solid var(--border);
+    padding: 24px 28px;
+    border-radius: 14px;
+  }
+
+  .alts { display: flex; flex-direction: column; gap: 10px; }
+  .alt {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: linear-gradient(145deg, #0f1420, #0a0e18);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .2s cubic-bezier(.34,1.2,.64,1);
+    text-align: left;
+    font-family: inherit;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.55;
+    width: 100%;
+  }
+  .alt:hover:not(:disabled) {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(59,130,246,.15);
+  }
+  .alt:disabled { cursor: default; }
+  .alt-key {
+    flex-shrink: 0;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent-2);
+    transition: all .2s;
+  }
+  .alt:hover:not(:disabled) .alt-key { background: var(--accent); color: #fff; border-color: transparent; }
+  .alt-text { flex: 1; }
+  .alt.selected { border-color: var(--accent); background: rgba(59,130,246,.08); }
+  .alt.selected .alt-key { background: var(--accent); color: #fff; border-color: transparent; }
+  .alt.correct-alt {
+    border-color: var(--ok);
+    background: rgba(16,185,129,.1);
+    box-shadow: 0 0 0 1px var(--ok), 0 8px 20px var(--ok-glow);
+  }
+  .alt.correct-alt .alt-key { background: var(--ok); color: #fff; border-color: transparent; }
+  .alt.wrong-alt {
+    border-color: var(--err);
+    background: rgba(239,68,68,.08);
+    box-shadow: 0 0 0 1px var(--err);
+  }
+  .alt.wrong-alt .alt-key { background: var(--err); color: #fff; border-color: transparent; }
+  .alt-badge {
+    margin-left: 8px;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 999px;
+    letter-spacing: 1px; text-transform: uppercase;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .alt.correct-alt .alt-badge {
+    background: var(--ok); color: #fff;
+  }
+  .alt.wrong-alt .alt-badge {
+    background: var(--err); color: #fff;
+  }
+
+  .confirm-wrap {
+    margin-top: 24px;
+    display: flex; justify-content: center;
+  }
+  .btn-confirm {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff;
+    border: 1px solid transparent;
+    padding: 14px 32px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: .3px;
+    box-shadow: 0 10px 24px var(--accent-glow);
+    transition: all .2s cubic-bezier(.34,1.2,.64,1);
+    min-width: 260px;
+  }
+  .btn-confirm:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px var(--accent-glow);
+  }
+  .btn-confirm:active:not(:disabled) { transform: translateY(0); }
+  .btn-confirm:disabled {
+    background: var(--panel);
+    color: var(--muted);
+    border-color: var(--border);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  .feedback-panel {
+    margin-top: 24px;
+    animation: slideDown .4s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+  .feedback-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .5px;
+  }
+  .feedback-header.correct {
+    background: rgba(16,185,129,.12);
+    border: 1px solid var(--ok);
+    color: var(--ok);
+  }
+  .feedback-header.wrong {
+    background: rgba(239,68,68,.12);
+    border: 1px solid var(--err);
+    color: var(--err);
+  }
+
+  .gabarito-toggle {
+    margin-top: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 12px 18px;
+    border-radius: 10px;
+    color: var(--text);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all .2s;
+  }
+  .gabarito-toggle:hover { border-color: var(--accent); color: var(--accent-2); }
+  .gabarito-toggle svg { transition: transform .3s; }
+  .gabarito-toggle.open svg { transform: rotate(90deg); }
+
+  .gabarito-body {
+    margin-top: 14px;
+    padding: 20px 24px;
+    background: linear-gradient(145deg, rgba(59,130,246,.06), rgba(59,130,246,.02));
+    border: 1px solid rgba(59,130,246,.25);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    line-height: 1.7;
+    font-size: 14.5px;
+    color: #dbeafe;
+    animation: slideDown .3s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .gabarito-body .gab-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .gabarito-body .gab-answer {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--ok); margin-bottom: 10px;
+  }
+
+  .nav-buttons {
+    display: flex; justify-content: space-between; gap: 12px;
+    margin-top: 32px;
+    max-width: 820px; margin-left: auto; margin-right: auto;
+  }
+  .nav-btn {
+    flex: 1;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all .2s;
+  }
+  .nav-btn:hover:not(:disabled) { background: var(--panel-2); border-color: var(--border-hover); transform: translateY(-1px); }
+  .nav-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .nav-btn.primary {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; border-color: transparent;
+    box-shadow: 0 8px 20px var(--accent-glow);
+  }
+  .nav-btn.primary:hover:not(:disabled) { transform: translateY(-2px); }
+
+  /* End screen */
+  .end-screen {
+    max-width: 640px; margin: 0 auto; text-align: center;
+    padding-top: 40px;
+    animation: fadeUp .5s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .end-screen h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 34px; font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: -.5px;
+  }
+  .end-screen .subtitle {
+    color: var(--muted-2); font-size: 15px;
+    margin-bottom: 40px;
+  }
+  .donut {
+    width: 240px; height: 240px;
+    margin: 0 auto 32px; position: relative;
+  }
+  .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .donut .track { fill: none; stroke: var(--panel); stroke-width: 14; }
+  .donut .fill-arc {
+    fill: none; stroke-width: 14; stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s cubic-bezier(.4,.2,.2,1);
+  }
+  .donut .center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .donut .pct {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 56px; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1;
+  }
+  .donut .pct-label {
+    font-size: 11px; color: var(--muted-2);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-top: 4px; font-weight: 600;
+  }
+  .badge {
+    display: inline-flex; padding: 12px 24px;
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px; font-weight: 700;
+    letter-spacing: .5px;
+    margin-bottom: 32px;
+  }
+  .badge.excelente { background: rgba(16,185,129,.15); color: var(--ok); border: 1px solid var(--ok); }
+  .badge.otimo { background: rgba(59,130,246,.15); color: var(--accent-2); border: 1px solid var(--accent); }
+  .badge.regular { background: rgba(245,158,11,.15); color: var(--warn); border: 1px solid var(--warn); }
+  .badge.melhorar { background: rgba(239,68,68,.15); color: var(--err); border: 1px solid var(--err); }
+  .end-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin-bottom: 32px;
+  }
+  .end-stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 16px;
+  }
+  .end-stat .val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px; font-weight: 700; line-height: 1;
+  }
+  .end-stat.correct .val { color: var(--ok); }
+  .end-stat.wrong .val { color: var(--err); }
+  .end-stat .lbl {
+    font-size: 11px; color: var(--muted-2);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-top: 8px; font-weight: 600;
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+  @media (max-width: 900px) {
+    aside.sidebar {
+      width: 100%; height: auto;
+      position: relative; top: auto; left: auto;
+      padding: 60px 20px 20px;
+      transform: none;
+    }
+    body.sidebar-hidden aside.sidebar { transform: none; display: none; }
+    .brand h1 { font-size: 26px; }
+    main { padding: 24px 16px 60px; margin-left: 0; }
+    body.sidebar-hidden main { margin-left: 0; }
+    .q-grid { grid-template-columns: repeat(10, 1fr); }
+  }
+</style>
+</head>
+<body>
+<script>
+  try { if (localStorage.getItem('sidebarHidden') === '1') { document.body.classList.add('sidebar-hidden','no-transition'); requestAnimationFrame(() => document.body.classList.remove('no-transition')); } } catch (e) {}
+</script>
+
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Alternar barra lateral" title="Alternar barra lateral (B)">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+    <rect x="3" y="4" width="18" height="16" rx="2"/>
+    <line x1="9" y1="4" x2="9" y2="20"/>
+  </svg>
+</button>
+
+<aside class="sidebar">
+  <a href="index.html" class="back-link" title="Voltar ao Sétimo Período">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    <span>Sétimo Período</span>
+  </a>
+  <div class="brand">
+    <h1>SIMULADO</h1>
+    <div class="sub">AC 1 · 50 questões</div>
+  </div>
+  <div class="q-list-label">Navegação</div>
+  <div class="q-grid" id="qGrid"></div>
+</aside>
+
+<main id="main">
+  <div id="quiz"></div>
+</main>
+
+<script>
+const QUESTIONS = [
+  {
+    n: 1,
+    enunciado: "Homem, 58 anos, hipertenso e diabético, apresenta dispneia progressiva aos esforços há 3 meses, ortopneia e edema de membros inferiores. Ao exame: estase jugular, crepitações bibasais e B3 em foco mitral. Ecocardiograma evidencia fração de ejeção de ventrículo esquerdo (FEVE) de 32%. NT-proBNP: 2.800 pg/mL. Foi classificado como estágio C da ACCF/AHA e NYHA III. Qual é a terapia quádrupla recomendada para este paciente?",
+    alternativas: {
+      "A": "IECA + betabloqueador + tiazídico + SGLT2i",
+      "B": "ARNI + betabloqueador + antagonista mineralocorticoide + SGLT2i",
+      "C": "BRA + bloqueador de canal de cálcio + betabloqueador + hidralazina",
+      "D": "IECA + espironolactona + digitálico + diurético de alça",
+    },
+    correta: "B",
+    explicacao: "A terapia quádrupla padrão para ICFEr (FEVE ≤ 40%) com NYHA II-III inclui: ARNI (sacubitril/valsartana — PARADIGM-HF, HR 0,84), betabloqueador (carvedilol, metoprolol succinato ou bisoprolol — OR 0,65), antagonista mineralocorticoide (espironolactona/eplerenona — RALES, RR 0,70) e inibidor SGLT2 (dapagliflozina ou empagliflozina — DAPA-HF, HR 0,74). A introdução deve ser sequencial rápida, completando os 4 pilares em 2–3 meses."
+  },
+  {
+    n: 2,
+    enunciado: "Homem, 67 anos, tabagista de 45 maços-ano, apresenta tosse produtiva crônica há 3 anos e dispneia progressiva. Espirometria pós-broncodilatador: VEF1/CVF = 0,58; VEF1 = 42% do previsto. Escala mMRC = 3, CAT = 22. Teve 2 exacerbações moderadas no último ano, uma com hospitalização. Qual é a classificação GOLD e o grupo deste paciente, respectivamente?",
+    alternativas: {
+      "A": "GOLD 2 / Grupo B",
+      "B": "GOLD 3 / Grupo E",
+      "C": "GOLD 3 / Grupo B",
+      "D": "GOLD 4 / Grupo A",
+    },
+    correta: "B",
+    explicacao: "VEF1 de 42% = GOLD 3 (30–49% = grave). Com ≥ 1 exacerbação moderada-grave (incluindo hospitalização), classifica-se como Grupo E, independente dos sintomas. O tratamento do Grupo E é LABA + LAMA, com adição de ICS se eosinófilos ≥ 300/mm³."
+  },
+  {
+    n: 3,
+    enunciado: "Mulher, 45 anos, hipertensa em uso irregular de medicações, chega ao PS com cefaleia intensa, visão turva e PA 240/130 mmHg. Fundo de olho: hemorragias e exsudatos (retinopatia grau III). Creatinina: 2,8 mg/dL (basal: 1,0). TC de crânio sem alterações. Qual é a meta de redução pressórica na primeira hora e qual a classe de medicamento IV mais indicada?",
+    alternativas: {
+      "A": "Reduzir 50% da PA na 1ª hora; nitroprussiato de sódio",
+      "B": "Reduzir 20–25% da PA na 1ª hora; nitroprussiato de sódio ou nitroglicerina IV titulável",
+      "C": "Normalizar a PA (<140/90) em 1 hora; enalaprilato IV",
+      "D": "Reduzir 10% da PA na 1ª hora; hidralazina IV em bolus",
+    },
+    correta: "B",
+    explicacao: "Na emergência hipertensiva (PA elevada + LOA aguda), a meta é reduzir 20–25% na 1ª hora, atingindo 160/100–110 mmHg em 2–6h. Normalização rápida pode causar isquemia por perda da autorregulação. Medicamentos IV titulables são preferidos."
+  },
+  {
+    n: 4,
+    enunciado: "Menino, 10 anos, apresenta poliartrite migratória de grandes articulações há 1 semana, febre (38,5°C) e sopro holossistólico em foco mitral não documentado previamente. ASLO: 680 UI/mL. PCR: 85 mg/L. ECG: intervalo PR prolongado (240 ms). De acordo com os critérios de Jones revisados (2015), qual alternativa contém critérios maiores E menores identificados neste caso?",
+    alternativas: {
+      "A": "Maiores: poliartrite e cardite; Menores: febre e PR prolongado",
+      "B": "Maiores: poliartrite e febre; Menores: cardite e elevação de PCR",
+      "C": "Maiores: artralgia e cardite; Menores: ASLO elevado e PR prolongado",
+      "D": "Maiores: cardite; Menores: poliartrite, febre e ASLO elevado",
+    },
+    correta: "A",
+    explicacao: "Critérios de Jones 2015 — Maiores: cardite (sopro novo) e poliartrite. Menores: febre (≥ 38,5°C) e PR prolongado. A ASLO é evidência de infecção estreptocócica prévia (critério obrigatório), mas NÃO é critério de Jones."
+  },
+  {
+    n: 5,
+    enunciado: "Homem, 35 anos, apresenta cólica lombar esquerda intensa com irradiação para fossa ilíaca, náuseas e hematúria. TC sem contraste: cálculo de 7 mm em ureter distal esquerdo. Composição: oxalato de cálcio. Qual é a principal medida dietética para prevenção de recorrência neste tipo de litíase?",
+    alternativas: {
+      "A": "Restrição de cálcio na dieta",
+      "B": "Aumento da ingesta hídrica (≥ 2,5 L/dia) e restrição de oxalato e sódio",
+      "C": "Suplementação de vitamina D e restrição de proteínas",
+      "D": "Alcalinização urinária com citrato de potássio isoladamente",
+    },
+    correta: "B",
+    explicacao: "Para cálculos de oxalato de cálcio (~80% dos casos), as medidas são: hidratação ≥ 2,5 L/dia, restrição de oxalato e sódio (< 2 g/dia), e manter cálcio dietético NORMAL (1.000–1.200 mg/dia). Restringir cálcio AUMENTA a absorção de oxalato."
+  },
+  {
+    n: 6,
+    enunciado: "Mulher, 28 anos, iniciou carbamazepina há 4 semanas para neuralgia do trigêmeo. Febre 39,5°C, exantema morbiliforme extenso, edema facial, linfadenopatia cervical e hepatomegalia dolorosa. Eosinofilia (2.200/mm³), linfócitos atípicos (8%), ALT 380, AST 310. HHV-6 IgM positiva. Em relação à síndrome DRESS, assinale a alternativa correta:",
+    alternativas: {
+      "A": "O quadro segue cascata monofásica, com início em 24–48h após o fármaco",
+      "B": "A reativação de herpesvírus (especialmente HHV-6) é parte da fisiopatologia e pode explicar a recorrência após retirada do fármaco",
+      "C": "O escore RegiSCAR não considera alterações hepáticas como critério",
+      "D": "O tratamento de 1ª linha é imunoglobulina IV, reservando corticoides para refratários",
+    },
+    correta: "B",
+    explicacao: "A DRESS segue cascata BIFÁSICA (não monofásica), com início tardio (2–8 semanas). A reativação do HHV-6 é parte da fisiopatologia e pode causar flares mesmo após retirada do fármaco. O RegiSCAR INCLUI hepatite. Corticoides sistêmicos são 1ª linha."
+  },
+  {
+    n: 7,
+    enunciado: "Mulher, 24 anos, episódios recorrentes de sibilância, dispneia e tosse seca, predominantemente à noite e ao contato com poeira. Espirometria: VEF1 basal 72%; pós-BD: VEF1 85% (+260 mL, +18%). FeNO: 62 ppb. IgE total elevada. Qual é o tratamento preferencial no Step 3 da GINA (Via 1)?",
+    alternativas: {
+      "A": "SABA de resgate + corticoide inalatório em dose alta",
+      "B": "MART com ICS-formoterol em dose baixa (manutenção e resgate)",
+      "C": "LABA isolado em dose moderada",
+      "D": "Corticoide oral em dose baixa + antileucotrieno",
+    },
+    correta: "B",
+    explicacao: "No Step 3 Via 1 (preferencial) GINA: MART (Maintenance And Reliever Therapy) com ICS-formoterol em dose baixa, para manutenção e resgate. O formoterol tem início rápido e efeito prolongado. LABA isolado é contraindicado na asma."
+  },
+  {
+    n: 8,
+    enunciado: "Homem, 72 anos, internado por pneumonia, recebendo vancomicina e gentamicina IV. No 5º dia: oligúria, creatinina 1,0 → 3,2 mg/dL em 48h. Sedimento: cilindros granulosos marrons (muddy brown casts). Sódio urinário: 48 mEq/L. FENa: 3,8%. Qual é o diagnóstico e o estágio KDIGO desta IRA?",
+    alternativas: {
+      "A": "IRA pré-renal; KDIGO 2",
+      "B": "Necrose tubular aguda (IRA intrínseca); KDIGO 3",
+      "C": "IRA pós-renal obstrutiva; KDIGO 1",
+      "D": "Nefrite intersticial aguda; KDIGO 2",
+    },
+    correta: "B",
+    explicacao: "Gentamicina é nefrotóxica → NTA. Achados típicos: muddy brown casts, sódio urinário > 40, FENa > 2%. Creatinina triplicou (1,0 → 3,2) = KDIGO 3 (≥ 3× basal). Na IRA pré-renal, FENa < 1% e sódio urinário < 20."
+  },
+  {
+    n: 9,
+    enunciado: "Mulher, 52 anos, pirose retroesternal e regurgitação ácida 3–4x/semana há 6 meses, resposta parcial a IBP. EDA: esofagite erosiva Los Angeles grau C. Manometria descarta acalásia. De acordo com o Consenso de Lyon 2.0, como se classifica esta paciente?",
+    alternativas: {
+      "A": "DRGE não comprovada — necessita pHmetria para confirmação",
+      "B": "DRGE acionável — esofagite Los Angeles C/D dispensa pHmetria",
+      "C": "Pirose funcional — resposta parcial ao IBP exclui DRGE",
+      "D": "Esôfago hipersensível — requer impedâncio-pHmetria",
+    },
+    correta: "B",
+    explicacao: "Pelo Lyon 2.0, esofagite LA grau C ou D é evidência CONCLUSIVA de DRGE, dispensando pHmetria. LA-A e LA-B podem ser inespecíficas e requerem confirmação por pHmetria (TEA > 6%)."
+  },
+  {
+    n: 10,
+    enunciado: "Mulher, 62 anos, assintomática, exames de rotina: Ca 11,4 mg/dL (VR: 8,5–10,5), P 2,1, PTH 128 pg/mL (VR: 15–65). Densitometria: T-score -2,8 em colo femoral. Calciúria 24h: 420 mg/dia. Clearance: 55 mL/min. USG renal sem cálculos. De acordo com os critérios cirúrgicos do 4º Workshop (2022), esta paciente tem indicação de paratireoidectomia por quais razões?",
+    alternativas: {
+      "A": "Apenas pela hipercalciúria > 400 mg/dia",
+      "B": "Ca > 1 mg/dL acima do LSN, T-score ≤ -2,5 e clearance < 60 mL/min",
+      "C": "Somente pela densitometria alterada (T-score ≤ -2,5)",
+      "D": "Não há indicação cirúrgica, pois é assintomática",
+    },
+    correta: "B",
+    explicacao: "Critérios cirúrgicos 2022 para HPTP assintomático: Ca > 1 mg/dL acima LSN; T-score ≤ -2,5; clearance < 60 mL/min; nefrolitíase; fratura vertebral; calciúria > 400 mg/dia com risco litogênico. Esta paciente preenche T-score (-2,8) e clearance (55)."
+  },
+  {
+    n: 11,
+    enunciado: "Homem, 55 anos, agricultor, ferimento perfurante profundo em pé com prego enferrujado há 7 dias. Sem cartão vacinal. Trismo, riso sardônico e opistótono. Reflexos exaltados. Sem febre. Qual é a conduta prioritária em relação à imunização passiva e ao antibiótico de escolha?",
+    alternativas: {
+      "A": "SAT 20.000 UI IV + penicilina cristalina",
+      "B": "IGHAT 3.000–6.000 UI IM + metronidazol IV",
+      "C": "Vacina dT isolada + amoxicilina VO",
+      "D": "IGHAT 500 UI IM + cefalosporina de 3ª geração IV",
+    },
+    correta: "B",
+    explicacao: "No tétano estabelecido: IGHAT 3.000–6.000 UI IM (dose terapêutica; 500 UI é profilática). IGHAT > SAT (menor risco de anafilaxia). Antibiótico: metronidazol IV (penicilina pode antagonizar GABA, potencializando espasmos)."
+  },
+  {
+    n: 12,
+    enunciado: "Homem, 30 anos, alérgico (rinite/eczema), disfagia para sólidos há 2 anos e impactação alimentar. EDA: anéis concêntricos (\"traquealização\"), sulcos longitudinais, exsudatos esbranquiçados. Biópsia: ≥ 15 eos/CGA. Quais são os 3 critérios diagnósticos da EoE segundo o ACG 2025?",
+    alternativas: {
+      "A": "Disfagia + > 5 eos/CGA + resposta ao IBP",
+      "B": "Sintomas de disfunção esofágica + ≥ 15 eos/CGA + exclusão de causas secundárias",
+      "C": "Impactação alimentar + anéis endoscópicos + IgE elevada",
+      "D": "Eosinofilia periférica + esofagite erosiva + ≥ 15 eos/CGA",
+    },
+    correta: "B",
+    explicacao: "ACG 2025 — 3 critérios: (1) sintomas de disfunção esofágica, (2) ≥ 15 eos/CGA na biópsia, (3) exclusão de causas secundárias de eosinofilia esofágica. Resposta ao IBP NÃO é mais critério de exclusão."
+  },
+  {
+    n: 13,
+    enunciado: "Homem, 60 anos, PA 152/96 mmHg com losartana 100 mg, anlodipino 10 mg e HCTZ 25 mg em doses máximas, adesão confirmada. MAPA: 148/94 (vigília), 135/82 (sono). Causas secundárias excluídas. Qual é o 4º fármaco recomendado e qual estudo fundamenta essa escolha?",
+    alternativas: {
+      "A": "Betabloqueador (atenolol) — estudo ALLHAT",
+      "B": "Alfa-1-bloqueador (doxazosina) — estudo ASCOT",
+      "C": "Espironolactona — estudo PATHWAY-2",
+      "D": "Clonidina — estudo SPRINT",
+    },
+    correta: "C",
+    explicacao: "Na HAR (≥ 130/80 com 3 classes + diurético), o 4º fármaco é espironolactona (PATHWAY-2), superior a doxazosina e bisoprolol. HAR tem predomínio SRAA/aldosterona. HAR refratária (≥ 5 classes + ARM) tem predomínio simpático."
+  },
+  {
+    n: 14,
+    enunciado: "Mulher, 48 anos, epigastralgia em queimação aliviada com alimentação há 2 meses. Nega AINEs. EDA: úlcera duodenal 1,2 cm, margens regulares. Teste da urease: positivo. Biópsia: H. pylori +++. Qual é o esquema de erradicação de 1ª linha do H. pylori e a duração?",
+    alternativas: {
+      "A": "IBP + amoxicilina + claritromicina por 7 dias",
+      "B": "IBP + amoxicilina + claritromicina por 14 dias",
+      "C": "IBP + metronidazol + tetraciclina + bismuto por 7 dias",
+      "D": "IBP + levofloxacino + amoxicilina por 10 dias",
+    },
+    correta: "B",
+    explicacao: "Terapia tríplice de 1ª linha: IBP (dose dobrada) + amoxicilina 1 g 2x/dia + claritromicina 500 mg 2x/dia por 14 dias. Esquemas de 7 dias têm taxas inferiores de erradicação. Terapia quádrupla com bismuto é 2ª linha."
+  },
+  {
+    n: 15,
+    enunciado: "Mulher, 70 anos, pós-IAM há 5 anos, dispneia aos médios esforços (NYHA II), FEVE 38%. Em uso de enalapril 20 mg 2x/dia. Médico deseja trocar para ARNI. Qual é o cuidado ESSENCIAL antes de iniciar ARNI em paciente usando IECA?",
+    alternativas: {
+      "A": "Associar IECA e ARNI por 7 dias antes de suspender o IECA",
+      "B": "Suspender o IECA e aguardar washout de 36 horas antes de iniciar o ARNI",
+      "C": "Não há necessidade de washout — trocar imediatamente",
+      "D": "Realizar dosagem de potássio e, se normal, trocar no mesmo dia",
+    },
+    correta: "B",
+    explicacao: "ARNI inibe neprilisina (degrada bradicinina). Uso concomitante com IECA (que também eleva bradicinina) aumenta risco de angioedema grave. Washout OBRIGATÓRIO de 36h entre suspensão do IECA e início do ARNI."
+  },
+  {
+    n: 16,
+    enunciado: "Mulher, 35 anos, em uso de omeprazol há 3 meses, creatinina 1,0 → 2,4 mg/dL. Sedimento: leucocitúria estéril, hematúria dismórfica discreta, cilindros leucocitários. Eosinófilos: normais. Sem febre, sem rash. Sobre a NIA, assinale a alternativa correta:",
+    alternativas: {
+      "A": "A tríade clássica (febre, rash, eosinofilia) está presente em > 80% dos casos",
+      "B": "AINEs causam NIA sem eosinofilia e podem cursar com síndrome nefrótica associada",
+      "C": "O diagnóstico só é feito por biópsia e o tratamento é exclusivamente nefroprotetor",
+      "D": "A NIA por ICI geralmente cursa com eosinofilia periférica intensa",
+    },
+    correta: "B",
+    explicacao: "A tríade clássica da NIA está presente em < 10% dos casos (tríade morta). AINEs são exceção: causam NIA sem eosinofilia e podem associar-se a doença de lesões mínimas com síndrome nefrótica. NIA por ICI raramente cursa com eosinofilia."
+  },
+  {
+    n: 17,
+    enunciado: "Adolescente, 16 anos, asma alérgica, usa SABA (salbutamol) diariamente para sibilância. Espirometria: VEF1 78%; pós-BD: VEF1 92% (+220 mL, +18%). Nunca usou corticoide inalatório. Qual é o problema do SABA isolado e a conduta recomendada?",
+    alternativas: {
+      "A": "SABA isolado é adequado para asma intermitente leve; manter",
+      "B": "SABA isolado aumenta risco de exacerbações graves e morte; iniciar ICS-formoterol sob demanda (Step 1–2, Via 1)",
+      "C": "SABA pode ser mantido se associado a antileucotrieno oral diário",
+      "D": "SABA deve ser trocado por LABA isolado como resgate",
+    },
+    correta: "B",
+    explicacao: "GINA: SABA isolado NÃO é mais recomendado em NENHUM step, pois aumenta risco de exacerbações e morte. Via 1: ICS-formoterol sob demanda já nos Steps 1–2. LABA isolado é CONTRAINDICADO na asma."
+  },
+  {
+    n: 18,
+    enunciado: "Homem, 50 anos, PA consultório 148/94 mmHg em duas ocasiões. MAPA 24h: vigília 122/78, sono 110/68. Sem LOA. Sem medicação. Qual é o fenótipo de PA deste paciente e a conduta?",
+    alternativas: {
+      "A": "Hipertensão mascarada — iniciar tratamento farmacológico",
+      "B": "Hipertensão sustentada — monoterapia com IECA",
+      "C": "Hipertensão do avental branco — monitorizar com MAPA/MRPA e tratar fatores de risco",
+      "D": "Normotensão verdadeira — dispensar acompanhamento",
+    },
+    correta: "C",
+    explicacao: "PA elevada no consultório (≥ 140/90) com MAPA normal (vigília < 135/85) = hipertensão do avental branco. Risco intermediário. Conduta: MAPA/MRPA periódica + medidas não farmacológicas. HA mascarada seria o inverso."
+  },
+  {
+    n: 19,
+    enunciado: "Homem, 56 anos, cirrótico Child-Pugh C, ascite tensa, creatinina 1,2 → 2,8 mg/dL em 5 dias. Sem resposta a albumina (1 g/kg/2 dias). Sedimento inocente. USG renal normal. Sódio urinário < 10 mEq/L. Qual é o diagnóstico mais provável e o vasoconstritor de 1ª linha?",
+    alternativas: {
+      "A": "NTA por sepse — noradrenalina",
+      "B": "Síndrome hepatorrenal (SHR) tipo 1 — terlipressina + albumina",
+      "C": "IRA pré-renal por hipovolemia — continuar expansão com SF",
+      "D": "Nefrite intersticial aguda — corticoterapia",
+    },
+    correta: "B",
+    explicacao: "Cirrótico + ascite + creatinina em ascensão + sem resposta a albumina + sedimento inocente + sódio urinário muito baixo (< 10) = SHR-IRA. Tratamento: terlipressina (vasoconstritor esplâncnico) + albumina. Transplante hepático é definitivo."
+  },
+  {
+    n: 20,
+    enunciado: "Paciente, 60 anos, DPOC (VEF1/CVF = 0,63 pós-BD, VEF1 = 68%), mMRC 1, CAT = 8, sem exacerbações no último ano. A qual grupo GOLD pertence e qual o tratamento inicial?",
+    alternativas: {
+      "A": "Grupo A — broncodilatador de curta ação conforme necessidade",
+      "B": "Grupo B — LABA + LAMA de manutenção",
+      "C": "Grupo E — LABA + LAMA + ICS",
+      "D": "Grupo A — corticoide inalatório isolado",
+    },
+    correta: "A",
+    explicacao: "mMRC 0–1 e CAT < 10 = baixa carga sintomática. Sem exacerbações = Grupo A. Tratamento: broncodilatador conforme necessidade. ICS isolado NÃO tem papel na DPOC."
+  },
+  {
+    n: 21,
+    enunciado: "Homem, 65 anos, ICFEr (FEVE 28%), terapia quádrupla otimizada. Após 12 meses: FEVE 52%. Paciente questiona se pode suspender medicações. Com base no estudo TRED-HF, qual é a conduta?",
+    alternativas: {
+      "A": "Suspender gradualmente os 4 pilares, pois FEVE normalizou",
+      "B": "Manter terapia quádrupla indefinidamente — TRED-HF mostrou 44% de recidiva com retirada",
+      "C": "Suspender apenas ARNI e SGLT2i, mantendo BB e ARM",
+      "D": "Reduzir todas pela metade e reavaliar em 6 meses",
+    },
+    correta: "B",
+    explicacao: "TRED-HF: 44% dos pacientes com FEVE recuperada recidivaram ao retirar terapia. A melhora reflete o efeito do tratamento, NÃO cura. IC é crônica com remodelamento neuro-hormonal persistente. Manter indefinidamente."
+  },
+  {
+    n: 22,
+    enunciado: "Mulher, 42 anos, litíase recorrente por cálculos de ácido úrico. pH urinário: 5,0. Ácido úrico sérico: 8,5 mg/dL. Dieta rica em proteínas animais. Qual é a medida terapêutica MAIS específica para prevenção de cálculos de ácido úrico?",
+    alternativas: {
+      "A": "Tiazídico para reduzir calciúria",
+      "B": "Alcalinização urinária com citrato de potássio (alvo pH 6,5–7,0) + hidratação",
+      "C": "Restrição de oxalato na dieta",
+      "D": "Alopurinol isolado, sem alterar pH urinário",
+    },
+    correta: "B",
+    explicacao: "Cálculos de ácido úrico formam-se em urina ácida (pH < 5,5). Alcalinização com citrato de potássio (alvo pH 6,5–7,0) é a medida mais específica — ácido úrico é solúvel em pH > 6,5, podendo dissolver cálculos existentes."
+  },
+  {
+    n: 23,
+    enunciado: "Criança, 8 anos, laceração profunda em joelho com solo contaminado. Esquema vacinal: 2 doses DTP (última há 6 meses). Tecido desvitalizado e contaminação por terra. Qual a conduta para profilaxia antitetânica?",
+    alternativas: {
+      "A": "Apenas reforço com dT — esquema quase completo",
+      "B": "Completar esquema (3ª dose) + IGHAT — ferimento de alto risco e esquema incompleto",
+      "C": "Nenhuma medida — 2 doses já conferem proteção adequada",
+      "D": "SAT 5.000 UI IM + dT — preferir SAT por ser mais acessível",
+    },
+    correta: "B",
+    explicacao: "Ferimento de alto risco (profundo, desvitalizado, contaminação por solo) + esquema incompleto (< 3 doses): completar esquema + IGHAT. IGHAT > SAT (menor risco de reações). Com 2 doses, proteção insuficiente para ferimentos de alto risco."
+  },
+  {
+    n: 24,
+    enunciado: "Homem, 58 anos, dor torácica lancinante súbita com irradiação dorsal. PA: 210/120, FC: 98 bpm. Pulso radial D diminuído. Angiotomografia: dissecção tipo A de Stanford. Qual a meta de PA/FC e qual classe farmacológica deve ser administrada PRIMEIRO?",
+    alternativas: {
+      "A": "PAS < 140 e FC < 80; nitroprussiato primeiro, depois BB",
+      "B": "PAS 100–120 e FC < 60; betabloqueador IV PRIMEIRO, antes de vasodilatadores",
+      "C": "PAS < 160 e FC < 70; hidralazina IV",
+      "D": "PAS 130–140; BCC IV isoladamente",
+    },
+    correta: "B",
+    explicacao: "Na dissecção de aorta: PAS 100–120 e FC < 60. BB IV (esmolol/metoprolol) PRIMEIRO — vasodilatadores sem beta-bloqueio prévio causam taquicardia reflexa, aumentando o estresse de cisalhamento (dP/dt) e propagando a dissecção."
+  },
+  {
+    n: 25,
+    enunciado: "Homem, 40 anos, alopurinol há 5 semanas. Febre, exantema difuso, linfadenopatia, icterícia. Eosinófilos 3.500/mm³, ALT 520, creatinina 2,0. RegiSCAR = 5 (caso definitivo). Qual é o tratamento de 1ª linha após suspensão do fármaco?",
+    alternativas: {
+      "A": "Anti-histamínicos orais + observação",
+      "B": "Corticoterapia sistêmica (prednisona 0,5–1 mg/kg/dia) com desmame gradual em 8–12 semanas",
+      "C": "Imunoglobulina intravenosa em dose alta",
+      "D": "Ciclosporina IV de urgência",
+    },
+    correta: "B",
+    explicacao: "Após suspensão do fármaco, 1ª linha = corticoterapia sistêmica (prednisona 0,5–1 mg/kg/dia). Desmame GRADUAL em 8–12 semanas — desmame rápido pode causar flare (reativação viral HHV-6). IVIG é para casos refratários."
+  },
+  {
+    n: 26,
+    enunciado: "Homem, 45 anos, pirose e regurgitação há 4 meses. EDA: esofagite LA grau A. pHmetria: TEA = 3,8% (VR < 4%). Associação sintomática positiva. Como se classifica este caso pelo Lyon 2.0?",
+    alternativas: {
+      "A": "DRGE comprovada — LA-A já é evidência conclusiva",
+      "B": "Evidência inconclusiva — LA-A pode ser inespecífica; TEA 3,8% no limiar normal; avaliar episódios de refluxo e associação sintomática",
+      "C": "DRGE excluída — TEA < 4% descarta o diagnóstico",
+      "D": "Pirose funcional — LA-A é achado incidental",
+    },
+    correta: "B",
+    explicacao: "LA-A pode ser inespecífica (até 20% em saudáveis). TEA 3,8% < 6% (conclusivo). Zona 4–6% é inconclusiva. São necessários dados adicionais (nº episódios de refluxo, associação sintomática). LA-C/D dispensam pHmetria."
+  },
+  {
+    n: 27,
+    enunciado: "Menina, 12 anos, coreia de Sydenham (movimentos involuntários e labilidade emocional) documentada. ASLO: 450. Sem outros critérios de Jones. Esta paciente pode receber diagnóstico de FRA?",
+    alternativas: {
+      "A": "Não — necessários pelo menos 2 critérios maiores",
+      "B": "Não — coreia isolada sem cardite é insuficiente",
+      "C": "Sim — coreia de Sydenham isolada com evidência de infecção estreptocócica é suficiente para diagnóstico de FRA",
+      "D": "Sim — mas somente se houver artralgia associada",
+    },
+    correta: "C",
+    explicacao: "A coreia de Sydenham é EXCEÇÃO: sozinha, com evidência de infecção estreptocócica, é suficiente para diagnóstico de FRA. Pode ser manifestação tardia (meses após faringite), quando ASLO e provas inflamatórias já estão normalizando."
+  },
+  {
+    n: 28,
+    enunciado: "Homem, 68 anos, IC, FEVE 44%, obeso (IMC 38). BNP: 180 pg/mL. NT-proBNP: 520 pg/mL. Qual peptídeo natriurético é mais confiável para seguimento neste caso e por quê?",
+    alternativas: {
+      "A": "BNP, pois não é afetado pela massa corporal",
+      "B": "NT-proBNP — obesidade reduz BNP (clearance por NPR-C no tecido adiposo) e ARNI degrada BNP mas NÃO afeta NT-proBNP",
+      "C": "Ambos são igualmente confiáveis em obesos",
+      "D": "Nenhum é útil — apenas ecocardiograma para seguimento",
+    },
+    correta: "B",
+    explicacao: "Obesidade reduz BNP pelo aumento de receptores de clearance NPR-C no tecido adiposo. ARNI (sacubitril) inibe neprilisina, elevando BNP artificialmente, mas NÃO afeta NT-proBNP. Em obesos e/ou em uso de ARNI, NT-proBNP é mais confiável."
+  },
+  {
+    n: 29,
+    enunciado: "Paciente com EoE em uso de budesonida orodispersível há 12 semanas mantém > 15 eos/CGA e disfagia. EDA de controle: escore EREFS com fibrose submucosa e estenose leve. Qual ferramenta o ACG 2025 recomenda para monitorar resposta ao tratamento?",
+    alternativas: {
+      "A": "Apenas contagem de eosinófilos na biópsia",
+      "B": "IMPACT (sintomas) + EREFS (endoscopia + histologia integrados)",
+      "C": "pHmetria de 24h para excluir DRGE concomitante",
+      "D": "IgE sérica total como marcador de atividade",
+    },
+    correta: "B",
+    explicacao: "ACG 2025: avaliação integrada com IMPACT (sintomas) + EREFS (edema, anéis, exsudatos, sulcos, estenose). Contagem de eos isolada é insuficiente — pode haver remodelamento fibrótico mesmo com histologia normalizada."
+  },
+  {
+    n: 30,
+    enunciado: "Mulher, 78 anos, hipertensa usando enalapril + losartana + ibuprofeno (triple whammy). Creatinina 1,1 → 2,5 mg/dL após diarreia. PA: 90/60. Diurese reduzida. Por que a combinação IECA + BRA + AINE é \"triple whammy\" e qual o mecanismo?",
+    alternativas: {
+      "A": "Os três causam nefrotoxicidade tubular direta",
+      "B": "IECA dilata eferente, AINE contrai aferente, BRA potencializa — em hipovolemia, a TFG colapsa",
+      "C": "A combinação causa rabdomiólise com IRA",
+      "D": "Os três causam nefrite intersticial alérgica simultânea",
+    },
+    correta: "B",
+    explicacao: "Triple whammy: IECA/BRA dilatam arteríola eferente; AINE contrai aferente (bloqueia prostaglandinas). Em hipovolemia (diarreia), sem mecanismos compensatórios, a TFG colapsa. NÃO é nefrotoxicidade direta."
+  },
+  {
+    n: 31,
+    enunciado: "Homem, 55 anos, HPTP (PTH 98, Ca 10,8). Não preenche critérios cirúrgicos. Osteopenia (T-score -1,8), sem cálculos renais. Qual é a opção de manejo clínico (não cirúrgico)?",
+    alternativas: {
+      "A": "Calcitriol em dose alta para suprimir PTH",
+      "B": "Cinacalcete — calcimimético que atua no CaSR reduzindo PTH e calcemia",
+      "C": "Bifosfonatos isolados como tratamento definitivo",
+      "D": "Restrição severa de cálcio (< 400 mg/dia)",
+    },
+    correta: "B",
+    explicacao: "Cinacalcete atua no receptor CaSR da paratireoide, simulando hipercalcemia e reduzindo PTH. Opção clínica quando sem critérios cirúrgicos. Calcitriol aumentaria cálcio. Restrição severa de Ca pode paradoxalmente estimular PTH."
+  },
+  {
+    n: 32,
+    enunciado: "Mulher, 72 anos, hemiparesia esquerda súbita há 2h. TC sem sangramento. PA: 200/110. Trombólise não realizada (contraindicação por anticoagulante oral). Qual o manejo da PA neste AVC isquêmico sem trombólise?",
+    alternativas: {
+      "A": "Reduzir PA para < 140/90 com nitroprussiato IV",
+      "B": "Não tratar PA, a menos que > 220/120 — hipertensão permissiva",
+      "C": "Reduzir 20% na 1ª hora com enalaprilato IV",
+      "D": "BB IV para FC < 60 e PA < 160/100",
+    },
+    correta: "B",
+    explicacao: "AVC isquêmico sem trombólise: hipertensão permissiva — só tratar se > 220/120. A hipertensão mantém perfusão da penumbra isquêmica. Com trombólise: PA < 185/110 antes e < 180/105 após."
+  },
+  {
+    n: 33,
+    enunciado: "Homem, 60 anos, hematêmese volumosa. EDA de urgência: úlcera gástrica com vaso visível sem sangramento ativo (Forrest II",
+    alternativas: {
+      "A": "Forrest III — baixo risco — tratamento clínico",
+      "B": "Forrest IIA — alto risco (~43%) — hemostasia endoscópica indicada",
+      "C": "Forrest IIC — risco intermediário — observação",
+      "D": "Forrest IA — sangramento ativo em jato",
+    },
+    correta: "B",
+    explicacao: "Forrest IIA = vaso visível não sangrante — risco ~43% (alto). Classificação: IA (jato ~90%), IB (babação ~55%), IIA (vaso visível ~43%) = hemostasia endoscópica. IIB (coágulo ~22%) controverso. IIC (~10%) e III (~5%) = baixo risco."
+  },
+  {
+    n: 34,
+    enunciado: "Adolescente, 15 anos, 1º surto de FRA com cardite leve (regurgitação mitral leve) sem sequela valvar residual após tratamento. Qual a duração da profilaxia secundária com penicilina benzatina?",
+    alternativas: {
+      "A": "5 anos ou até 18 anos (o que for mais longo)",
+      "B": "10 anos ou até 21 anos (o que for mais longo) — FRA com cardite sem sequela valvar",
+      "C": "10 anos ou até 25 anos — para qualquer FRA",
+      "D": "Profilaxia vitalícia — qualquer cardite requer profilaxia para vida toda",
+    },
+    correta: "B",
+    explicacao: "Duração da profilaxia secundária: sem cardite = 5 anos/21 anos; com cardite sem sequela = 10 anos/21 anos; com cardite e sequela valvar = 10 anos/40 anos (ou vitalícia). Este paciente: cardite sem sequela = 10 anos ou até 21 anos."
+  },
+  {
+    n: 35,
+    enunciado: "Homem, 62 anos, melanoma metastático, nivolumabe (anti-PD-1) há 4 meses. Creatinina 0,9 → 3,1. Biópsia: infiltrado linfoplasmocitário intersticial. Eosinófilos periféricos normais. Qual a conduta para NIA por ICI?",
+    alternativas: {
+      "A": "Suspender ICI e observar — NIA por ICI resolve espontaneamente",
+      "B": "Suspender ICI + corticoterapia agressiva (prednisona 1 mg/kg/dia) — NIA por ICI não cursa com eosinofilia e requer tratamento ativo",
+      "C": "Manter ICI e associar ciclofosfamida",
+      "D": "Trocar para outro ICI sem corticoide",
+    },
+    correta: "B",
+    explicacao: "NIA por ICI: perfil distinto — infiltrado linfoplasmocitário, raramente eosinofilia. Suspensão do ICI isolada geralmente NÃO é suficiente. Corticoterapia agressiva é indicada. Retomada do ICI: decisão individualizada com oncologia."
+  },
+  {
+    n: 36,
+    enunciado: "Homem, 70 anos, DPOC GOLD 3, dispneia intensa, escarro purulento, FR 32. Gasometria: pH 7,28, pCO2 62, pO2 55, HCO3 28. Além de BD e corticoide, qual o suporte ventilatório de PRIMEIRA ESCOLHA?",
+    alternativas: {
+      "A": "O2 alto fluxo por Venturi (FiO2 50%)",
+      "B": "VNI — primeira escolha na exacerbação hipercápnica com acidose",
+      "C": "Intubação orotraqueal imediata",
+      "D": "Cânula nasal de alto fluxo sem pressão positiva",
+    },
+    correta: "B",
+    explicacao: "Na exacerbação com acidose hipercápnica (pH < 7,35, pCO2 elevada), VNI (BiPAP) é 1ª escolha. Reduz intubação, internação e mortalidade. IOT: reservada para falha de VNI. O2 alto fluxo isolado pode piorar hipercapnia."
+  },
+  {
+    n: 37,
+    enunciado: "Criança, 7 anos, asma alérgica, sintomas 2x/semana, sem despertares noturnos. FeNO 35 ppb. Espirometria normal. Qual a classificação do controle e a conduta?",
+    alternativas: {
+      "A": "Asma não controlada — iniciar Step 3",
+      "B": "Asma parcialmente controlada — manter Step 1–2 e reavaliar em 4–12 semanas",
+      "C": "Asma controlada — suspender medicação",
+      "D": "Asma intermitente — nenhum tratamento",
+    },
+    correta: "B",
+    explicacao: "Sintomas 2x/semana (limítrofe), sem despertares = parcialmente controlada (1–2 critérios). Conduta: manter step e reavaliar em 4–12 semanas. Controlada teria 0 critérios. Nunca suspender toda medicação abruptamente."
+  },
+  {
+    n: 38,
+    enunciado: "Gestante, 32 semanas, convulsão tônico-clônica generalizada. PA: 180/110. Proteinúria 3+. Edema generalizado. Qual o anti-hipertensivo E anticonvulsivante de escolha?",
+    alternativas: {
+      "A": "Nitroprussiato + fenitoína",
+      "B": "Hidralazina IV + sulfato de magnésio (MgSO4)",
+      "C": "Enalaprilato IV + diazepam",
+      "D": "Nifedipino sublingual + fenobarbital",
+    },
+    correta: "B",
+    explicacao: "Eclâmpsia: hidralazina IV (anti-hipertensivo de escolha) + MgSO4 (anticonvulsivante — estudo MAGPIE). Nitroprussiato: risco de intoxicação cianídrica fetal. IECA/BRA: CONTRAINDICADOS na gestação. Fenitoína é inferior ao MgSO4."
+  },
+  {
+    n: 39,
+    enunciado: "EoE confirmada em uso de budesonida orodispersível 12 semanas: mantém > 15 eos/CGA e disfagia. IBP em dose alta já falhou previamente. Qual a próxima linha terapêutica (ACG 2025)?",
+    alternativas: {
+      "A": "Dieta de eliminação empírica (2, 4 ou 6 alimentos) com reintrodução sequencial",
+      "B": "Corticoide oral sistêmico em dose alta",
+      "C": "Dilatação esofágica como tratamento isolado definitivo",
+      "D": "Gastrectomia parcial",
+    },
+    correta: "A",
+    explicacao: "Pilares da EoE: IBP, corticoide tópico, dieta de eliminação. Se IBP e corticoide falharam, dieta de eliminação empírica (2, 4 ou 6 alimentos com reintrodução sequencial) é alternativa. Dilatação trata estenose, não inflamação."
+  },
+  {
+    n: 40,
+    enunciado: "Homem, 55 anos, úlcera duodenal crônica não tratada. Vômitos pós-prandiais tardios há 3 semanas, saciedade precoce, perda de 6 kg. EDA: estenose pilórica sem malignidade na biópsia. Qual a complicação e o manejo inicial?",
+    alternativas: {
+      "A": "Perfuração — laparotomia de urgência",
+      "B": "Estenose pilórica — IBP dose alta + dilatação endoscópica por balão; cirurgia se refratária",
+      "C": "HDA — hemostasia endoscópica",
+      "D": "Úlcera penetrante — pancreatectomia",
+    },
+    correta: "B",
+    explicacao: "Estenose pilórica: complicação de úlcera crônica. Vômitos tardios, saciedade precoce, emagrecimento. Manejo: IBP (reduz edema), dilatação endoscópica com balão, tratar H. pylori. Cirurgia se refratária."
+  },
+  {
+    n: 41,
+    enunciado: "Mulher, 55 anos, HA estágio 2 (PA 162/98), diabética, DRC (TFG 48). Potássio: 5,3 mEq/L. Qual a combinação inicial mais adequada e qual classe EVITAR?",
+    alternativas: {
+      "A": "IECA + tiazídico; evitar BCC",
+      "B": "IECA (ou BRA) + BCC di-hidropiridínico; evitar ARM (espironolactona) pelo risco de hipercalemia",
+      "C": "BRA + BB; evitar IECA",
+      "D": "Alfa-1-bloqueador + diurético de alça; evitar tiazídico",
+    },
+    correta: "B",
+    explicacao: "DRC + diabetes: IECA/BRA (nefroprotetores) + BCC di-hidro. Evitar ARM (espironolactona) pela hipercalemia (K 5,3). Nunca associar IECA + BRA. Octeto 2025: TIAZ, IECA, BRA, BCC, BB, ARM, α1-bloqueador, simpatolíticos centrais."
+  },
+  {
+    n: 42,
+    enunciado: "Mulher, 28 anos, litíase recorrente. Cálculos: estruvita (fosfato de amônio magnesiano). Urinocultura: Proteus mirabilis. Qual a relação entre este germe e cálculos de estruvita?",
+    alternativas: {
+      "A": "Proteus causa ITU mas não se relaciona com composição do cálculo",
+      "B": "Proteus produz urease → hidrolisa ureia em amônia → alcaliniza urina (pH > 7) → cristalização de estruvita",
+      "C": "Proteus produz oxalato que se combina com cálcio",
+      "D": "Estruvita forma-se apenas em urina ácida",
+    },
+    correta: "B",
+    explicacao: "Estruvita = cálculos infecciosos. Bactérias produtoras de urease (Proteus, Klebsiella, Pseudomonas) hidrolisam ureia em amônia + CO2, alcalinizando urina (pH > 7). Tratamento: remoção completa do cálculo + erradicação da infecção."
+  },
+  {
+    n: 43,
+    enunciado: "Homem, 50 anos, tétano generalizado em uso de IGHAT, metronidazol e diazepam. No 3º dia: espasmos intensos com comprometimento respiratório apesar de doses crescentes de diazepam. Qual a conduta para o manejo da via aérea?",
+    alternativas: {
+      "A": "Intubação orotraqueal com sequência rápida",
+      "B": "Traqueostomia precoce — evita manipulação laríngea que desencadeia espasmos; necessidade prolongada de via aérea",
+      "C": "Máscara laríngea como alternativa definitiva",
+      "D": "VNI com BiPAP de longo prazo",
+    },
+    correta: "B",
+    explicacao: "No tétano grave: traqueostomia precoce > IOT. Manipulação laríngea pode desencadear espasmos de glote fatais. Necessidade prolongada de via aérea (semanas). VNI inadequada para espasmos incontroláveis."
+  },
+  {
+    n: 44,
+    enunciado: "Homem, 45 anos, hígido previamente, dispneia progressiva, edema e B3. Eco: FEVE 25%, hipocinesia difusa, VE dilatado. Troponina levemente elevada. Sem DAC nem álcool. Usando o mnemônico CHAMPIT, quais diagnósticos diferenciais investigar?",
+    alternativas: {
+      "A": "Apenas DAC e hipertensão",
+      "B": "C-coronária, H-hipertensão, A-valvopatias, M-miocardiopatias, P-pericárdio, I-infecção/inflamação, T-taquiarritmia/toxinas",
+      "C": "Apenas miocardiopatia hipertrófica e amiloidose",
+      "D": "SCA exclusivamente — hipocinesia difusa confirma etiologia isquêmica",
+    },
+    correta: "B",
+    explicacao: "CHAMPIT: C=Coronária, H=Hipertensão, A=Valvopatias, M=Miocardiopatias (dilatada, hipertrófica, restritiva, Chagas), P=Pericárdio, I=Infecção/Inflamação (miocardite), T=Taquiarritmia/Toxinas. IC é SÍNDROME, não doença."
+  },
+  {
+    n: 45,
+    enunciado: "Mulher, 38 anos, tosse crônica, rouquidão e globus. EDA sem esofagite. pHmetria: TEA = 2,5% (normal). É possível atribuir esses sintomas à DRGE?",
+    alternativas: {
+      "A": "Sim — tosse e rouquidão são típicos e confirmam DRGE",
+      "B": "Não — sem esofagite e pHmetria normal, DRGE está excluída; investigar outras causas antes",
+      "C": "Sim — globus basta para diagnóstico",
+      "D": "Sim — IBP empírico dose dupla por 12 meses",
+    },
+    correta: "B",
+    explicacao: "Sintomas extraesofágicos (tosse, rouquidão, globus) têm baixa especificidade para DRGE. Sem esofagite e TEA normal, NÃO há evidência de DRGE. Hierarquia: pirose/regurgitação são típicos; extraesofágicos requerem comprovação objetiva."
+  },
+  {
+    n: 46,
+    enunciado: "Criança, 8 anos, faringoamigdalite aguda, febre, teste rápido positivo para estreptococo grupo A. Qual a conduta para profilaxia PRIMÁRIA da FRA?",
+    alternativas: {
+      "A": "Amoxicilina VO por 3 dias",
+      "B": "Penicilina benzatina IM dose única (600.000 UI < 20 kg, 1.200.000 UI ≥ 20 kg) ou amoxicilina VO por 10 dias",
+      "C": "Azitromicina 3 dias como 1ª escolha",
+      "D": "Corticoide oral isolado",
+    },
+    correta: "B",
+    explicacao: "Profilaxia primária = tratar faringite estreptocócica adequadamente: penicilina benzatina dose única OU amoxicilina 10 dias. Tratamento por 3 dias é insuficiente. Azitromicina (5 dias) é para alérgicos a penicilina."
+  },
+  {
+    n: 47,
+    enunciado: "Homem, 48 anos, pré-hipertenso (PA 132/86), sedentário, dieta rica em sódio (~5 g/dia), IMC 31. Sem LOA. Quais as metas quantificadas de tratamento não farmacológico (Diretriz 2025)?",
+    alternativas: {
+      "A": "Sódio < 5 g/dia e caminhada 3x/semana 30 min",
+      "B": "Sódio < 2 g/dia, dieta DASH, potássio ≥ 3,5 g/dia, exercício 150 min/semana, perda de peso",
+      "C": "Apenas restrição calórica e magnésio",
+      "D": "Ioga diária e restrição de cafeína",
+    },
+    correta: "B",
+    explicacao: "Diretriz 2025: sódio < 2 g/dia (~5 mmHg), DASH, K ≥ 3,5 g/dia, exercício aeróbico 150 min/semana (~7 mmHg), perda de peso (1 kg ≈ 1 mmHg), moderação de álcool e cessação tabágica."
+  },
+  {
+    n: 48,
+    enunciado: "Homem, 65 anos, IRA KDIGO 3, oligúria. K: 7,2 mEq/L (ECG: ondas T apiculadas, QRS alargado), ureia 280, pH 7,15, HCO3 10. Edema pulmonar refratário a diuréticos. Quais indicações de diálise de urgência presentes?",
+    alternativas: {
+      "A": "Apenas ureia elevada",
+      "B": "Hipercalemia refratária com repercussão ECG, acidose metabólica grave e hipervolemia refratária",
+      "C": "Apenas oligúria isolada é indicação absoluta",
+      "D": "Aguardar creatinina > 10 para indicar diálise",
+    },
+    correta: "B",
+    explicacao: "Indicações de diálise de urgência (AEIOU): Acidose refratária (pH 7,15), Eletrólitos — hipercalemia com ECG (K 7,2 + T apiculadas + QRS alargado), Intoxicação, Overload — hipervolemia refratária, Uremia sintomática. Três indicações simultâneas neste caso."
+  },
+  {
+    n: 49,
+    enunciado: "Mulher, 30 anos, lamotrigina há 10 dias. Febre, exantema morbiliforme, erosões mucosas orais, descolamento epidérmico em 5% SC. Nikolsky positivo. Sem eosinofilia nem linfadenopatia. Este quadro é mais compatível com DRESS ou outra farmacodermia?",
+    alternativas: {
+      "A": "DRESS — exantema e febre com fármaco de risco são suficientes",
+      "B": "SSJ — descolamento < 10% SC, erosões mucosas, Nikolsky positivo e latência curta (10 dias) apontam para SSJ",
+      "C": "Pênfigo vulgar — pelo Nikolsky positivo",
+      "D": "Eritema multiforme menor",
+    },
+    correta: "B",
+    explicacao: "SSJ: latência curta (10 dias vs 2–8 semanas na DRESS), descolamento epidérmico < 10% SC, erosões mucosas, Nikolsky positivo, AUSÊNCIA de eosinofilia/linfadenopatia (esperadas na DRESS). Lamotrigina é fármaco de risco para ambas."
+  },
+  {
+    n: 50,
+    enunciado: "Mulher, 52 anos, PA 158/98 persistente com 3 anti-hipertensivos em doses adequadas. Antes de diagnosticar HAR verdadeira, o médico investiga pseudorresistência. Quais são as \"5 portas\" de pseudorresistência a excluir?",
+    alternativas: {
+      "A": "Apneia do sono, hiperaldosteronismo, feocromocitoma, coarctação e estenose renal",
+      "B": "Má adesão, efeito avental branco, doses inadequadas, substâncias pressoras (AINEs) e técnica incorreta de aferição",
+      "C": "Dislipidemia, diabetes, tabagismo, sedentarismo e obesidade",
+      "D": "FA, IC, DPOC, DRC e AVC prévio",
+    },
+    correta: "B",
+    explicacao: "5 portas de pseudorresistência: (1) Má adesão (mais comum), (2) Efeito avental branco — confirmar com MAPA, (3) Doses/combinações inadequadas, (4) Substâncias pressoras (AINEs, ACO, descongestionantes), (5) Técnica incorreta de aferição. A opção A lista causas secundárias de HA. Simulado elaborado com base em 15 resumos de estudo — AC1, 7º período de Medicina (UVV). Temas: Asma • DPOC • DRESS • DRGE • DUP • Esofagite Eosinofílica • Febre Reumática Aguda • HPTP • IC • Litíase Renal • IRA • Nefrite Intersticial Aguda • Hipertensão Arterial • Tétano"
+  }
+];
+
+const state = {
+  index: 0,
+  answers: {},   // { n: 'A'|'B'|'C'|'D' }  — respostas confirmadas
+  pending: {},   // { n: 'A'|'B'|'C'|'D' }  — selecao antes de confirmar
+  showGabarito: {},
+  finished: false
+};
+
+const $main = document.getElementById('quiz');
+const $grid = document.getElementById('qGrid');
+
+/* Persistencia */
+function saveState() {
+  try { localStorage.setItem('simuladoAC1', JSON.stringify(state)); } catch (e) {}
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem('simuladoAC1');
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    Object.assign(state, s);
+  } catch (e) {}
+}
+loadState();
+
+function toggleSidebar() {
+  const hidden = document.body.classList.toggle('sidebar-hidden');
+  try { localStorage.setItem('sidebarHidden', hidden ? '1' : '0'); } catch (e) {}
+}
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'b' || e.key === 'B') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    const t = e.target; const tag = (t && t.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || (t && t.isContentEditable)) return;
+    toggleSidebar();
+  }
+});
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+function renderGrid() {
+  $grid.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const cell = document.createElement('button');
+    cell.className = 'q-cell';
+    cell.textContent = String(q.n).padStart(2,'0');
+    if (i === state.index) cell.classList.add('current');
+    const a = state.answers[q.n];
+    if (a) {
+      if (a === q.correta) cell.classList.add('correct');
+      else cell.classList.add('wrong');
+    }
+    cell.onclick = () => { state.index = i; state.finished = false; saveState(); render(); };
+    $grid.appendChild(cell);
+  });
+}
+
+function selectAlt(n, key) {
+  if (state.answers[n]) return; // ja confirmada
+  state.pending[n] = key;
+  saveState();
+  render();
+}
+
+function confirmAnswer(n) {
+  const sel = state.pending[n];
+  if (!sel || state.answers[n]) return;
+  state.answers[n] = sel;
+  delete state.pending[n];
+  saveState();
+  render();
+}
+
+function toggleGab(n) {
+  state.showGabarito[n] = !state.showGabarito[n];
+  saveState();
+  render();
+}
+
+function next() {
+  if (state.index < QUESTIONS.length - 1) {
+    state.index++;
+    saveState();
+    render();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  } else {
+    state.finished = true;
+    saveState();
+    render();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+function prev() {
+  if (state.finished) {
+    state.finished = false;
+    saveState(); render();
+    return;
+  }
+  if (state.index > 0) {
+    state.index--;
+    saveState();
+    render();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function resetQuiz() {
+  if (!confirm('Reiniciar simulado? Suas respostas serão apagadas.')) return;
+  state.index = 0;
+  state.answers = {};
+  state.showGabarito = {};
+  state.finished = false;
+  saveState();
+  render();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function classify(pct) {
+  if (pct >= 90) return { key: 'excelente', label: 'Excelente' };
+  if (pct >= 75) return { key: 'otimo', label: 'Ótimo' };
+  if (pct >= 60) return { key: 'regular', label: 'Regular' };
+  return { key: 'melhorar', label: 'Precisa Melhorar' };
+}
+
+function render() {
+  renderGrid();
+  if (state.finished) { renderEnd(); return; }
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[state.index];
+  const answered = !!state.answers[q.n];
+  const userAns = state.answers[q.n];
+  const pending = state.pending[q.n];
+  const correct = userAns === q.correta;
+  const progress = ((state.index + 1) / QUESTIONS.length) * 100;
+  const gabOpen = !!state.showGabarito[q.n];
+
+  const alts = ['A','B','C','D'].map(k => {
+    let cls = 'alt';
+    let badge = '';
+    if (answered) {
+      if (k === q.correta) { cls += ' correct-alt'; badge = '<span class="alt-badge">Correta</span>'; }
+      else if (k === userAns) { cls += ' wrong-alt'; badge = '<span class="alt-badge">Sua resposta</span>'; }
+    } else if (pending === k) {
+      cls += ' selected';
+    }
+    const disabled = answered ? 'disabled' : '';
+    return '<button class="'+cls+'" '+disabled+' onclick="selectAlt('+q.n+', \''+k+'\')">' +
+      '<div class="alt-key">'+k+'</div>' +
+      '<div class="alt-text">'+esc(q.alternativas[k])+' '+badge+'</div>' +
+      '</button>';
+  }).join('');
+
+  // Botão de confirmar (só antes de responder)
+  let confirmBtn = '';
+  if (!answered) {
+    const disabled = pending ? '' : 'disabled';
+    confirmBtn = '<div class="confirm-wrap">' +
+      '<button class="btn-confirm" '+disabled+' onclick="confirmAnswer('+q.n+')">' +
+        (pending ? 'Confirmar resposta ('+pending+')' : 'Selecione uma alternativa para responder') +
+      '</button>' +
+    '</div>';
+  }
+
+  let feedback = '';
+  if (answered) {
+    const iconOk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><polyline points="20 6 9 17 4 12"/></svg>';
+    const iconErr = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    const headerCls = correct ? 'correct' : 'wrong';
+    const headerTxt = correct
+      ? 'Você acertou!'
+      : 'Você errou — a resposta correta é ' + q.correta;
+    const chevron = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>';
+    feedback = '<div class="feedback-panel">' +
+      '<div class="feedback-header '+headerCls+'">' +
+        (correct ? iconOk : iconErr) +
+        '<span>'+headerTxt+'</span>' +
+      '</div>' +
+      '<button class="gabarito-toggle '+(gabOpen?'open':'')+'" onclick="toggleGab('+q.n+')">' +
+        chevron +
+        '<span>'+(gabOpen ? 'Ocultar gabarito comentado' : 'Ver gabarito comentado')+'</span>' +
+      '</button>' +
+      (gabOpen ? (
+        '<div class="gabarito-body">' +
+          '<div class="gab-title">Gabarito Comentado</div>' +
+          '<div class="gab-answer">Resposta: '+q.correta+'</div>' +
+          '<div>'+esc(q.explicacao)+'</div>' +
+        '</div>'
+      ) : '') +
+      '</div>';
+  }
+
+  const answeredCount = Object.keys(state.answers).length;
+
+  $main.innerHTML =
+    '<div class="toolbar">' +
+      '<div class="crumb">Questão '+q.n+' de '+QUESTIONS.length+' · Respondidas: '+answeredCount+'</div>' +
+      '<div class="actions">' +
+        '<button class="btn" onclick="resetQuiz()">Reiniciar</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="progress-bar"><div class="fill" style="width:'+progress+'%"></div></div>' +
+    '<div class="question-card">' +
+      '<div class="q-number">Questão '+String(q.n).padStart(2,'0')+'</div>' +
+      '<div class="q-enun">'+esc(q.enunciado)+'</div>' +
+      '<div class="alts">'+alts+'</div>' +
+      confirmBtn +
+      feedback +
+    '</div>' +
+    '<div class="nav-buttons">' +
+      '<button class="nav-btn" onclick="prev()" '+(state.index===0?'disabled':'')+'>← Anterior</button>' +
+      '<button class="nav-btn primary" onclick="next()">'+(state.index===QUESTIONS.length-1?'Ver resultado':'Próxima →')+'</button>' +
+    '</div>';
+}
+
+function renderEnd() {
+  let correct = 0, wrong = 0;
+  QUESTIONS.forEach(q => {
+    const a = state.answers[q.n];
+    if (!a) return;
+    if (a === q.correta) correct++;
+    else wrong++;
+  });
+  const total = QUESTIONS.length;
+  const answered = correct + wrong;
+  const pct = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+  const cls = classify(pct);
+
+  const r = 100;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - pct/100);
+  const colorFor = {
+    excelente: 'var(--ok)',
+    otimo: 'var(--accent)',
+    regular: 'var(--warn)',
+    melhorar: 'var(--err)'
+  }[cls.key];
+
+  $main.innerHTML =
+    '<div class="end-screen">' +
+      '<h2>Simulado Concluído</h2>' +
+      '<div class="subtitle">50 questões · AC 1 · 7º Período</div>' +
+      '<div class="donut">' +
+        '<svg viewBox="0 0 240 240">' +
+          '<circle class="track" cx="120" cy="120" r="'+r+'"></circle>' +
+          '<circle class="fill-arc" cx="120" cy="120" r="'+r+'"' +
+            ' stroke="'+colorFor+'"' +
+            ' stroke-dasharray="'+circ+'"' +
+            ' stroke-dashoffset="'+circ+'"' +
+            ' id="arc"></circle>' +
+        '</svg>' +
+        '<div class="center">' +
+          '<div class="pct">'+pct+'%</div>' +
+          '<div class="pct-label">Acertos</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="badge '+cls.key+'">'+cls.label+'</div>' +
+      '<div class="end-stats">' +
+        '<div class="end-stat correct"><div class="val">'+correct+'</div><div class="lbl">Acertos</div></div>' +
+        '<div class="end-stat wrong"><div class="val">'+wrong+'</div><div class="lbl">Erros</div></div>' +
+        '<div class="end-stat"><div class="val">'+answered+'/'+total+'</div><div class="lbl">Respondidas</div></div>' +
+      '</div>' +
+      '<div class="nav-buttons">' +
+        '<button class="nav-btn" onclick="prev()">← Ver questões</button>' +
+        '<button class="nav-btn primary" onclick="resetQuiz()">Recomeçar simulado</button>' +
+      '</div>' +
+    '</div>';
+
+  requestAnimationFrame(() => {
+    const arc = document.getElementById('arc');
+    if (arc) arc.style.strokeDashoffset = offset;
+  });
+}
+
+render();
+</script>
+</body>
+</html>
