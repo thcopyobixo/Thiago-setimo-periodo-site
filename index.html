@@ -376,13 +376,13 @@
   </div>
   <div class="nav-label">Provas</div>
   <nav class="nav-list" id="navList">
-    <button class="nav-item active" data-section="ac2">
-      <span>AC 2</span>
+    <button class="nav-item" data-section="ac1" onclick="selectSection('ac1')">
+      <span>AC 1</span>
       <span class="badge">4</span>
     </button>
-    <button class="nav-item disabled" title="Em breve">
-      <span>AC 1</span>
-      <span class="badge">—</span>
+    <button class="nav-item active" data-section="ac2" onclick="selectSection('ac2')">
+      <span>AC 2</span>
+      <span class="badge">4</span>
     </button>
     <button class="nav-item disabled" title="Em breve">
       <span>AC 3</span>
@@ -398,93 +398,187 @@
     <div class="tagline">Central de Estudos</div>
   </div>
 
-  <div class="section-header">
-    <div>
-      <div class="section-title">AC 2</div>
-      <div class="section-sub">Escolha uma área para começar</div>
+  <section class="ac-section" id="section-ac1" hidden>
+    <div class="section-header">
+      <div>
+        <div class="section-title">AC 1</div>
+        <div class="section-sub">Escolha uma área para começar</div>
+      </div>
+      <div class="chip">4 seções</div>
     </div>
-    <div class="chip">4 seções</div>
-  </div>
 
-  <div class="grid">
+    <div class="grid">
 
-    <a href="materiais.html" class="card">
-      <div class="card-header">
-        <div class="icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-          </svg>
+      <a href="#" class="card disabled" onclick="return alertSoon('Materiais AC 1')">
+        <div class="card-header">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </div>
+          <span class="tag soon">Em breve</span>
         </div>
-        <span class="tag">Disponível</span>
-      </div>
-      <h3>Materiais</h3>
-      <p>Resumos integrados por tutoria: quadro clínico, diagnóstico, tratamento e diagnóstico diferencial.</p>
-      <div class="card-footer">
-        <span class="meta">10 tutorias</span>
-        <span class="arrow">→</span>
-      </div>
-    </a>
-
-    <a href="AC2.html" class="card">
-      <div class="card-header">
-        <div class="icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="5" width="14" height="16" rx="2"/>
-            <path d="M7 3h14v16"/>
-            <line x1="7" y1="10" x2="13" y2="10"/>
-            <line x1="7" y1="14" x2="13" y2="14"/>
-          </svg>
+        <h3>Materiais</h3>
+        <p>Resumos integrados por tutoria: quadro clínico, diagnóstico, tratamento e diagnóstico diferencial.</p>
+        <div class="card-footer">
+          <span class="meta">Aguardando tutorias</span>
+          <span class="arrow">→</span>
         </div>
-        <span class="tag">Disponível</span>
-      </div>
-      <h3>Flash Cards</h3>
-      <p>Revisão ativa por tema, com efeito de baralho, som e classificação de desempenho ao final.</p>
-      <div class="card-footer">
-        <span class="meta">2 temas · 140+ cards</span>
-        <span class="arrow">→</span>
-      </div>
-    </a>
+      </a>
 
-    <a href="#" class="card disabled" onclick="return alertSoon('ECG')">
-      <div class="card-header">
-        <div class="icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 12h4l2 -6l4 12l2 -6h6"/>
-          </svg>
+      <a href="AC1.html" class="card">
+        <div class="card-header">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="14" height="16" rx="2"/>
+              <path d="M7 3h14v16"/>
+              <line x1="7" y1="10" x2="13" y2="10"/>
+              <line x1="7" y1="14" x2="13" y2="14"/>
+            </svg>
+          </div>
+          <span class="tag">Disponível</span>
         </div>
-        <span class="tag soon">Em breve</span>
-      </div>
-      <h3>ECG</h3>
-      <p>Compilado de ritmos, bloqueios, isquemia e leitura sistemática do eletrocardiograma.</p>
-      <div class="card-footer">
-        <span class="meta">Traçados · Casos</span>
-        <span class="arrow">→</span>
-      </div>
-    </a>
-
-    <a href="#" class="card disabled" onclick="return alertSoon('Simulados')">
-      <div class="card-header">
-        <div class="icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 11l3 3l8 -8"/>
-            <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"/>
-          </svg>
+        <h3>Flash Cards</h3>
+        <p>Revisão ativa por tema, com efeito de baralho, som e classificação de desempenho ao final.</p>
+        <div class="card-footer">
+          <span class="meta">15 temas · 630 cards</span>
+          <span class="arrow">→</span>
         </div>
-        <span class="tag soon">Em breve</span>
-      </div>
-      <h3>Simulados</h3>
-      <p>Questões de caso clínico no formato da tutoria, com gabarito comentado e desempenho por tema.</p>
-      <div class="card-footer">
-        <span class="meta">Casos · Gabarito</span>
-        <span class="arrow">→</span>
-      </div>
-    </a>
+      </a>
 
-  </div>
+      <a href="#" class="card disabled" onclick="return alertSoon('ECG AC 1')">
+        <div class="card-header">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12h4l2 -6l4 12l2 -6h6"/>
+            </svg>
+          </div>
+          <span class="tag soon">Em breve</span>
+        </div>
+        <h3>ECG</h3>
+        <p>Compilado de ritmos, bloqueios, isquemia e leitura sistemática do eletrocardiograma.</p>
+        <div class="card-footer">
+          <span class="meta">Traçados · Casos</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <a href="#" class="card disabled" onclick="return alertSoon('Simulados AC 1')">
+        <div class="card-header">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3l8 -8"/>
+              <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"/>
+            </svg>
+          </div>
+          <span class="tag soon">Em breve</span>
+        </div>
+        <h3>Simulados</h3>
+        <p>Questões de caso clínico no formato da tutoria, com gabarito comentado e desempenho por tema.</p>
+        <div class="card-footer">
+          <span class="meta">Casos · Gabarito</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <section class="ac-section" id="section-ac2">
+    <div class="section-header">
+      <div>
+        <div class="section-title">AC 2</div>
+        <div class="section-sub">Escolha uma área para começar</div>
+      </div>
+      <div class="chip">4 seções</div>
+    </div>
+
+    <div class="grid">
+
+      <a href="materiais.html" class="card">
+        <div class="card-header">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </div>
+          <span class="tag">Disponível</span>
+        </div>
+        <h3>Materiais</h3>
+        <p>Resumos integrados por tutoria: quadro clínico, diagnóstico, tratamento e diagnóstico diferencial.</p>
+        <div class="card-footer">
+          <span class="meta">10 tutorias</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <a href="AC2.html" class="card">
+        <div class="card-header">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="14" height="16" rx="2"/>
+              <path d="M7 3h14v16"/>
+              <line x1="7" y1="10" x2="13" y2="10"/>
+              <line x1="7" y1="14" x2="13" y2="14"/>
+            </svg>
+          </div>
+          <span class="tag">Disponível</span>
+        </div>
+        <h3>Flash Cards</h3>
+        <p>Revisão ativa por tema, com efeito de baralho, som e classificação de desempenho ao final.</p>
+        <div class="card-footer">
+          <span class="meta">2 temas · 140+ cards</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <a href="#" class="card disabled" onclick="return alertSoon('ECG')">
+        <div class="card-header">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12h4l2 -6l4 12l2 -6h6"/>
+            </svg>
+          </div>
+          <span class="tag soon">Em breve</span>
+        </div>
+        <h3>ECG</h3>
+        <p>Compilado de ritmos, bloqueios, isquemia e leitura sistemática do eletrocardiograma.</p>
+        <div class="card-footer">
+          <span class="meta">Traçados · Casos</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <a href="#" class="card disabled" onclick="return alertSoon('Simulados')">
+        <div class="card-header">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3l8 -8"/>
+              <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"/>
+            </svg>
+          </div>
+          <span class="tag soon">Em breve</span>
+        </div>
+        <h3>Simulados</h3>
+        <p>Questões de caso clínico no formato da tutoria, com gabarito comentado e desempenho por tema.</p>
+        <div class="card-footer">
+          <span class="meta">Casos · Gabarito</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
 </main>
 
 <script>
+  function selectSection(id) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.section === id));
+    document.querySelectorAll('.ac-section').forEach(s => s.hidden = (s.id !== 'section-' + id));
+  }
+
   function toggleSidebar() {
     const hidden = document.body.classList.toggle('sidebar-hidden');
     try { localStorage.setItem('sidebarHidden', hidden ? '1' : '0'); } catch (e) {}
