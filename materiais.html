@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Materiais · Sétimo Período</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --panel: #0f1420;
+    --panel-2: #1a2333;
+    --border: #1e2a44;
+    --border-hover: #2d4166;
+    --accent: #3b82f6;
+    --accent-2: #60a5fa;
+    --accent-3: #1d4ed8;
+    --accent-glow: rgba(59,130,246,.35);
+    --text: #f8fafc;
+    --muted: #64748b;
+    --muted-2: #94a3b8;
+    --sidebar-w: 300px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "cv02","cv03","cv04","cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(circle at 15% 20%, rgba(59,130,246,.06) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, rgba(29,78,216,.04) 0%, transparent 50%),
+      var(--bg);
+    min-height: 100vh;
+  }
+  [hidden] { display: none !important; }
+
+  aside.sidebar {
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: linear-gradient(180deg, rgba(15,20,32,.6), rgba(0,0,0,.9));
+    border-right: 1px solid var(--border);
+    padding: 60px 20px 24px;
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0;
+    overflow-y: auto;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    transition: transform .35s cubic-bezier(.4,.2,.2,1);
+  }
+  body.sidebar-hidden aside.sidebar { transform: translateX(-100%); }
+  main {
+    margin-left: var(--sidebar-w);
+    transition: margin-left .35s cubic-bezier(.4,.2,.2,1);
+  }
+  body.sidebar-hidden main { margin-left: 0; }
+  body.no-transition aside.sidebar,
+  body.no-transition main { transition: none !important; }
+
+  .sidebar-toggle {
+    position: fixed;
+    top: 14px; left: 14px;
+    z-index: 100;
+    width: 36px; height: 36px;
+    padding: 0;
+    background: rgba(15,20,32,.85);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted-2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+    backdrop-filter: blur(8px);
+    font-family: inherit;
+  }
+  .sidebar-toggle:hover {
+    color: var(--accent-2);
+    border-color: var(--accent);
+    background: rgba(59,130,246,.15);
+  }
+  .sidebar-toggle svg { transition: transform .35s cubic-bezier(.4,.2,.2,1); }
+  body.sidebar-hidden .sidebar-toggle svg { transform: rotate(180deg); }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted-2); text-decoration: none;
+    font-size: 12px; font-weight: 500; letter-spacing: .5px;
+    padding: 8px 12px; border-radius: 8px;
+    border: 1px solid transparent;
+    align-self: flex-start;
+    transition: all .2s;
+  }
+  .back-link:hover { color: var(--accent-2); background: var(--panel); border-color: var(--border); }
+  .back-link svg { transition: transform .2s; }
+  .back-link:hover svg { transform: translateX(-2px); }
+  .brand {
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand h1 {
+    margin: 0; font-family: 'Space Grotesk', sans-serif;
+    font-size: 34px; letter-spacing: 3px; font-weight: 700;
+    background: linear-gradient(135deg,#60a5fa 0%,#3b82f6 50%,#1d4ed8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1;
+  }
+  .brand .sub {
+    color: var(--muted); font-size: 10px;
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-top: 8px; font-weight: 500;
+  }
+  .tabs-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); padding: 0 12px 10px; font-weight: 600;
+  }
+  .tabs { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; }
+  .tab {
+    background: transparent; color: var(--muted-2);
+    border: 1px solid transparent;
+    padding: 10px 14px; border-radius: 10px; cursor: pointer;
+    font-size: 13.5px; font-weight: 500; text-align: left;
+    display: flex; align-items: center; gap: 12px;
+    font-family: inherit;
+    transition: all .2s cubic-bezier(.4,.2,.2,1);
+    position: relative;
+  }
+  .tab:hover { background: var(--panel); color: var(--text); border-color: var(--border); }
+  .tab.active {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; border-color: transparent;
+    box-shadow: 0 6px 18px var(--accent-glow);
+  }
+  .tab.active::before {
+    content: ''; position: absolute; left: -20px; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 24px;
+    background: var(--accent-2); border-radius: 0 3px 3px 0;
+  }
+  .tab-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 12px;
+    padding: 2px 8px; border-radius: 6px;
+    background: rgba(255,255,255,.06);
+    color: var(--muted-2);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+  .tab.active .tab-num { background: rgba(255,255,255,.2); color: #fff; }
+  .tab-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  main {
+    padding: 48px 60px 80px;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  .tut-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    animation: fadeDown .5s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .tut-crumb {
+    font-size: 12px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--accent-2);
+    font-weight: 600; margin-bottom: 8px;
+  }
+  .tut-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 700;
+    margin: 0; letter-spacing: -.5px;
+    background: linear-gradient(135deg, #f8fafc, #94a3b8);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  /* PDF Viewer */
+  .pdf-viewer {
+    display: flex; flex-direction: column;
+    gap: 24px;
+    max-width: 920px;
+    margin: 0 auto;
+    animation: fadeUp .5s .1s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .pdf-page {
+    margin: 0;
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(59,130,246,.06);
+    transition: box-shadow .3s, transform .3s;
+  }
+  .pdf-page:hover {
+    box-shadow: 0 24px 70px rgba(0,0,0,.6), 0 0 30px rgba(59,130,246,.2);
+    transform: translateY(-2px);
+  }
+  .pdf-page img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .pdf-page figcaption {
+    position: absolute;
+    top: 12px; right: 12px;
+    padding: 4px 10px;
+    background: rgba(0,0,0,.75);
+    color: #f8fafc;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.15);
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+  }
+
+  .tutoria-empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted-2);
+    animation: fadeUp .5s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .empty-icon { color: var(--border-hover); margin-bottom: 20px; }
+  .tutoria-empty h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--text); font-size: 22px; font-weight: 600;
+    margin: 0 0 10px;
+  }
+  .tutoria-empty p { margin: 0; }
+
+  /* Floating page navigator */
+  .page-nav {
+    position: fixed;
+    right: 24px; bottom: 24px;
+    display: flex; flex-direction: column; gap: 8px;
+    z-index: 10;
+  }
+  .page-nav button {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px; font-weight: 700;
+    transition: all .2s;
+    box-shadow: 0 10px 24px rgba(0,0,0,.5);
+  }
+  .page-nav button:hover {
+    background: var(--accent);
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px var(--accent-glow);
+  }
+
+  @keyframes fadeUp   { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: none; } }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+  @media (max-width: 900px) {
+    aside.sidebar {
+      width: 100%; height: auto;
+      position: relative; top: auto; left: auto;
+      padding: 60px 20px 20px;
+      transform: none;
+    }
+    body.sidebar-hidden aside.sidebar { transform: none; display: none; }
+    .brand h1 { font-size: 28px; }
+    .tabs { flex-direction: row; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .tabs-label { display: none; }
+    .tab { flex-shrink: 0; }
+    .tab.active::before { display: none; }
+    main { padding: 24px 12px 60px; margin-left: 0; }
+    body.sidebar-hidden main { margin-left: 0; }
+    .page-nav { right: 12px; bottom: 12px; }
+  }
+</style>
+</head>
+<body>
+<script>
+  try { if (localStorage.getItem('sidebarHidden') === '1') { document.body.classList.add('sidebar-hidden','no-transition'); requestAnimationFrame(() => document.body.classList.remove('no-transition')); } } catch (e) {}
+</script>
+
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Alternar barra lateral" title="Alternar barra lateral (B)">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+    <rect x="3" y="4" width="18" height="16" rx="2"/>
+    <line x1="9" y1="4" x2="9" y2="20"/>
+  </svg>
+</button>
+
+<aside class="sidebar">
+  <a href="index.html" class="back-link" title="Voltar ao Sétimo Período">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    <span>Sétimo Período</span>
+  </a>
+  <div class="brand">
+    <h1>MATERIAIS</h1>
+    <div class="sub">AC 2 · Resumos</div>
+  </div>
+  <div class="tabs-label">Tutorias</div>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tut="1" onclick="selectTut(1)">
+      <span class="tab-num">01</span>
+      <span class="tab-name">Hepatites Virais A, B e C</span>
+    </button>
+    <button class="tab" data-tut="2" onclick="selectTut(2)">
+      <span class="tab-num">02</span>
+      <span class="tab-name">Tromboembolismo Pulmonar Agudo</span>
+    </button>
+    <button class="tab" data-tut="3" onclick="selectTut(3)">
+      <span class="tab-num">03</span>
+      <span class="tab-name">Em breve</span>
+    </button>
+    <button class="tab" data-tut="4" onclick="selectTut(4)">
+      <span class="tab-num">04</span>
+      <span class="tab-name">Em breve</span>
+    </button>
+    <button class="tab" data-tut="5" onclick="selectTut(5)">
+      <span class="tab-num">05</span>
+      <span class="tab-name">Em breve</span>
+    </button>
+    <button class="tab" data-tut="6" onclick="selectTut(6)">
+      <span class="tab-num">06</span>
+      <span class="tab-name">Em breve</span>
+    </button>
+    <button class="tab" data-tut="7" onclick="selectTut(7)">
+      <span class="tab-num">07</span>
+      <span class="tab-name">Em breve</span>
+    </button>
+    <button class="tab" data-tut="8" onclick="selectTut(8)">
+      <span class="tab-num">08</span>
+      <span class="tab-name">Em breve</span>
+    </button>
+    <button class="tab" data-tut="9" onclick="selectTut(9)">
+      <span class="tab-num">09</span>
+      <span class="tab-name">Em breve</span>
+    </button>
+    <button class="tab" data-tut="10" onclick="selectTut(10)">
+      <span class="tab-num">10</span>
+      <span class="tab-name">Em breve</span>
+    </button>
+  </nav>
+</aside>
+
+<main id="main">
+<section class="tutoria" id="tut-1">
+      <div class="tut-header">
+        <div class="tut-crumb">Tutoria 01 · 47 páginas</div>
+        <h1 class="tut-title">Hepatites Virais A, B e C</h1>
+      </div>
+    <div class="pdf-viewer">
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-02.png" alt="Página 2" loading="lazy" decoding="async"><figcaption>Página 2 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-03.png" alt="Página 3" loading="lazy" decoding="async"><figcaption>Página 3 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-04.png" alt="Página 4" loading="lazy" decoding="async"><figcaption>Página 4 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-05.png" alt="Página 5" loading="lazy" decoding="async"><figcaption>Página 5 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-06.png" alt="Página 6" loading="lazy" decoding="async"><figcaption>Página 6 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-07.png" alt="Página 7" loading="lazy" decoding="async"><figcaption>Página 7 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-08.png" alt="Página 8" loading="lazy" decoding="async"><figcaption>Página 8 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-09.png" alt="Página 9" loading="lazy" decoding="async"><figcaption>Página 9 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-10.png" alt="Página 10" loading="lazy" decoding="async"><figcaption>Página 10 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-11.png" alt="Página 11" loading="lazy" decoding="async"><figcaption>Página 11 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-12.png" alt="Página 12" loading="lazy" decoding="async"><figcaption>Página 12 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-13.png" alt="Página 13" loading="lazy" decoding="async"><figcaption>Página 13 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-14.png" alt="Página 14" loading="lazy" decoding="async"><figcaption>Página 14 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-15.png" alt="Página 15" loading="lazy" decoding="async"><figcaption>Página 15 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-16.png" alt="Página 16" loading="lazy" decoding="async"><figcaption>Página 16 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-17.png" alt="Página 17" loading="lazy" decoding="async"><figcaption>Página 17 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-18.png" alt="Página 18" loading="lazy" decoding="async"><figcaption>Página 18 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-19.png" alt="Página 19" loading="lazy" decoding="async"><figcaption>Página 19 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-20.png" alt="Página 20" loading="lazy" decoding="async"><figcaption>Página 20 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-21.png" alt="Página 21" loading="lazy" decoding="async"><figcaption>Página 21 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-22.png" alt="Página 22" loading="lazy" decoding="async"><figcaption>Página 22 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-23.png" alt="Página 23" loading="lazy" decoding="async"><figcaption>Página 23 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-24.png" alt="Página 24" loading="lazy" decoding="async"><figcaption>Página 24 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-25.png" alt="Página 25" loading="lazy" decoding="async"><figcaption>Página 25 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-26.png" alt="Página 26" loading="lazy" decoding="async"><figcaption>Página 26 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-27.png" alt="Página 27" loading="lazy" decoding="async"><figcaption>Página 27 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-28.png" alt="Página 28" loading="lazy" decoding="async"><figcaption>Página 28 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-29.png" alt="Página 29" loading="lazy" decoding="async"><figcaption>Página 29 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-30.png" alt="Página 30" loading="lazy" decoding="async"><figcaption>Página 30 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-31.png" alt="Página 31" loading="lazy" decoding="async"><figcaption>Página 31 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-32.png" alt="Página 32" loading="lazy" decoding="async"><figcaption>Página 32 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-33.png" alt="Página 33" loading="lazy" decoding="async"><figcaption>Página 33 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-34.png" alt="Página 34" loading="lazy" decoding="async"><figcaption>Página 34 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-35.png" alt="Página 35" loading="lazy" decoding="async"><figcaption>Página 35 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-36.png" alt="Página 36" loading="lazy" decoding="async"><figcaption>Página 36 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-37.png" alt="Página 37" loading="lazy" decoding="async"><figcaption>Página 37 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-38.png" alt="Página 38" loading="lazy" decoding="async"><figcaption>Página 38 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-39.png" alt="Página 39" loading="lazy" decoding="async"><figcaption>Página 39 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-40.png" alt="Página 40" loading="lazy" decoding="async"><figcaption>Página 40 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-41.png" alt="Página 41" loading="lazy" decoding="async"><figcaption>Página 41 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-42.png" alt="Página 42" loading="lazy" decoding="async"><figcaption>Página 42 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-43.png" alt="Página 43" loading="lazy" decoding="async"><figcaption>Página 43 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-44.png" alt="Página 44" loading="lazy" decoding="async"><figcaption>Página 44 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-45.png" alt="Página 45" loading="lazy" decoding="async"><figcaption>Página 45 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-46.png" alt="Página 46" loading="lazy" decoding="async"><figcaption>Página 46 de 47</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/hepatites/page-47.png" alt="Página 47" loading="lazy" decoding="async"><figcaption>Página 47 de 47</figcaption></figure>
+    </div>
+    </section>
+<section class="tutoria" id="tut-2" hidden>
+      <div class="tut-header">
+        <div class="tut-crumb">Tutoria 02 · 45 páginas</div>
+        <h1 class="tut-title">Tromboembolismo Pulmonar Agudo</h1>
+      </div>
+    <div class="pdf-viewer">
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-02.png" alt="Página 2" loading="lazy" decoding="async"><figcaption>Página 2 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-03.png" alt="Página 3" loading="lazy" decoding="async"><figcaption>Página 3 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-04.png" alt="Página 4" loading="lazy" decoding="async"><figcaption>Página 4 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-05.png" alt="Página 5" loading="lazy" decoding="async"><figcaption>Página 5 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-06.png" alt="Página 6" loading="lazy" decoding="async"><figcaption>Página 6 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-07.png" alt="Página 7" loading="lazy" decoding="async"><figcaption>Página 7 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-08.png" alt="Página 8" loading="lazy" decoding="async"><figcaption>Página 8 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-09.png" alt="Página 9" loading="lazy" decoding="async"><figcaption>Página 9 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-10.png" alt="Página 10" loading="lazy" decoding="async"><figcaption>Página 10 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-11.png" alt="Página 11" loading="lazy" decoding="async"><figcaption>Página 11 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-12.png" alt="Página 12" loading="lazy" decoding="async"><figcaption>Página 12 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-13.png" alt="Página 13" loading="lazy" decoding="async"><figcaption>Página 13 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-14.png" alt="Página 14" loading="lazy" decoding="async"><figcaption>Página 14 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-15.png" alt="Página 15" loading="lazy" decoding="async"><figcaption>Página 15 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-16.png" alt="Página 16" loading="lazy" decoding="async"><figcaption>Página 16 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-17.png" alt="Página 17" loading="lazy" decoding="async"><figcaption>Página 17 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-18.png" alt="Página 18" loading="lazy" decoding="async"><figcaption>Página 18 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-19.png" alt="Página 19" loading="lazy" decoding="async"><figcaption>Página 19 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-20.png" alt="Página 20" loading="lazy" decoding="async"><figcaption>Página 20 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-21.png" alt="Página 21" loading="lazy" decoding="async"><figcaption>Página 21 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-22.png" alt="Página 22" loading="lazy" decoding="async"><figcaption>Página 22 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-23.png" alt="Página 23" loading="lazy" decoding="async"><figcaption>Página 23 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-24.png" alt="Página 24" loading="lazy" decoding="async"><figcaption>Página 24 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-25.png" alt="Página 25" loading="lazy" decoding="async"><figcaption>Página 25 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-26.png" alt="Página 26" loading="lazy" decoding="async"><figcaption>Página 26 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-27.png" alt="Página 27" loading="lazy" decoding="async"><figcaption>Página 27 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-28.png" alt="Página 28" loading="lazy" decoding="async"><figcaption>Página 28 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-29.png" alt="Página 29" loading="lazy" decoding="async"><figcaption>Página 29 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-30.png" alt="Página 30" loading="lazy" decoding="async"><figcaption>Página 30 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-31.png" alt="Página 31" loading="lazy" decoding="async"><figcaption>Página 31 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-32.png" alt="Página 32" loading="lazy" decoding="async"><figcaption>Página 32 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-33.png" alt="Página 33" loading="lazy" decoding="async"><figcaption>Página 33 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-34.png" alt="Página 34" loading="lazy" decoding="async"><figcaption>Página 34 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-35.png" alt="Página 35" loading="lazy" decoding="async"><figcaption>Página 35 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-36.png" alt="Página 36" loading="lazy" decoding="async"><figcaption>Página 36 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-37.png" alt="Página 37" loading="lazy" decoding="async"><figcaption>Página 37 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-38.png" alt="Página 38" loading="lazy" decoding="async"><figcaption>Página 38 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-39.png" alt="Página 39" loading="lazy" decoding="async"><figcaption>Página 39 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-40.png" alt="Página 40" loading="lazy" decoding="async"><figcaption>Página 40 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-41.png" alt="Página 41" loading="lazy" decoding="async"><figcaption>Página 41 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-42.png" alt="Página 42" loading="lazy" decoding="async"><figcaption>Página 42 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-43.png" alt="Página 43" loading="lazy" decoding="async"><figcaption>Página 43 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-44.png" alt="Página 44" loading="lazy" decoding="async"><figcaption>Página 44 de 45</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tep/page-45.png" alt="Página 45" loading="lazy" decoding="async"><figcaption>Página 45 de 45</figcaption></figure>
+    </div>
+    </section>
+<section class="tutoria" id="tut-3" hidden>
+      <div class="tut-header">
+        <div class="tut-crumb">Tutoria 03 · —</div>
+        <h1 class="tut-title">Em breve</h1>
+      </div>
+    <div class="tutoria-empty">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </div>
+      <h3>Tutoria 3 — Em breve</h3>
+      <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
+    </div>
+    </section>
+<section class="tutoria" id="tut-4" hidden>
+      <div class="tut-header">
+        <div class="tut-crumb">Tutoria 04 · —</div>
+        <h1 class="tut-title">Em breve</h1>
+      </div>
+    <div class="tutoria-empty">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </div>
+      <h3>Tutoria 4 — Em breve</h3>
+      <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
+    </div>
+    </section>
+<section class="tutoria" id="tut-5" hidden>
+      <div class="tut-header">
+        <div class="tut-crumb">Tutoria 05 · —</div>
+        <h1 class="tut-title">Em breve</h1>
+      </div>
+    <div class="tutoria-empty">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </div>
+      <h3>Tutoria 5 — Em breve</h3>
+      <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
+    </div>
+    </section>
+<section class="tutoria" id="tut-6" hidden>
+      <div class="tut-header">
+        <div class="tut-crumb">Tutoria 06 · —</div>
+        <h1 class="tut-title">Em breve</h1>
+      </div>
+    <div class="tutoria-empty">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </div>
+      <h3>Tutoria 6 — Em breve</h3>
+      <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
+    </div>
+    </section>
+<section class="tutoria" id="tut-7" hidden>
+      <div class="tut-header">
+        <div class="tut-crumb">Tutoria 07 · —</div>
+        <h1 class="tut-title">Em breve</h1>
+      </div>
+    <div class="tutoria-empty">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </div>
+      <h3>Tutoria 7 — Em breve</h3>
+      <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
+    </div>
+    </section>
+<section class="tutoria" id="tut-8" hidden>
+      <div class="tut-header">
+        <div class="tut-crumb">Tutoria 08 · —</div>
+        <h1 class="tut-title">Em breve</h1>
+      </div>
+    <div class="tutoria-empty">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </div>
+      <h3>Tutoria 8 — Em breve</h3>
+      <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
+    </div>
+    </section>
+<section class="tutoria" id="tut-9" hidden>
+      <div class="tut-header">
+        <div class="tut-crumb">Tutoria 09 · —</div>
+        <h1 class="tut-title">Em breve</h1>
+      </div>
+    <div class="tutoria-empty">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </div>
+      <h3>Tutoria 9 — Em breve</h3>
+      <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
+    </div>
+    </section>
+<section class="tutoria" id="tut-10" hidden>
+      <div class="tut-header">
+        <div class="tut-crumb">Tutoria 10 · —</div>
+        <h1 class="tut-title">Em breve</h1>
+      </div>
+    <div class="tutoria-empty">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </div>
+      <h3>Tutoria 10 — Em breve</h3>
+      <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
+    </div>
+    </section>
+</main>
+
+<div class="page-nav">
+  <button title="Voltar ao topo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+  <button title="Ir para o fim" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})">↓</button>
+</div>
+
+<script>
+  function selectTut(n) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', +t.dataset.tut === n));
+    document.querySelectorAll('.tutoria').forEach(s => s.hidden = (s.id !== 'tut-' + n));
+    window.scrollTo({top: 0, behavior: 'instant'});
+  }
+  function toggleSidebar() {
+    const hidden = document.body.classList.toggle('sidebar-hidden');
+    try { localStorage.setItem('sidebarHidden', hidden ? '1' : '0'); } catch (e) {}
+  }
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'b' || e.key === 'B') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const t = e.target; const tag = (t && t.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || (t && t.isContentEditable)) return;
+      toggleSidebar();
+    }
+  });
+</script>
+
+</body>
+</html>

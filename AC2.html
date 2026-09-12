@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AC2 - Flashcards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --bg-2: #0a0a0f;
+    --panel: #0f1420;
+    --panel-2: #1a2333;
+    --border: #1e2a44;
+    --border-hover: #2d4166;
+    --accent: #3b82f6;
+    --accent-2: #60a5fa;
+    --accent-3: #1d4ed8;
+    --accent-glow: rgba(59,130,246,.35);
+    --text: #f8fafc;
+    --muted: #64748b;
+    --muted-2: #94a3b8;
+    --ok: #10b981;
+    --ok-glow: rgba(16,185,129,.3);
+    --err: #ef4444;
+    --err-glow: rgba(239,68,68,.3);
+    --warn: #f59e0b;
+    --shadow: 0 20px 50px rgba(0,0,0,.6);
+    --sidebar-w: 280px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "cv02","cv03","cv04","cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(circle at 15% 20%, rgba(59,130,246,.08) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, rgba(29,78,216,.06) 0%, transparent 50%),
+      var(--bg);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* Sidebar */
+  aside.sidebar {
+    width: var(--sidebar-w);
+    min-height: 100vh;
+    background: linear-gradient(180deg, rgba(15,20,32,.6), rgba(0,0,0,.9));
+    border-right: 1px solid var(--border);
+    padding: 60px 20px 24px;
+    display: flex; flex-direction: column;
+    position: sticky; top: 0;
+    backdrop-filter: blur(10px);
+    transition: margin-left .35s cubic-bezier(.4,.2,.2,1);
+  }
+  body.sidebar-hidden aside.sidebar { margin-left: calc(var(--sidebar-w) * -1); }
+  main { transition: max-width .35s cubic-bezier(.4,.2,.2,1); }
+  body.sidebar-hidden main { max-width: 100vw; }
+  body.no-transition aside.sidebar,
+  body.no-transition main { transition: none !important; }
+
+  .sidebar-toggle {
+    position: fixed;
+    top: 14px; left: 14px;
+    z-index: 100;
+    width: 36px; height: 36px;
+    padding: 0;
+    background: rgba(15,20,32,.85);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted-2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+    backdrop-filter: blur(8px);
+    font-family: inherit;
+  }
+  .sidebar-toggle:hover {
+    color: var(--accent-2);
+    border-color: var(--accent);
+    background: rgba(59,130,246,.15);
+  }
+  .sidebar-toggle svg { transition: transform .35s cubic-bezier(.4,.2,.2,1); }
+  body.sidebar-hidden .sidebar-toggle svg { transform: rotate(180deg); }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted-2);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .5px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    margin-bottom: 20px;
+    align-self: flex-start;
+    transition: all .2s;
+  }
+  .back-link:hover { color: var(--accent-2); background: var(--panel); border-color: var(--border); }
+  .back-link svg { transition: transform .2s; }
+  .back-link:hover svg { transform: translateX(-2px); }
+
+  .brand {
+    text-align: center;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand h1 {
+    margin: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 52px;
+    letter-spacing: 4px;
+    font-weight: 700;
+    background: linear-gradient(135deg,#60a5fa 0%,#3b82f6 50%,#1d4ed8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1;
+  }
+  .brand .sub {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    font-weight: 500;
+  }
+
+  .tabs {
+    display: flex; flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .tabs-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 12px 8px;
+    font-weight: 600;
+  }
+  .tab {
+    background: transparent;
+    color: var(--muted-2);
+    border: 1px solid transparent;
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: inherit;
+    transition: all .2s cubic-bezier(.4,.2,.2,1);
+    position: relative;
+  }
+  .tab:hover { background: var(--panel); color: var(--text); border-color: var(--border); }
+  .tab.active {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 8px 24px var(--accent-glow);
+  }
+  .tab.active::before {
+    content: ''; position: absolute; left: -20px; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 24px;
+    background: var(--accent-2);
+    border-radius: 0 3px 3px 0;
+  }
+  .tab .count {
+    background: rgba(255,255,255,.1);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tab.active .count { background: rgba(255,255,255,.2); }
+
+  /* Main */
+  main {
+    flex: 1;
+    padding: 40px 48px;
+    max-width: calc(100vw - var(--sidebar-w));
+    display: flex; flex-direction: column;
+  }
+  .empty {
+    text-align: center;
+    padding: 100px 20px;
+    color: var(--muted-2);
+    margin: auto;
+  }
+  .empty h2 { color: var(--text); font-weight: 600; font-size: 22px; margin-bottom: 8px; }
+
+  .toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; margin-bottom: 24px;
+  }
+  .deck-title {
+    font-size: 18px; font-weight: 700; color: var(--text);
+    letter-spacing: .3px;
+  }
+  .deck-progress-num {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--muted-2); font-size: 14px; font-weight: 500;
+  }
+  .deck-progress-num .curr { color: var(--accent-2); font-weight: 700; font-size: 16px; }
+
+  .actions { display: flex; gap: 8px; }
+  .btn {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .btn:hover { background: var(--panel-2); border-color: var(--border-hover); }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; border-color: transparent; font-weight: 600;
+    box-shadow: 0 8px 20px var(--accent-glow);
+  }
+  .btn.primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px var(--accent-glow); }
+
+  .progress-bar {
+    height: 4px; background: var(--panel);
+    border-radius: 999px; overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-3), var(--accent), var(--accent-2));
+    transition: width .3s ease;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .card-container {
+    perspective: 1600px;
+    margin: 0 auto; width: 100%; max-width: 780px;
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .card-anim {
+    width: 100%;
+    position: relative;
+    will-change: transform, opacity;
+  }
+  .card-anim.enter-right { animation: enterRight .45s cubic-bezier(.34,1.2,.64,1) both; }
+  .card-anim.enter-left  { animation: enterLeft  .45s cubic-bezier(.34,1.2,.64,1) both; }
+  .card-anim.enter-up    { animation: enterUp    .5s  cubic-bezier(.34,1.2,.64,1) both; }
+  .card-anim.exit-left   { animation: exitLeft   .35s cubic-bezier(.4,.15,.6,1) forwards; }
+  .card-anim.exit-right  { animation: exitRight  .35s cubic-bezier(.4,.15,.6,1) forwards; }
+  .card-anim.exit-up     { animation: exitUp     .4s  cubic-bezier(.4,.15,.6,1) forwards; }
+  .card-anim.exit-down   { animation: exitDown   .4s  cubic-bezier(.4,.15,.6,1) forwards; }
+
+  @keyframes enterRight {
+    from { transform: translateX(60%) scale(.92); opacity: 0; }
+    to   { transform: translateX(0)   scale(1);   opacity: 1; }
+  }
+  @keyframes enterLeft {
+    from { transform: translateX(-60%) scale(.92); opacity: 0; }
+    to   { transform: translateX(0)    scale(1);   opacity: 1; }
+  }
+  @keyframes enterUp {
+    from { transform: translateY(30px) scale(.95); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);   opacity: 1; }
+  }
+  @keyframes exitLeft {
+    to { transform: translateX(-70%) rotate(-4deg) scale(.9); opacity: 0; }
+  }
+  @keyframes exitRight {
+    to { transform: translateX(70%) rotate(4deg) scale(.9); opacity: 0; }
+  }
+  @keyframes exitUp {
+    to { transform: translateY(-100%) scale(.85); opacity: 0; }
+  }
+  @keyframes exitDown {
+    to { transform: translateY(100%) scale(.85); opacity: 0; }
+  }
+
+  /* Flash overlay for correct/wrong */
+  .flash-overlay {
+    position: absolute; inset: -20px;
+    border-radius: 24px;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .flash-overlay.ok  { animation: flashOk  .55s ease-out forwards; }
+  .flash-overlay.err { animation: flashErr .55s ease-out forwards; }
+  @keyframes flashOk {
+    0%   { opacity: 0; box-shadow: 0 0 0 0 rgba(16,185,129,0), inset 0 0 0 0 rgba(16,185,129,0); }
+    30%  { opacity: 1; box-shadow: 0 0 80px 20px rgba(16,185,129,.6), inset 0 0 60px 0 rgba(16,185,129,.3); }
+    100% { opacity: 0; box-shadow: 0 0 120px 40px rgba(16,185,129,0), inset 0 0 100px 0 rgba(16,185,129,0); }
+  }
+  @keyframes flashErr {
+    0%   { opacity: 0; box-shadow: 0 0 0 0 rgba(239,68,68,0), inset 0 0 0 0 rgba(239,68,68,0); }
+    30%  { opacity: 1; box-shadow: 0 0 80px 20px rgba(239,68,68,.6), inset 0 0 60px 0 rgba(239,68,68,.3); }
+    100% { opacity: 0; box-shadow: 0 0 120px 40px rgba(239,68,68,0), inset 0 0 100px 0 rgba(239,68,68,0); }
+  }
+
+  .card {
+    position: relative;
+    width: 100%; min-height: 380px;
+    cursor: pointer;
+    will-change: transform, opacity, filter;
+    transition: box-shadow .25s;
+  }
+  .card > .face {
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+  }
+  .card > .front { opacity: 1; pointer-events: auto; }
+  .card.flipped > .front { opacity: 0; pointer-events: none; }
+  .card.flipped > .back  { opacity: 1; pointer-events: auto; }
+
+  .card.blinking { animation: cardBlink .4s cubic-bezier(.55,.05,.45,1); }
+  @keyframes cardBlink {
+    0%   { opacity: 1; transform: scale(1);    filter: blur(0);   }
+    45%  { opacity: 0; transform: scale(.88);  filter: blur(6px); }
+    55%  { opacity: 0; transform: scale(.88);  filter: blur(6px); }
+    100% { opacity: 1; transform: scale(1);    filter: blur(0);   }
+  }
+
+  .card:not(.blinking):hover { transform: translateY(-3px); }
+  .card:not(.blinking):not(.flipped):hover .face.front { box-shadow: 0 24px 60px rgba(0,0,0,.7), 0 0 30px rgba(59,130,246,.25); }
+  .card:not(.blinking).flipped:hover .face.back { box-shadow: 0 24px 60px rgba(0,0,0,.7), 0 0 40px var(--accent-glow); }
+  .card .face {
+    position: absolute; inset: 0;
+    padding: 40px 44px;
+    border-radius: 20px;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .card .front {
+    background: linear-gradient(145deg, #0f1420 0%, #0a0e18 100%);
+  }
+  .card .back {
+    background: linear-gradient(145deg, #1d4ed8 0%, #1e40af 60%, #172554 100%);
+    border-color: var(--accent);
+    box-shadow: 0 20px 50px rgba(0,0,0,.6), 0 0 40px var(--accent-glow);
+  }
+  .card .label {
+    position: absolute; top: 20px; left: 24px;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 3px; color: var(--muted-2);
+    font-weight: 700;
+  }
+  .card .back .label { color: rgba(255,255,255,.7); }
+  .card .content {
+    font-size: clamp(17px, 2.1vw, 21px);
+    line-height: 1.6;
+    max-height: 100%; overflow-y: auto;
+    padding: 24px 8px;
+    font-weight: 400;
+  }
+  .card .hint {
+    position: absolute; bottom: 16px; right: 24px;
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .card .back .hint { color: rgba(255,255,255,.5); }
+
+  /* Directional hints below card */
+  .keymap {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    max-width: 780px;
+    margin: 24px auto 0;
+  }
+  .key {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+    color: var(--muted-2);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .key:hover { background: var(--panel-2); color: var(--text); border-color: var(--border-hover); transform: translateY(-2px); }
+  .key:active { transform: translateY(0) scale(.96); }
+  .key.pressed { animation: keyPress .35s ease-out; }
+  @keyframes keyPress {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(.92); box-shadow: 0 0 0 4px currentColor; }
+    100% { transform: scale(1); }
+  }
+  .key .icon {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px; font-weight: 700; line-height: 1;
+    color: var(--text);
+    transition: transform .2s;
+  }
+  .key:hover .icon { transform: scale(1.1); }
+  .key.err:hover { border-color: var(--err); color: var(--err); box-shadow: 0 8px 20px var(--err-glow); }
+  .key.err:hover .icon { color: var(--err); transform: scale(1.15) translateY(2px); }
+  .key.ok:hover { border-color: var(--ok); color: var(--ok); box-shadow: 0 8px 20px var(--ok-glow); }
+  .key.ok:hover .icon { color: var(--ok); transform: scale(1.15) translateY(-2px); }
+  .key.disabled { opacity: .35; cursor: not-allowed; }
+  .key.disabled:hover { transform: none; background: var(--panel); }
+
+  /* End screen */
+  .end-screen {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: auto; text-align: center;
+    max-width: 560px;
+    animation: fadeIn .5s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  .end-screen h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 32px; font-weight: 700;
+    margin: 0 0 4px;
+    letter-spacing: -.5px;
+    animation: slideDown .6s .1s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .end-screen .subtitle {
+    color: var(--muted-2); font-size: 15px;
+    margin-bottom: 40px;
+    animation: slideDown .6s .2s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .end-screen .donut { animation: scaleIn .7s .35s cubic-bezier(.34,1.4,.64,1) both; }
+  .end-screen .badge { animation: bounceIn .6s .8s cubic-bezier(.34,1.6,.64,1) both; }
+  .end-screen .end-stat:nth-child(1) { animation: slideUp .5s 1.0s cubic-bezier(.34,1.2,.64,1) both; }
+  .end-screen .end-stat:nth-child(2) { animation: slideUp .5s 1.1s cubic-bezier(.34,1.2,.64,1) both; }
+  .end-screen .end-stat:nth-child(3) { animation: slideUp .5s 1.2s cubic-bezier(.34,1.2,.64,1) both; }
+  .end-screen .end-actions { animation: slideUp .5s 1.35s cubic-bezier(.34,1.2,.64,1) both; }
+
+  @keyframes slideDown  { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: none; } }
+  @keyframes slideUp    { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes scaleIn    { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+  @keyframes bounceIn {
+    0%   { opacity: 0; transform: scale(.3); }
+    60%  { opacity: 1; transform: scale(1.08); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .donut .pct { animation: pulseGlow 2.5s ease-in-out infinite; }
+  @keyframes pulseGlow {
+    0%,100% { filter: drop-shadow(0 0 8px var(--accent-glow)); }
+    50%     { filter: drop-shadow(0 0 20px var(--accent-glow)); }
+  }
+  .donut {
+    width: 240px; height: 240px;
+    margin-bottom: 32px; position: relative;
+  }
+  .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .donut .track { fill: none; stroke: var(--panel); stroke-width: 14; }
+  .donut .fill-arc {
+    fill: none;
+    stroke-width: 14;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s cubic-bezier(.4,.2,.2,1);
+  }
+  .donut .center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .donut .pct {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 56px; font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .donut .pct-label {
+    font-size: 11px; color: var(--muted-2);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-top: 4px; font-weight: 600;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px; font-weight: 700;
+    letter-spacing: .5px;
+    margin-bottom: 32px;
+  }
+  .badge.excelente { background: rgba(16,185,129,.15); color: var(--ok); border: 1px solid var(--ok); }
+  .badge.otimo { background: rgba(59,130,246,.15); color: var(--accent-2); border: 1px solid var(--accent); }
+  .badge.regular { background: rgba(245,158,11,.15); color: var(--warn); border: 1px solid var(--warn); }
+  .badge.melhorar { background: rgba(239,68,68,.15); color: var(--err); border: 1px solid var(--err); }
+
+  .end-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 100%; max-width: 480px;
+    margin-bottom: 32px;
+  }
+  .end-stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .end-stat .val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px; font-weight: 700;
+    line-height: 1;
+  }
+  .end-stat.correct .val { color: var(--ok); }
+  .end-stat.wrong .val { color: var(--err); }
+  .end-stat .lbl {
+    font-size: 11px; color: var(--muted-2);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-top: 8px; font-weight: 600;
+  }
+  .end-actions { display: flex; gap: 12px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    body { flex-direction: column; }
+    aside.sidebar { width: 100%; min-height: auto; position: relative; padding: 60px 20px 20px; }
+    body.sidebar-hidden aside.sidebar { margin-left: 0; display: none; }
+    .brand h1 { font-size: 40px; }
+    .brand { padding-bottom: 16px; margin-bottom: 16px; }
+    .tabs { flex-direction: row; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .tabs-label { display: none; }
+    .tab { flex-shrink: 0; }
+    .tab.active::before { display: none; }
+    main { padding: 24px 16px; max-width: 100%; }
+    .card .face { padding: 24px; }
+    .keymap { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<script>
+  try { if (localStorage.getItem('sidebarHidden') === '1') { document.body.classList.add('sidebar-hidden','no-transition'); requestAnimationFrame(() => document.body.classList.remove('no-transition')); } } catch (e) {}
+</script>
+
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Alternar barra lateral" title="Alternar barra lateral (B)">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+    <rect x="3" y="4" width="18" height="16" rx="2"/>
+    <line x1="9" y1="4" x2="9" y2="20"/>
+  </svg>
+</button>
+
+<aside class="sidebar">
+  <a href="index.html" class="back-link" title="Voltar ao Sétimo Período">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    <span>Sétimo Período</span>
+  </a>
+  <div class="brand">
+    <h1>AC2</h1>
+    <div class="sub">Flashcards</div>
+  </div>
+  <div class="tabs-label">Temas</div>
+  <nav class="tabs" id="tabs"></nav>
+</aside>
+
+<main id="main"></main>
+
+<script>
+/* ============================================================
+   BANCO DE FLASHCARDS
+   ------------------------------------------------------------
+   Para adicionar um novo tema, adicione um objeto em DECKS:
+   {
+     id: "tema-slug",
+     name: "Nome do Tema",
+     cards: [
+       { q: "Pergunta 1?", a: "Resposta 1" },
+       { q: "Pergunta 2?", a: "Resposta 2" },
+       ...
+     ]
+   }
+   ============================================================ */
+const DECKS = [
+  {
+    id: "hepatites",
+    name: "Hepatites A, B e C",
+    cards: [
+      { q: "Qual o período de incubação médio do HAV?", a: "28 dias (faixa 15 a 50 dias)." },
+      { q: "Qual o período de incubação do HBV?", a: "1 a 4 meses." },
+      { q: "Qual o tempo até os sintomas na hepatite C aguda?", a: "2 a 26 semanas (média 7 a 8 semanas); doença aguda dura 2 a 12 semanas." },
+      { q: "Vias de transmissão da hepatite A?", a: "Fecal-oral: pessoa a pessoa (domiciliar, sexual, creche), água/alimento contaminado; também transfusão e drogas ilícitas. Não há transmissão materno-fetal descrita." },
+      { q: "Principais vias de transmissão do HBV?", a: "Fluidos corporais: perinatal e horizontal precoce em áreas de alta prevalência; sexual e percutânea em EUA/Canadá/Europa ocidental." },
+      { q: "Principal via de transmissão do HCV na América do Norte e Europa?", a: "Uso de drogas injetáveis. Também: perfurocortante, sexo traumático/HSH com HIV." },
+      { q: "Taxas de cronificação da hepatite B por idade da infecção?", a: "~90% se perinatal; 20 a 50% entre 1 e 5 anos; <5% em adultos imunocompetentes." },
+      { q: "Taxa de cronificação da hepatite C?", a: "50 a 86% cronificam. Clareamento espontâneo entre 14 e 50%." },
+      { q: "A hepatite A pode cronificar?", a: "Nunca. A imunidade após cura é vitalícia (IgG anti-HAV protetor por décadas). Não há reinfecção." },
+      { q: "Por que o anti-HCV não protege contra reinfecção?", a: "Anticorpo não é protetor. O HCV tem polimerase sem correção de erros → quasispécies. Reinfecção é possível e frequente; rastreio de reinfecção deve ser feito com HCV-RNA, não anti-HCV." },
+      { q: "Existe vacina para hepatite C?", a: "Não. Também não há profilaxia pré ou pós-exposição." },
+      { q: "Qual mecanismo de lesão hepática nas hepatites virais?", a: "Imunomediado — a agressão hepática é feita pela resposta imune do hospedeiro, não pelo vírus diretamente. Por isso ALT reflete agressão imune, não carga viral." },
+      { q: "Regra clínica: quanto mais imunocompetente, mais sintomática a hepatite viral?", a: "Sim. Crianças <6 anos: HAV raramente sintomática. Adultos: >70% sintomáticos. Na HCV aguda, clareamento espontâneo em 52% dos sintomáticos vs 0% dos assintomáticos." },
+      { q: "O que caracteriza a fase imunotolerante do HBV perinatal?", a: "HBeAg+, HBV-DNA tipicamente ≥10.000.000 UI/mL, ALT persistentemente normal, biópsia com fibrose 0-I. Muito vírus, pouca agressão." },
+      { q: "Por que na hepatite B fulminante o HBV-DNA pode estar baixo?", a: "A lise imunomediada foi tão intensa que eliminou a maior parte dos hepatócitos infectados — e com eles o vírus. Usar carga viral como marcador de gravidade dá o oposto da realidade." },
+      { q: "O que mede a ALT e o que mede gravidade na hepatite viral?", a: "ALT mede agressão imune, não carga viral nem gravidade. Gravidade se mede pela função de síntese hepática: tempo de protrombina (INR). Falência hepática aguda = INR ≥1,5 + encefalopatia." },
+      { q: "Ordem clássica da síndrome de hepatite aguda?", a: "1) Pródromo (náusea, vômitos, febre, mal-estar, dor abdominal); 2) Colúria e acolia; 3) Icterícia (com melhora dos sintomas iniciais); 4) Convalescença." },
+      { q: "Achado semiológico típico da hepatite A?", a: "Hepatomegalia em 80% dos casos; icterícia (40-70%); dor à palpação do hipocôndrio direito. Esplenomegalia é menos comum." },
+      { q: "Distribuição clínica da hepatite B aguda?", a: "~70% subclínica ou anictérica; ~30% ictérica. Falência fulminante em 0,1 a 0,5%. Bilirrubina normal NÃO exclui hepatite B aguda." },
+      { q: "Padrão típico de aminotransferases nas hepatites virais agudas?", a: "ALT > AST (ao contrário da alcoólica, em que AST/ALT ≥2). HAV: frequentemente >1000 UI/L. HBV aguda: 1000-2000 U/L. HCV aguda: 10-20× LSN (média 1174 U/L em série grande)." },
+      { q: "Marcador diagnóstico da hepatite A aguda?", a: "IgM anti-HAV. Detectável já no início dos sintomas; permanece 3-6 meses (persiste durante todo o curso na hepatite recidivante)." },
+      { q: "O que separa infecção passada de aguda pela sorologia do HAV?", a: "IgG anti-HAV positivo com IgM negativo = infecção passada ou vacinação, nunca infecção aguda. IgG persiste por décadas." },
+      { q: "Marcadores do painel sorológico da hepatite B e o que respondem?", a: "HBsAg (vírus presente agora?); IgM anti-HBc (contato recente?); Anti-HBc total (já houve contato?); Anti-HBs (proteção?); HBeAg/anti-HBe (grau de replicação); HBV-DNA (quanto vírus); ALT (agressão imune)." },
+      { q: "O que é a 'fase de janela' da hepatite B?", a: "HBsAg já negativo, anti-HBs ainda ausente. Apenas o IgM anti-HBc é positivo. Por isso o IgM anti-HBc deve entrar no painel inicial de toda hepatite aguda." },
+      { q: "Como o anti-HBc separa vacinado de infectado?", a: "Anti-HBc nunca aparece após vacinação. Anti-HBs isolado = vacinado; anti-HBs + anti-HBc = infecção passada resolvida." },
+      { q: "Como se define cronificação da hepatite B?", a: "HBsAg persistente por mais de 6 meses; equivale a ALT persistentemente elevada por mais de 6 meses." },
+      { q: "Quais são as quatro fases da hepatite B crônica?", a: "1) Imunotolerante; 2) Imunoativa HBeAg-positiva (clearance imune); 3) Imunoativa HBeAg-negativa (variantes pré-core); 4) Crônica inativa. + Fase indeterminada em 30-50%." },
+      { q: "Como diagnosticar hepatite C aguda com certeza?", a: "Soroconversão documentada: HCV-RNA detectável com anti-HCV indetectável que se torna detectável em até 12 semanas. Ou RNA e anticorpo novos com testes negativos documentados nos 6 meses anteriores." },
+      { q: "Por que anti-HCV negativo não exclui hepatite C aguda?", a: "Apenas ~50% dos sintomáticos têm anti-HCV detectável na primeira apresentação. HCV-RNA soroconverte só em 2 a 6 meses. Imunossuprimidos e dialíticos podem nunca produzir anticorpo detectável." },
+      { q: "Qual o primeiro marcador a positivar na hepatite C aguda?", a: "HCV-RNA (poucos dias a 8 semanas após exposição). Em acidentes perfurocortantes, PCR negativo em 2 semanas teve VPN de 100%." },
+      { q: "Definição de hepatite fulminante?", a: "Lesão hepática aguda grave com encefalopatia + INR ≥1,5. HAV: <1% (mais em >50 anos). HBV aguda: 0,1-0,5%." },
+      { q: "Superinfecção HAV sobre HCV crônico: qual o risco?", a: "Em 17 pacientes com HCV que adquiriram HAV, 7 (41%) desenvolveram falência hepática fulminante e 6 morreram. Justifica vacinação anti-HAV em hepatopatia crônica." },
+      { q: "Quais as três formas atípicas da hepatite A?", a: "1) Colestática (<5%, bilirrubina >10, dura >3 meses, ultrassom para excluir obstrução, sem corticoide, colestiramina se prurido); 2) Recidivante (até 10%, IgM persiste, HAV nas fezes = infectante); 3) Autoimune desencadeada." },
+      { q: "Manifestações extra-hepáticas da hepatite A?", a: "Exantema e artralgia em 10-15%. Raras: vasculite leucocitoclástica, artrite, glomerulonefrite, crioglobulinemia, neurite óptica, mielite transversa, aplasia pura da série vermelha." },
+      { q: "Manifestações extra-hepáticas da hepatite B?", a: "Pródromo: síndrome semelhante à doença do soro (febre, exantema, artralgia). Crônica: poliarterite nodosa e doença glomerular (nefropatia membranosa)." },
+      { q: "Qual armadilha há na alfafetoproteína durante reagudização de HBV crônico?", a: "Pode subir a 1000 ng/mL, levantando falso alarme de carcinoma hepatocelular. E o IgM anti-HBc pode subir também, imitando hepatite B aguda." },
+      { q: "Como é feito o tratamento da hepatite A?", a: "Suporte apenas. Sem antiviral, sem corticoide (mesmo na colestática). Colestiramina se prurido incômodo. Recuperação em 2-3 meses em 85%, completa em 6 meses em quase todos." },
+      { q: "Por que não se trata a maioria das hepatites B agudas?", a: "Fulminante <1%, cronificação <5% em adultos imunocompetentes. Tratar todos exporia >95% a fármaco sem indicação. Tratamento é apenas de suporte na maioria." },
+      { q: "Indicações de antiviral na hepatite B aguda?", a: "1) Grave (INR >1,5); 2) Protraída (bilirrubina >10 mg/dL por >4 semanas); 3) Fulminante; 4) Imunocomprometidos, coinfecção C/D, hepatopatia prévia, idosos." },
+      { q: "Quais antivirais são usados na hepatite B aguda grave?", a: "Entecavir ou tenofovir (ambos servem tanto para aguda quanto para exacerbação de crônica). Suspender após clareamento do HBsAg confirmado em 2 testes com 4 semanas de intervalo." },
+      { q: "Por que interferona é contraindicada na hepatite B aguda?", a: "É imunoestimulante — e a lesão é imunomediada. Risco aumentado de necroinflamação hepática." },
+      { q: "Análogos de nucleos(t)ídeo (entecavir/tenofovir) curam o HBV?", a: "Não. Suprimem a replicação enquanto tomados; a suspensão pode ser seguida de reativação. Objetivo é supressão sustentada; perda de HBsAg (cura funcional) é rara — 0,5-2%/ano no Ocidente." },
+      { q: "DAA cura hepatite C?", a: "Sim. Regime de 8 a 12 semanas elimina o vírus com RVS >95% na infecção crônica." },
+      { q: "Qual esquema de escolha na hepatite C aguda?", a: "Glecaprevir-pibrentasvir por 8 semanas (RVS 96% em ensaio com 286 pacientes) OU sofosbuvir-velpatasvir por 12 semanas (6 semanas foi inferior: RVS 81% vs 91%)." },
+      { q: "Por que testar HBsAg e anti-HBc antes de iniciar DAA para HCV?", a: "A replicação do HBV pode aumentar após o clareamento do HCV; risco de reativação do HBV." },
+      { q: "Como se avalia resposta ao tratamento da hepatite C?", a: "Resposta virológica sustentada (RVS): carga viral 12 semanas após o fim da terapia." },
+      { q: "Preditor mais importante de gravidade na hepatite B aguda?", a: "Tempo de protrombina (INR). Guardar: 'melhor indicador de prognóstico'." },
+      { q: "Sinal diagnóstico útil para distinguir HCV aguda de crônica?", a: "Flutuação. Aminotransferases flutuam amplamente em intervalos curtos na aguda; estáveis na crônica. HCV-RNA flutua >1 log em 10 semanas em 86% dos agudos. Repetir RNA com ≥6 semanas de intervalo ajuda." },
+      { q: "Por que APRI e FIB-4 falsamente elevam na hepatite C aguda?", a: "Ambos usam AST/ALT no numerador. Na hepatite aguda as transaminases estão em milhares, elevando o escore sem que exista mais colágeno no fígado. Elastografia também sobe falsamente." },
+      { q: "Qual o padrão AST/ALT da hepatite alcoólica?", a: "AST/ALT ≥2, com transaminases tipicamente <300 UI/L (o inverso do padrão viral em que ALT>AST e >1000). Somam-se história de uso e sinais de desnutrição." },
+      { q: "Como suspeitar de doença de Wilson vs hepatite viral?", a: "Jovem, AST/ALT >2, transaminases <2000, hemólise Coombs-negativa, ceruloplasmina e cobre alterados, anéis de Kayser-Fleischer." },
+      { q: "Como leptospirose se distingue de hepatite viral?", a: "Sufusão conjuntival, mialgia intensa (panturrilhas), cefaleia, elevação apenas modesta de transaminases com icterícia desproporcional. Sorologia confirma." },
+      { q: "Definição de reagudização (flare) da hepatite B crônica?", a: "Elevações intermitentes de aminotransferase a >10× LSN e >2× o valor de base." },
+      { q: "Quais taxas de progressão em 5 anos na hepatite B crônica?", a: "Crônica → cirrose: 12-20%. Cirrose compensada → descompensação: 20-23%. Cirrose compensada → CHC: 6-15%." },
+      { q: "Sobrevida na cirrose por HBV?", a: "Compensada: 85% em 5 anos. Descompensada: 55-70% em 1 ano; 14-35% em 5 anos." },
+      { q: "O que é o 'HBV oculto'?", a: "HBsAg negativo, HBV-DNA detectável no fígado e/ou soro, geralmente anti-HBc positivo. Risco de reativação sob imunossupressão. Testar HBsAg e anti-HBc antes de rituximabe, QT, corticoide imunossupressor, transplante." },
+      { q: "Fatores associados a maior clareamento espontâneo do HCV?", a: "Infecção sintomática, idade jovem na aquisição, sexo feminino, genótipo 1, polimorfismos IFN-lambda 4, HBV crônico/resolvido. Coinfecção HIV → persistência." },
+      { q: "Quando ocorre a maior parte do clareamento espontâneo do HCV?", a: "88% dentro de 12 semanas (último caso em 14 semanas). Estudo InC3: 25% clarearam em 1 ano; 34%, 67% e 83% em 3, 6 e 12 meses." },
+      { q: "Quando pensar em superinfecção HBV+HDV?", a: "Curso mais grave e maior risco de fulminante. HDV sempre exige HBV para replicar. Superinfecção HDV em portador de HBV: suprime replicação do HBV e acelera progressão para cirrose." },
+      { q: "Regra prática das coinfecções em hepatites virais?", a: "Todo HBV → investigar HDV, HCV, HIV. Todo HCV → dosar HBsAg e anti-HBc antes de DAA. Todo hepatopata crônico → vacinar contra HAV (testar anti-HAV antes em país de alta prevalência)." },
+      { q: "Por que não existe profilaxia para hepatite C?", a: "'Tratamento profilático pré ou pós-exposição não é recomendado.' Não há vacina nem profilaxia. Manejo do exposto é vigilância laboratorial seriada e tratamento precoce se houver infecção." },
+      { q: "Calendário de seguimento após exposição discreta ao HCV?", a: "Basal (24-48h): HCV-RNA, anti-HCV, transaminases. 4 semanas: HCV-RNA e transaminases. 3-4 meses: RNA, anti-HCV, transaminases. 6 meses: RNA e anti-HCV. Elevação de transaminases → antecipar RNA." },
+      { q: "Argumentos para tratar hepatite C aguda cedo?", a: "1) Risco de perda de seguimento; 2) Transmissão contínua em quem mantém risco; 3) Potencial de HCV aguda grave. Recomenda-se tratamento imediato à documentação de viremia." },
+      { q: "Duração inadequada de glecaprevir-pibrentasvir?", a: "4 semanas — RVS de apenas 78-84%. 6 semanas é alternativa razoável (RVS 90%). 8 semanas é o padrão (RVS 96%)." },
+      { q: "Aconselhamento obrigatório para HCV aguda?", a: "Redução de danos (terapia com agonista opioide para usuário de drogas injetáveis); não compartilhar escova de dente/barbear/seringas; não doar sangue; cobrir feridas. Sexual: barreira apenas se HIV+, múltiplos parceiros, IST." },
+      { q: "Por que se vacina o portador de hepatopatia crônica contra HAV?", a: "Superinfecção por HAV sobre HCV crônico associa-se a alto risco de falência hepática fulminante (41% em série clássica). Todo hepatopata crônico deve ser vacinado (testar anti-HAV antes em país de alta prevalência)." }
+    ]
+  },
+  {
+    id: "tep",
+    name: "TEP Agudo (AHA/ACC 2026)",
+    cards: [
+      { q: "Quais são as 5 Categorias Clínicas AHA/ACC 2026?", a: "A: Subclínico (incidental, assintomático). B: Sintomático, escore baixo. C: Sintomático, escore elevado. D: Falência cardiopulmonar incipiente. E: Falência cardiopulmonar estabelecida." },
+      { q: "O que caracteriza a Categoria A?", a: "TEP assintomático, diagnosticado incidentalmente em TC feita por outra indicação. Pode receber alta do PS com segurança — não precisa internar." },
+      { q: "Diferenças entre B1 e B2?", a: "Sintomático com PESI ≤85 ou sPESI=0 ou Bova ≤4. B1: subsegmentar (único ou múltiplo). B2: segmentar ou mais proximal." },
+      { q: "O que separa C1, C2 e C3?", a: "Todos são sintomáticos com escore elevado. C1: VD normal e biomarcadores normais. C2: VD anormal OU ≥1 biomarcador anormal. C3: VD anormal E ≥1 biomarcador anormal." },
+      { q: "Diferença entre D1 e D2?", a: "D1: hipotensão transitória/recorrente (curta duração ou responde a fluidos), sem marcador de má perfusão. D2: choque normotenso (má perfusão SEM hipotensão persistente: lactato >2, IRA, oligúria)." },
+      { q: "O que caracteriza E1 vs E2?", a: "E1: hipotensão recorrente/persistente com choque cardiogênico (SCAI C). E2: choque cardiogênico refratário (SCAI D-E) ou parada cardíaca sem RCE após 30 min de reanimação." },
+      { q: "O que é o modificador respiratório R?", a: "Adicionado quando há critério respiratório dominante. Em C: SatO₂<90%, FR≥30 ou O₂ suplementar. Em D: >6 L de cateter nasal ou máscara não reinalante. Em E: necessidade de VMNI ou VMI." },
+      { q: "Por que o VD falha no TEP agudo?", a: "É câmara de parede fina, feita para volume. Aumento agudo de pós-carga → dilatação (não hipertrofia). 3 consequências: desvio septal (reduz enchimento do VE), estiramento de miócito (libera troponina/BNP), isquemia do VD." },
+      { q: "Por que troponina positiva no TEP não indica SCA?", a: "É marcador de sobrecarga aguda do VD (estiramento parietal), não de doença coronariana. Entra como critério de categoria C2/C3." },
+      { q: "Por que a carga trombótica angiográfica não é usada para estratificar?", a: "Classe 3 (Sem benefício, B-NR). Meta-análise de 19 estudos: sem correlação — na verdade, maior mortalidade com índice de obstrução MENOR (OR 2,24). O que mata é a resposta do VD, não o volume de coágulo." },
+      { q: "Sintomas mais comuns do TEP?", a: "Dor torácica pleurítica e dispneia. Menos comuns: hemoptise, síncope, choque." },
+      { q: "Sinais semiológicos de sobrecarga do VD?", a: "Turgência jugular, hiperfonese de P2 (segunda bulha pulmonar acentuada), impulso paraesternal." },
+      { q: "Quais os 4 instrumentos de probabilidade pré-teste aceitos?", a: "Wells (padrão e modificado), PERC, Genebra revisado, Gestalt clínico. Todos validados para os estratos <15%, 15-50%, >50%." },
+      { q: "Componentes do Wells para TEP?", a: "Sinais de TVP (3), TEP mais provável (3), FC>100 (1,5), imobilização/cirurgia ≤4 sem (1,5), TVP/TEP prévio (1,5), hemoptise (1), câncer (1). Padrão: baixo <2, moderado 2-6, alto >6. Modificado: improvável ≤4, provável >4." },
+      { q: "Quando aplicar o PERC?", a: "Somente quando a probabilidade pré-teste (gestalt) já é <15% (ex: Wells<2). Com todos os 8 critérios cumpridos, TEP está excluído sem nenhum outro teste." },
+      { q: "Quais os 8 critérios do PERC?", a: "Idade <50, FC<100, SatO₂≥95%, sem hemoptise, sem estrogênio, sem TVP/TEP prévio, sem edema unilateral, sem cirurgia/trauma com hospitalização em 4 sem." },
+      { q: "Quando um TEP é considerado improvável pelo D-dímero?", a: "3 critérios simultâneos: (1) D-dímero abaixo do limiar; (2) probabilidade pré-teste baixa ou intermediária (<50%); (3) paciente NÃO anticoagulado." },
+      { q: "Como aplicar o D-dímero ajustado à idade?", a: "Limiar = idade × 10 µg/L em pacientes >50 anos. Aplicável a probabilidade baixa/intermediária. Taxa de falha 0,3% em 3 meses." },
+      { q: "Como funciona o algoritmo YEARS?", a: "3 itens: sinais de TVP, hemoptise, TEP é o diagnóstico mais provável. 0 itens → limiar 1000 µg/L; ≥1 item → limiar 500 µg/L (ou ajustado à idade). Só validado em não anticoagulados." },
+      { q: "YEARS adaptado à gestação?", a: "Limiar 1000 µg/L nas de menor risco. Falha 0-0,21% em 3 meses. Evita ~65% das angio-TC no 1º trimestre. Gestante com sintomas em MMII + USG compressão + → tratar sem angio-TC." },
+      { q: "Qual exame de imagem é preferido para TEP?", a: "Angio-TC de tórax (CTPA) — Classe 1, B-R. Detecta TEP periférico, avalia VD, dá diagnósticos alternativos. V/Q em quem não pode fazer CTPA." },
+      { q: "Quando NÃO fazer angio-TC?", a: "Quando probabilidade é baixa e D-dímero negativo/ajustado exclui TEP. Ou quando o algoritmo (YEARS, PERC) resolve o caso." },
+      { q: "Ecocardiograma é usado para diagnosticar TEP?", a: "NÃO. Classe 3 (Sem benefício). A maioria dos TEP não tem disfunção de VD; sinais têm baixa sensibilidade. O eco estratifica risco, não faz diagnóstico." },
+      { q: "Ultrassonografia venosa após CTPA negativa?", a: "NÃO é útil. Classe 3 (Sem benefício, B-NR). Não identifica mais TEP." },
+      { q: "O que deve ser relatado na CTPA para categorizar?", a: "Razão VD/VE numérica, medida por diâmetro interno em corte axial ou reformatação de 4 câmaras. Corte VD/VE ≥1,0: sens 85%, esp 72%." },
+      { q: "Parâmetros ecocardiográficos definidores de disfunção de VD?", a: "VD/VE >0,9; diâmetro diastólico basal do VD ≥41 mm; TAPSE <1,7 cm; TDI S' <9,5 cm/s; velocidade de regurgitação tricúspide ≥2,9 m/s sugere HP." },
+      { q: "O que é o sinal de McConnell?", a: "Hipocinesia da parede livre do VD com preservação do ápice ao ecocardiograma. Sugere sobrecarga aguda do VD." },
+      { q: "Componentes do PESI?", a: "Idade em anos (pontos), sexo M (10), câncer (30), IC (10), DPOC (10), FC≥110 (20), PAS<100 (30), FR≥30 (20), Tº<36 (20), estado mental alterado (60), SatO₂<90% (20). Soma idade + pontos. Classe I ≤65, V ≥126." },
+      { q: "Componentes do sPESI?", a: "Idade >80, câncer, doença cardiopulmonar crônica, PAS<100, FC≥110, SatO₂<90%. 1 ponto cada. 0 = baixo risco de mortalidade em 30 dias; ≥1 = alto risco." },
+      { q: "Como usar os escores de risco na prática?", a: "PESI/sPESI/Hestia identificam quem tem BAIXO risco (bom VPN) — autorizam manejo ambulatorial. Escore alto NÃO autoriza sozinho terapia avançada." },
+      { q: "Quais critérios Hestia impedem manejo ambulatorial?", a: "Qualquer 'sim' a: instabilidade, necessidade de trombólise/embolectomia, sangramento ativo/alto risco, O₂ >24h, TEP durante anticoagulação, dor exigindo analgésico IV >24h, razão social para internar, ClCr<30, disfunção hepática grave, gestante, TIH." },
+      { q: "Biomarcadores a medir na Categoria C?", a: "Ao menos um: troponina OU BNP (Classe 1, B-NR). Troponina positiva OR 4,33 para mortalidade geral. BNP OR 6,57 mortalidade curto prazo." },
+      { q: "Quando dosar lactato no TEP?", a: "Categorias C a E em ambiente agudo (Classe 1, B-NR). Elevado associa-se a OR 5,13 para mortalidade geral. Detecta hipoperfusão subclínica." },
+      { q: "PAM abaixo de qual valor sugere necessidade de escalonar na C3?", a: "PAM <80 mmHg. Corte ótimo por análise ROC: 81,5 mmHg (sens 77,5%, esp 95%, VPN 97,7%)." },
+      { q: "Qual a base do tratamento do TEP agudo?", a: "Anticoagulação. Todo o resto (filtro, trombólise, cateter, ECMO) é decidido sobre fatores de risco individuais medidos por biomarcadores, imagem de VD e hemodinâmica." },
+      { q: "Quando iniciar anticoagulação empírica antes da imagem?", a: "Suspeita de TEP em Categoria C2 ou superior com baixo risco de sangramento, se imagem estiver atrasada/indisponível (Classe 2a, C-EO)." },
+      { q: "HBPM ou HNF para anticoagulação parenteral inicial?", a: "HBPM é recomendada sobre HNF nas Categorias C1-E1 (Classe 1, B-R). Menos recorrência, menos sangramento maior, farmacocinética previsível, dispensa monitorização, menos TIH." },
+      { q: "DOAC ou AVK para anticoagulação oral?", a: "DOAC é recomendado sobre AVK, salvo contraindicação (Classe 1, B-R). Menos sangramento maior (especialmente hemorragia intracraniana), menos sangramento fatal, menor mortalidade." },
+      { q: "Quando NÃO usar DOAC (usar AVK)?", a: "SAF trombótica estabelecida (triplo-positivo ou trombose arterial) — Classe 1, A. Contraindicação a DOAC na fase estendida sem câncer. Gestação (usar HBPM/HNF). Amamentação (usar HBPM/HNF/varfarina)." },
+      { q: "Anticoagulação na gestação?", a: "HBPM ou HNF (Classe 1, C-LD). Não atravessam placenta. HBPM é preferida (previsível, meia-vida maior, menos osteoporose e TIH). DOAC e varfarina são Classe 3: Dano (aborto, anomalias)." },
+      { q: "DOAC em hepatopatia crônica por Child-Pugh?", a: "A: DOAC razoável (2a, C-LD). B: DOAC pode ser razoável (2b, C-LD). C: DOAC NÃO recomendado (3: Sem benefício)." },
+      { q: "DOAC em DRC?", a: "Estágio 2-3 (TFGe 30-89): DOAC recomendado sobre AVK (1, A). Estágio 4-5/HD: apenas apixabana com dados (2b, B-NR). Depuração renal: dabigatrana 80%, edoxabana 50%, rivaroxabana 33%, apixabana 27%." },
+      { q: "Posologia da apixabana no TEP?", a: "Iniciação: 10 mg VO 12/12h por 7 dias. Fase inicial/estendida: 5 mg VO 12/12h. Meia dose na estendida: 2,5 mg VO 12/12h. Fase inicial: 3-6 meses." },
+      { q: "Posologia da rivaroxabana no TEP?", a: "Iniciação: 15 mg VO 12/12h por 21 dias. Manutenção: 20 mg VO 1x/dia. Meia dose estendida: 10 mg VO 1x/dia. 15/20 mg exigem alimento." },
+      { q: "Edoxabana e dabigatrana têm particularidade no início?", a: "Ambas exigem ≥5 dias de anticoagulação parenteral antes de iniciar." },
+      { q: "Alvo do INR ao usar varfarina no TEP?", a: "INR ≥2 antes de suspender a sobreposição com o anticoagulante parenteral." },
+      { q: "Quando NÃO monitorar anti-Xa em HBPM?", a: "Maioria dos pacientes em dose por peso. Classe 3 (Sem benefício, A) — não indicada monitorização de rotina para reduzir recorrência ou sangramento." },
+      { q: "Quando monitorar anti-Xa e como?", a: "Medir PICO 3-5h após dose, com ≥3 doses (estado estável). Razoável em ClCr<30 (2a, C-LD). Não estabelecido em gestação, IMC>40 e UTI." },
+      { q: "Vasopressor de escolha no choque por TEP?", a: "Noradrenalina (Classe 1, C-LD). ≤15 µg/min: aumenta RVS sem elevar RVP. >15 µg/min: pode elevar RVP → adicionar 2º vasopressor (vasopressina, fenilefrina) em vez de escalar." },
+      { q: "Volume no TEP com falência de VD?", a: "≤500 mL apenas nas Categorias D1-2 (2b, C-LD). VD é pré-carga dependente MAS já está dilatado. Grandes volumes pioram (estudos animais). Pequenos bolus em normotenso com baixo débito." },
+      { q: "Papel da dobutamina no TEP?", a: "Adjuvante à noradrenalina em E1-2 quando débito permanece baixo apesar de vasopressor. Pode ser inicial no choque normotenso (D2). Aumenta IC à custa de queda da RVS." },
+      { q: "Óxido nítrico inalado no TEP?", a: "Considerar nas Categorias C2-E (2b, B-R). RCT não atingiu desfecho primário; post-hoc mostrou melhora de VD em 24h. Vasodilatadores sistêmicos NÃO são recomendados (hipotensão)." },
+      { q: "Sedação profunda + VM no TEP: qual a classe?", a: "Classe 3: Dano (C-LD) nas Categorias C-E. Reduz tônus adrenérgico, pré-carga do VD, aumenta pós-carga. 19-28% precisaram de RCP pós-indução em séries. Reservar para hipoxemia refratária ou proteção de via aérea." },
+      { q: "HFNC vs cateter convencional no TEP com hipoxemia?", a: "HFNC (cateter nasal alto fluxo aquecido) pode ser benéfico (Classe 2a, C-LD). Melhora oxigenação e trabalho respiratório." },
+      { q: "Quando instituir VA-ECMO no TEP?", a: "Categoria E2 (choque refratário) — Classe 2a, B-NR. Reduz pré-carga do VD, entrega sangue oxigenado, permite recuperação do VD ou intervenção subsequente." },
+      { q: "Anticoagulação em VA-ECMO no TEP?", a: "Continuar anticoagulação sistêmica parenteral na ausência de sangramento (Classe 1, B-NR). Complicações hemorrágicas > trombóticas em ECMO." },
+      { q: "Filtro de VCI: quando indicar?", a: "Paciente sem poder receber anticoagulação (2a, B-R). Recuperável é preferido ao permanente (1, B-R). Retirar assim que anticoagulação seja tolerada. NUNCA de rotina em paciente anticoagulado (Classe 3: Dano)." },
+      { q: "Prazo para retirar filtro recuperável?", a: "FDA recomenda 29-54 dias após colocação. Retiradas mais difíceis após 50 dias, falhas frequentes após 90 dias. Tempo médio de permanência: 85 dias (sucesso) vs 145 dias (falha)." },
+      { q: "Trombólise sistêmica: NNT e NNH?", a: "NNT 59 para evitar 1 morte (OR 0,53) e NNH 78 para causar 1 hemorragia intracraniana (OR 4,6). Meta-análise 16 ensaios, 2115 pacientes." },
+      { q: "Dose padrão de alteplase sistêmica no TEP?", a: "100 mg IV em 2 horas. Dose baixa (2b): regimes 25-50 mg. Estreptoquinase e uroquinase saíram da prática (infusões longas). Tenecteplase não é aprovada pelo FDA." },
+      { q: "Trombólise sistêmica na Categoria E1-2?", a: "Classe 2a, C-LD (razoável). O cenário em que mais faz sentido mecanisticamente é o menos estudado (difícil randomizar)." },
+      { q: "Trombólise sistêmica na Categoria A1-C2?", a: "Classe 3: Dano (B-R). Base: PEITHO — sangramento extracraniano 6,3% vs 1,2%, AVC 2,4% vs 0,2% (10/12 hemorrágicos)." },
+      { q: "Quando considerar terapia avançada em D1-D2?", a: "Trombólise sistêmica, CDL, trombectomia mecânica (Classe 2b) — 'pode ser considerada'. Cirurgia: incerto (2b)." },
+      { q: "PERT: quando ativar?", a: "Equipe de resposta ao TEP nas Categorias C-E (Classe 1, B-NR). Reduz tempo até anticoagulação terapêutica e uso de filtro. Efeito sobre mortalidade é misto." },
+      { q: "Alta hospitalar precoce: em quais Categorias?", a: "A (não precisa internar) e B selecionadas (Classe 2a, B-R). Precisa: baixo risco por Hestia/PESI/sPESI, acesso ao anticoagulante, seguimento rápido. HOME-PE: 38% tratados em casa, taxa composta 1,1-1,3%." },
+      { q: "Deve-se estabilizar E antes de transferir?", a: "SIM. Transferir instável antes de estabilizar é Classe 3: Dano (C-EO). Trombólise sistêmica não deve ser retardada pela transferência." },
+      { q: "Deambulação precoce vs repouso no leito?", a: "Encorajar deambulação precoce (Classe 2a, A). Meta-análise 3048 pacientes: menor incidência de novo TEP, menor mortalidade, reduz estase venosa." },
+      { q: "Recorrência sob anticoagulação: qual a conduta?", a: "1) Documentar por imagem; 2) Investigar não adesão, dose subterapêutica, interações, absorção, condições associadas (câncer, SAF); 3) Trocar de classe é razoável (2a, C-EO); dose reduzida → voltar à plena; câncer sob HBPM → escalonar 20-25%." },
+      { q: "3 categorias de fatores de risco de recorrência (Tabela 9)?", a: "1) Maior reversível (cirurgia ≥30 min, hospitalização ≥72h, cesariana, fratura MMII, trauma com imobilidade); 2) Menor reversível (cirurgia <30 min, hospitalização <72h, estrogênio, gestação); 3) Persistente (câncer ativo, autoimune, DII, imobilidade crônica)." },
+      { q: "Duração de anticoagulação por fator?", a: "Maior reversível: suspender após 3-6 meses (1, B-NR). Sem fator identificável: estender (1, A) — recorrência 30-40% em 10 anos. Persistente: estender (1, C-LD). Menor reversível: decisão compartilhada." },
+      { q: "Fase estendida: qual dose de DOAC?", a: "Meia dose recomendada de apixabana ou rivaroxabana (Classe 1, A). Ensaio RENOVE: recorrência similar (2,2% vs 1,8%), sangramento menor (9,9% vs 15,2%)." },
+      { q: "Fase estendida em câncer: qual anticoagulante?", a: "DOAC OU HBPM, ambos preferidos ao AVK (Classe 1, A). HBPM: menos recorrência que varfarina, sangramento semelhante. DOAC não inferior à HBPM." },
+      { q: "Rastreio de câncer após TEP não provocado?", a: "História e exame + rastreio apropriado à idade conforme diretrizes nacionais (Classe 1, A). Câncer é diagnosticado em 4-10% no 1º ano. TC/PET-CT de rotina NÃO é recomendado (3: Sem benefício)." },
+      { q: "Quando testar trombofilia?", a: "Sem fator maior reversível OU <55 anos, se o resultado mudar manejo ou informar risco familiar (Classe 2b, C-LD). NÃO na fase aguda (consumo de fatores + interferência do anticoagulante). Aconselhamento genético prévio." },
+      { q: "Rastreio de CTEPD: quando?", a: "Perguntar sobre sintomas e limitação funcional em toda consulta por pelo menos 1 ano (Classe 1, C-LD). Se dispneia/limitação após ≥3 meses de anticoagulação: avaliação diagnóstica (Classe 1, B-NR)." },
+      { q: "Prevalência de CTEPH após TEP agudo?", a: "~3% (2,3-4%). CTEPD sem hipertensão pulmonar é ao menos igualmente prevalente. Até 50% dos pacientes têm dispneia/limitação persistente após 3 meses." },
+      { q: "Exames iniciais na investigação de CTEPD?", a: "TTE + cintilografia de perfusão V/Q (Classe 2a, B-NR). TTE isolado é insuficiente: 1/3 dos CTEPH tem TTE normal. VPN da V/Q planar para excluir CTEPD é ~100%." },
+      { q: "CPET no rastreio de CTEPD?", a: "Razoável para excluir (2a, B-NR). Padrão-ouro. Achados: VO₂ pico reduzido, pulso de O₂ comprometido, VE/VCO₂ aumentado (ineficiência ventilatória por espaço morto)." },
+      { q: "Manter anticoagulação durante investigação de CTEPD?", a: "SIM (Classe 1, B-NR), salvo contraindicação por alto risco de sangramento. Vale mesmo em fator provocador aparentemente transitório." },
+      { q: "CTEPD sem HP com sintomas persistentes: qual conduta?", a: "Reabilitação pulmonar (Classe 1, B-R). RCT com 211 pacientes: 8 semanas de exercício supervisionado melhorou capacidade e QV. CTEPH: encaminhar a centro especializado para BPA e/ou PTE." },
+      { q: "Meias de compressão em viagens longas após TEP?", a: "≥5 horas: Classe 2a, B-R. Cochrane com 2918 participantes: redução significativa de TVP assintomática." },
+      { q: "Aspirina no TEP: quando?", a: "Fase estendida APENAS quando há contraindicação ou recusa a qualquer anticoagulante (Classe 2a, B-R). É inferior ao anticoagulante. Dose: 100 mg 1x/dia." }
+    ]
+  }
+];
+
+/* ============================================================
+   LÓGICA DO APP
+   ============================================================ */
+function toggleSidebar() {
+  const hidden = document.body.classList.toggle('sidebar-hidden');
+  try { localStorage.setItem('sidebarHidden', hidden ? '1' : '0'); } catch (e) {}
+}
+
+const state = {
+  currentDeck: null,
+  index: 0,
+  flipped: false,
+  order: [],
+  results: {},   // { cardIdx: 'ok' | 'err' }
+  finished: false,
+  animating: false,
+  enterDir: null  // 'right'|'left'|'up' for entering card animation
+};
+
+const $tabs = document.getElementById("tabs");
+const $main = document.getElementById("main");
+
+/* -------- Sons (Web Audio API, sem arquivos) -------- */
+let audioCtx = null;
+let masterGain = null;
+const MASTER_VOL = 0.45; // volume geral do site
+function getAudio() {
+  if (!audioCtx) {
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = MASTER_VOL;
+      masterGain.connect(audioCtx.destination);
+    } catch {}
+  }
+  return audioCtx;
+}
+function playTone(freqs, duration = 0.2, type = 'sine', gainStart = 0.15) {
+  const ctx = getAudio();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') ctx.resume();
+  const now = ctx.currentTime;
+  freqs.forEach((f, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(f.freq, now + (f.at || 0));
+    if (f.slideTo) osc.frequency.exponentialRampToValueAtTime(f.slideTo, now + (f.at || 0) + duration);
+    gain.gain.setValueAtTime(0, now + (f.at || 0));
+    gain.gain.linearRampToValueAtTime(gainStart, now + (f.at || 0) + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + (f.at || 0) + duration);
+    osc.connect(gain).connect(masterGain);
+    osc.start(now + (f.at || 0));
+    osc.stop(now + (f.at || 0) + duration + 0.02);
+  });
+}
+function makeNoiseBurst(ctx, at, duration, freqStart, freqEnd, peakGain, filterType = 'bandpass', Q = 3) {
+  const bufSize = Math.max(1, Math.floor(ctx.sampleRate * duration));
+  const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const filter = ctx.createBiquadFilter();
+  filter.type = filterType;
+  filter.frequency.setValueAtTime(freqStart, at);
+  filter.frequency.exponentialRampToValueAtTime(freqEnd, at + duration);
+  filter.Q.value = Q;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0, at);
+  g.gain.linearRampToValueAtTime(peakGain, at + 0.015);
+  g.gain.exponentialRampToValueAtTime(0.001, at + duration);
+  src.connect(filter).connect(g).connect(masterGain);
+  src.start(at);
+  src.stop(at + duration + 0.02);
+}
+function soundOk() {
+  // acorde ascendente: C5, E5, G5 (523, 659, 784)
+  playTone([
+    { freq: 523.25, at: 0 },
+    { freq: 659.25, at: 0.08 },
+    { freq: 783.99, at: 0.16 }
+  ], 0.35, 'triangle', 0.14);
+}
+function soundErr() {
+  // descendente grave
+  playTone([
+    { freq: 220, slideTo: 110, at: 0 }
+  ], 0.35, 'sawtooth', 0.12);
+}
+function soundEnd() {
+  playTone([
+    { freq: 523.25, at: 0 },
+    { freq: 659.25, at: 0.12 },
+    { freq: 783.99, at: 0.24 },
+    { freq: 1046.50, at: 0.36 }
+  ], 0.4, 'triangle', 0.12);
+}
+function soundFlip() {
+  const ctx = getAudio();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') ctx.resume();
+  const now = ctx.currentTime;
+  // Swoosh: ruído bandpass varrendo 2000 → 500 Hz
+  makeNoiseBurst(ctx, now, 0.18, 2000, 500, 0.22, 'bandpass', 3);
+  // Estalo curto no final (carta pousando)
+  const clickAt = now + 0.12;
+  const clickBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.04), ctx.sampleRate);
+  const cd = clickBuf.getChannelData(0);
+  for (let i = 0; i < cd.length; i++) cd[i] = (Math.random() * 2 - 1) * (1 - i / cd.length);
+  const click = ctx.createBufferSource();
+  click.buffer = clickBuf;
+  const clickHp = ctx.createBiquadFilter();
+  clickHp.type = 'highpass';
+  clickHp.frequency.value = 1500;
+  const clickGain = ctx.createGain();
+  clickGain.gain.setValueAtTime(0.28, clickAt);
+  clickGain.gain.exponentialRampToValueAtTime(0.001, clickAt + 0.05);
+  click.connect(clickHp).connect(clickGain).connect(masterGain);
+  click.start(clickAt);
+  click.stop(clickAt + 0.05);
+}
+function soundSlide(direction = 'right') {
+  const ctx = getAudio();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') ctx.resume();
+  const now = ctx.currentTime;
+  // Whoosh mais suave e curto que o flip — sem estalo
+  // direção altera o "pitch" do filtro (esquerda = pitch mais alto)
+  const startF = direction === 'left' ? 2400 : 1800;
+  const endF   = direction === 'left' ? 700  : 400;
+  makeNoiseBurst(ctx, now, 0.22, startF, endF, 0.18, 'bandpass', 2);
+}
+function soundShuffle() {
+  const ctx = getAudio();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') ctx.resume();
+  const now = ctx.currentTime;
+  // Riffle: 7 estalos curtos com variação (som de baralho embaralhando)
+  const N = 7;
+  for (let i = 0; i < N; i++) {
+    const at = now + i * 0.055 + (Math.random() * 0.015);
+    // pequeno swoosh
+    makeNoiseBurst(ctx, at, 0.06, 2600 + Math.random() * 1500, 900, 0.14, 'bandpass', 4);
+    // estalo curto
+    const clickBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.025), ctx.sampleRate);
+    const cd = clickBuf.getChannelData(0);
+    for (let j = 0; j < cd.length; j++) cd[j] = (Math.random() * 2 - 1) * (1 - j / cd.length);
+    const click = ctx.createBufferSource();
+    click.buffer = clickBuf;
+    const hp = ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 2500 + Math.random() * 1500;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.14 + Math.random() * 0.06, at + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, at + 0.035);
+    click.connect(hp).connect(g).connect(masterGain);
+    click.start(at + 0.02);
+    click.stop(at + 0.05);
+  }
+}
+
+function saveProgress() {
+  if (!state.currentDeck) return;
+  localStorage.setItem("ac2_" + state.currentDeck.id, JSON.stringify({
+    index: state.index,
+    order: state.order,
+    results: state.results,
+    finished: state.finished
+  }));
+}
+
+function loadProgress(deckId) {
+  try {
+    const raw = localStorage.getItem("ac2_" + deckId);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    return {
+      index: p.index || 0,
+      order: p.order || null,
+      results: p.results || {},
+      finished: !!p.finished
+    };
+  } catch { return null; }
+}
+
+function renderTabs() {
+  $tabs.innerHTML = "";
+  DECKS.forEach(deck => {
+    const btn = document.createElement("button");
+    btn.className = "tab" + (state.currentDeck && state.currentDeck.id === deck.id ? " active" : "");
+    btn.innerHTML = '<span>' + escapeHtml(deck.name) + '</span><span class="count">' + deck.cards.length + '</span>';
+    btn.onclick = () => selectDeck(deck);
+    $tabs.appendChild(btn);
+  });
+}
+
+function selectDeck(deck) {
+  state.currentDeck = deck;
+  state.flipped = false;
+  state.enterDir = 'up';
+  const saved = loadProgress(deck.id);
+  if (saved && saved.order && saved.order.length === deck.cards.length) {
+    state.index = saved.index;
+    state.order = saved.order;
+    state.results = saved.results;
+    state.finished = saved.finished;
+  } else {
+    state.index = 0;
+    state.order = deck.cards.map((_, i) => i);
+    state.results = {};
+    state.finished = false;
+  }
+  renderTabs();
+  render();
+}
+
+function shuffle() {
+  soundShuffle();
+  for (let i = state.order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [state.order[i], state.order[j]] = [state.order[j], state.order[i]];
+  }
+  state.index = 0;
+  state.flipped = false;
+  state.results = {};
+  state.finished = false;
+  state.enterDir = 'up';
+  saveProgress();
+  render();
+}
+
+function resetDeck() {
+  if (!confirm("Reiniciar progresso deste tema?")) return;
+  state.index = 0;
+  state.order = state.currentDeck.cards.map((_, i) => i);
+  state.results = {};
+  state.finished = false;
+  state.flipped = false;
+  saveProgress();
+  render();
+}
+
+function animateExit(exitClass, cb) {
+  const wrap = document.querySelector('.card-anim');
+  if (!wrap || state.animating) { cb(); return; }
+  state.animating = true;
+  wrap.classList.remove('enter-right','enter-left','enter-up');
+  wrap.classList.add(exitClass);
+  setTimeout(() => {
+    state.animating = false;
+    cb();
+  }, 320);
+}
+
+function next() {
+  if (state.finished || state.animating) return;
+  if (state.index < state.order.length - 1) {
+    soundSlide('left');
+    animateExit('exit-left', () => {
+      state.index++;
+      state.flipped = false;
+      state.enterDir = 'right';
+      saveProgress();
+      render();
+    });
+  }
+}
+
+function prev() {
+  if (state.animating) return;
+  if (state.finished) {
+    soundSlide('right');
+    state.finished = false;
+    state.index = state.order.length - 1;
+    state.flipped = false;
+    state.enterDir = 'left';
+    saveProgress();
+    render();
+    return;
+  }
+  if (state.index > 0) {
+    soundSlide('right');
+    animateExit('exit-right', () => {
+      state.index--;
+      state.flipped = false;
+      state.enterDir = 'left';
+      saveProgress();
+      render();
+    });
+  }
+}
+
+function flip() {
+  if (state.animating) return;
+  const cardEl = document.querySelector('.card');
+  if (!cardEl) return;
+  if (cardEl.classList.contains('blinking')) return;
+
+  const wasFlipped = state.flipped;
+  state.flipped = !wasFlipped;
+  saveProgress();
+  soundFlip();
+
+  cardEl.classList.add('blinking');
+
+  // Troca a face no meio (quando o card está invisível)
+  setTimeout(() => {
+    if (wasFlipped) cardEl.classList.remove('flipped');
+    else cardEl.classList.add('flipped');
+  }, 190);
+
+  setTimeout(() => {
+    cardEl.classList.remove('blinking');
+  }, 410);
+}
+
+function mark(kind) {
+  if (state.finished || state.animating) return;
+  const cardIdx = state.order[state.index];
+  state.results[cardIdx] = kind;
+
+  // som
+  if (kind === 'ok') soundOk(); else soundErr();
+
+  // botão pulsa
+  const keyBtn = document.querySelector(`.key.${kind === 'ok' ? 'ok' : 'err'}`);
+  if (keyBtn) { keyBtn.classList.add('pressed'); setTimeout(() => keyBtn.classList.remove('pressed'), 400); }
+
+  // flash overlay
+  const container = document.querySelector('.card-container');
+  if (container) {
+    const flash = document.createElement('div');
+    flash.className = 'flash-overlay ' + kind;
+    container.appendChild(flash);
+    setTimeout(() => flash.remove(), 600);
+  }
+
+  animateExit(kind === 'ok' ? 'exit-up' : 'exit-down', () => {
+    state.flipped = false;
+    if (state.index < state.order.length - 1) {
+      state.index++;
+      state.enterDir = 'up';
+    } else {
+      state.finished = true;
+      soundEnd();
+    }
+    saveProgress();
+    render();
+  });
+}
+
+function countResults() {
+  let correct = 0, wrong = 0;
+  Object.values(state.results).forEach(v => {
+    if (v === 'ok') correct++;
+    else if (v === 'err') wrong++;
+  });
+  return { correct, wrong };
+}
+
+function classify(pct) {
+  if (pct >= 90) return { key: 'excelente', label: 'Excelente' };
+  if (pct >= 75) return { key: 'otimo', label: 'Ótimo' };
+  if (pct >= 60) return { key: 'regular', label: 'Regular' };
+  return { key: 'melhorar', label: 'Precisa Melhorar' };
+}
+
+function render() {
+  const deck = state.currentDeck;
+  if (!deck) { renderEmpty(); return; }
+  if (state.finished) { renderEnd(); return; }
+  renderDeck();
+}
+
+function renderDeck() {
+  const deck = state.currentDeck;
+  const total = deck.cards.length;
+  const cardIdx = state.order[state.index];
+  const card = deck.cards[cardIdx];
+  const progress = ((state.index + 1) / total) * 100;
+  const atFirst = state.index === 0;
+
+  $main.innerHTML = `
+    <div class="toolbar">
+      <div>
+        <div class="deck-title">${escapeHtml(deck.name)}</div>
+        <div class="deck-progress-num"><span class="curr">${state.index + 1}</span> de ${total}</div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="shuffle()">Embaralhar</button>
+        <button class="btn" onclick="resetDeck()">Reiniciar</button>
+      </div>
+    </div>
+
+    <div class="progress-bar"><div class="fill" style="width:${progress}%"></div></div>
+
+    <div class="card-container">
+      <div class="card-anim ${state.enterDir ? 'enter-' + state.enterDir : ''}">
+        <div class="card ${state.flipped ? 'flipped' : ''}" onclick="flip()">
+          <div class="face front">
+            <div class="label">Pergunta</div>
+            <div class="content">${escapeHtml(card.q)}</div>
+            <div class="hint">clique ou espaço</div>
+          </div>
+          <div class="face back">
+            <div class="label">Resposta</div>
+            <div class="content">${escapeHtml(card.a)}</div>
+            <div class="hint">clique ou espaço</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="keymap">
+      <button class="key ${atFirst ? 'disabled' : ''}" onclick="prev()" ${atFirst ? 'disabled' : ''}>
+        <span class="icon">←</span><span>Anterior</span>
+      </button>
+      <button class="key err" onclick="mark('err')">
+        <span class="icon">↓</span><span>Errei</span>
+      </button>
+      <button class="key ok" onclick="mark('ok')">
+        <span class="icon">↑</span><span>Acertei</span>
+      </button>
+      <button class="key" onclick="next()">
+        <span class="icon">→</span><span>Próximo</span>
+      </button>
+    </div>
+  `;
+  // Clear entry direction after render so flipping doesn't retrigger animation
+  state.enterDir = null;
+}
+
+function renderEnd() {
+  const deck = state.currentDeck;
+  const total = deck.cards.length;
+  const { correct, wrong } = countResults();
+  const answered = correct + wrong;
+  const pct = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+  const cls = classify(pct);
+
+  // donut math
+  const r = 100;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - pct / 100);
+  const colorFor = {
+    excelente: 'var(--ok)',
+    otimo: 'var(--accent)',
+    regular: 'var(--warn)',
+    melhorar: 'var(--err)'
+  }[cls.key];
+
+  $main.innerHTML = `
+    <div class="end-screen">
+      <h2>Sessão Concluída</h2>
+      <div class="subtitle">${escapeHtml(deck.name)} · ${total} flashcards</div>
+
+      <div class="donut">
+        <svg viewBox="0 0 240 240">
+          <circle class="track" cx="120" cy="120" r="${r}"></circle>
+          <circle class="fill-arc" cx="120" cy="120" r="${r}"
+                  stroke="${colorFor}"
+                  stroke-dasharray="${circ}"
+                  stroke-dashoffset="${circ}"
+                  id="arc"></circle>
+        </svg>
+        <div class="center">
+          <div class="pct">${pct}%</div>
+          <div class="pct-label">Acertos</div>
+        </div>
+      </div>
+
+      <div class="badge ${cls.key}">${cls.label}</div>
+
+      <div class="end-stats">
+        <div class="end-stat correct">
+          <div class="val">${correct}</div>
+          <div class="lbl">Acertos</div>
+        </div>
+        <div class="end-stat wrong">
+          <div class="val">${wrong}</div>
+          <div class="lbl">Erros</div>
+        </div>
+        <div class="end-stat">
+          <div class="val">${answered}/${total}</div>
+          <div class="lbl">Respondidos</div>
+        </div>
+      </div>
+
+      <div class="end-actions">
+        <button class="btn" onclick="prev()">Voltar ao último</button>
+        <button class="btn primary" onclick="resetDeck()">Recomeçar</button>
+        <button class="btn" onclick="shuffle()">Embaralhar</button>
+      </div>
+    </div>
+  `;
+
+  // Animate donut fill
+  requestAnimationFrame(() => {
+    const arc = document.getElementById('arc');
+    if (arc) arc.style.strokeDashoffset = offset;
+  });
+}
+
+function renderEmpty() {
+  $main.innerHTML = `
+    <div class="empty">
+      <h2>Selecione um tema</h2>
+      <p>Escolha um tema na barra lateral para começar.</p>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+document.addEventListener("keydown", (e) => {
+  if ((e.key === 'b' || e.key === 'B') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    const t = e.target; const tag = (t && t.tagName || '').toLowerCase();
+    if (tag !== 'input' && tag !== 'textarea' && !(t && t.isContentEditable)) {
+      toggleSidebar(); return;
+    }
+  }
+  if (!state.currentDeck) return;
+  if (state.finished) {
+    if (e.key === "ArrowLeft") prev();
+    return;
+  }
+  if (e.key === "ArrowLeft") prev();
+  else if (e.key === "ArrowRight") next();
+  else if (e.key === "ArrowUp") { e.preventDefault(); mark('ok'); }
+  else if (e.key === "ArrowDown") { e.preventDefault(); mark('err'); }
+  else if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); }
+});
+
+renderTabs();
+if (DECKS.length > 0) selectDeck(DECKS[0]);
+</script>
+
+</body>
+</html>
