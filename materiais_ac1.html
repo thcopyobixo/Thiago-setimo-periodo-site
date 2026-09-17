@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Materiais AC1 · Sétimo Período</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --panel: #0f1420;
+    --panel-2: #1a2333;
+    --border: #1e2a44;
+    --border-hover: #2d4166;
+    --accent: #3b82f6;
+    --accent-2: #60a5fa;
+    --accent-3: #1d4ed8;
+    --accent-glow: rgba(59,130,246,.35);
+    --text: #f8fafc;
+    --muted: #64748b;
+    --muted-2: #94a3b8;
+    --sidebar-w: 300px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "cv02","cv03","cv04","cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(circle at 15% 20%, rgba(59,130,246,.06) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, rgba(29,78,216,.04) 0%, transparent 50%),
+      var(--bg);
+    min-height: 100vh;
+  }
+  [hidden] { display: none !important; }
+
+  aside.sidebar {
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: linear-gradient(180deg, rgba(15,20,32,.6), rgba(0,0,0,.9));
+    border-right: 1px solid var(--border);
+    padding: 60px 20px 24px;
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0;
+    overflow-y: auto;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    transition: transform .35s cubic-bezier(.4,.2,.2,1);
+  }
+  body.sidebar-hidden aside.sidebar { transform: translateX(-100%); }
+  main {
+    margin-left: var(--sidebar-w);
+    transition: margin-left .35s cubic-bezier(.4,.2,.2,1);
+    min-height: 100vh;
+    padding: 48px 60px 80px;
+    overflow-x: hidden;
+  }
+  body.sidebar-hidden main { margin-left: 0; }
+  body.no-transition aside.sidebar,
+  body.no-transition main { transition: none !important; }
+
+  .sidebar-toggle {
+    position: fixed; top: 14px; left: 14px; z-index: 100;
+    width: 36px; height: 36px; padding: 0;
+    background: rgba(15,20,32,.85);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted-2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+    backdrop-filter: blur(8px);
+    font-family: inherit;
+  }
+  .sidebar-toggle:hover { color: var(--accent-2); border-color: var(--accent); background: rgba(59,130,246,.15); }
+  .sidebar-toggle svg { transition: transform .35s cubic-bezier(.4,.2,.2,1); }
+  body.sidebar-hidden .sidebar-toggle svg { transform: rotate(180deg); }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted-2); text-decoration: none;
+    font-size: 12px; font-weight: 500; letter-spacing: .5px;
+    padding: 8px 12px; border-radius: 8px;
+    border: 1px solid transparent;
+    align-self: flex-start;
+    transition: all .2s;
+  }
+  .back-link:hover { color: var(--accent-2); background: var(--panel); border-color: var(--border); }
+  .back-link svg { transition: transform .2s; }
+  .back-link:hover svg { transform: translateX(-2px); }
+  .brand {
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand h1 {
+    margin: 0; font-family: 'Space Grotesk', sans-serif;
+    font-size: 34px; letter-spacing: 3px; font-weight: 700;
+    background: linear-gradient(135deg,#60a5fa 0%,#3b82f6 50%,#1d4ed8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1;
+  }
+  .brand .sub {
+    color: var(--muted); font-size: 10px;
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-top: 8px; font-weight: 500;
+  }
+  .tabs-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); padding: 0 12px 10px; font-weight: 600;
+  }
+  .tabs { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; }
+  .tab {
+    background: transparent; color: var(--muted-2);
+    border: 1px solid transparent;
+    padding: 10px 14px; border-radius: 10px; cursor: pointer;
+    font-size: 13.5px; font-weight: 500; text-align: left;
+    display: flex; align-items: center; gap: 12px;
+    font-family: inherit;
+    transition: all .2s cubic-bezier(.4,.2,.2,1);
+    position: relative;
+  }
+  .tab:hover { background: var(--panel); color: var(--text); border-color: var(--border); }
+  .tab.active {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; border-color: transparent;
+    box-shadow: 0 6px 18px var(--accent-glow);
+  }
+  .tab.active::before {
+    content: ''; position: absolute; left: -20px; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 24px;
+    background: var(--accent-2); border-radius: 0 3px 3px 0;
+  }
+  .tab-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 12px;
+    padding: 2px 8px; border-radius: 6px;
+    background: rgba(255,255,255,.06);
+    color: var(--muted-2);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+  .tab.active .tab-num { background: rgba(255,255,255,.2); color: #fff; }
+  .tab-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .tut-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    animation: fadeDown .5s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .tut-crumb {
+    font-size: 12px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--accent-2);
+    font-weight: 600; margin-bottom: 8px;
+  }
+  .tut-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 700;
+    margin: 0; letter-spacing: -.5px;
+    background: linear-gradient(135deg, #f8fafc, #94a3b8);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  .pdf-viewer {
+    display: flex; flex-direction: column;
+    gap: 24px;
+    max-width: 920px;
+    margin: 0 auto;
+    animation: fadeUp .5s .1s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .pdf-page {
+    margin: 0;
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(59,130,246,.06);
+    transition: box-shadow .3s, transform .3s;
+  }
+  .pdf-page:hover {
+    box-shadow: 0 24px 70px rgba(0,0,0,.6), 0 0 30px rgba(59,130,246,.2);
+    transform: translateY(-2px);
+  }
+  .pdf-page img {
+    display: block; width: 100%; height: auto;
+  }
+  .pdf-page figcaption {
+    position: absolute; top: 12px; right: 12px;
+    padding: 4px 10px;
+    background: rgba(0,0,0,.75);
+    color: #f8fafc;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 1.5px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.15);
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+  }
+
+  .page-nav {
+    position: fixed; right: 24px; bottom: 24px;
+    display: flex; flex-direction: column; gap: 8px;
+    z-index: 10;
+  }
+  .page-nav button {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px; font-weight: 700;
+    transition: all .2s;
+    box-shadow: 0 10px 24px rgba(0,0,0,.5);
+  }
+  .page-nav button:hover {
+    background: var(--accent); border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px var(--accent-glow);
+  }
+
+  @keyframes fadeUp   { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: none; } }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+  @media (max-width: 900px) {
+    aside.sidebar {
+      width: 100%; height: auto;
+      position: relative; top: auto; left: auto;
+      padding: 60px 20px 20px;
+      transform: none;
+    }
+    body.sidebar-hidden aside.sidebar { transform: none; display: none; }
+    .brand h1 { font-size: 28px; }
+    .tabs { flex-direction: row; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .tabs-label { display: none; }
+    .tab { flex-shrink: 0; }
+    .tab.active::before { display: none; }
+    main { padding: 24px 12px 60px; margin-left: 0; }
+    .page-nav { right: 12px; bottom: 12px; }
+  }
+</style>
+</head>
+<body>
+<script>
+  try { if (localStorage.getItem('sidebarHidden') === '1') { document.body.classList.add('sidebar-hidden','no-transition'); requestAnimationFrame(() => document.body.classList.remove('no-transition')); } } catch (e) {}
+</script>
+
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Alternar barra lateral" title="Alternar barra lateral (B)">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+    <rect x="3" y="4" width="18" height="16" rx="2"/>
+    <line x1="9" y1="4" x2="9" y2="20"/>
+  </svg>
+</button>
+
+<aside class="sidebar">
+  <a href="index.html" class="back-link" title="Voltar ao Sétimo Período">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    <span>Sétimo Período</span>
+  </a>
+  <div class="brand">
+    <h1>MATERIAIS</h1>
+    <div class="sub">AC 1 · Resumos</div>
+  </div>
+  <div class="tabs-label">Documentos</div>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tut="fluxogramas" onclick="selectDoc('fluxogramas')">
+      <span class="tab-num">01</span>
+      <span class="tab-name">Fluxogramas Terapêuticos</span>
+    </button>
+    <button class="tab" data-tut="diagnostico" onclick="selectDoc('diagnostico')">
+      <span class="tab-num">02</span>
+      <span class="tab-name">Diagnóstico e Tratamento</span>
+    </button>
+  </nav>
+</aside>
+
+<main id="main">
+<section class="tutoria" id="doc-fluxogramas">
+      <div class="tut-header">
+        <div class="tut-crumb">Documento 01 · 10 páginas</div>
+        <h1 class="tut-title">Fluxogramas Terapêuticos</h1>
+      </div>
+    <div class="pdf-viewer">
+      <figure class="pdf-page"><img src="assets/materiais_ac1/fluxogramas/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 10</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/fluxogramas/page-02.png" alt="Página 2" loading="lazy" decoding="async"><figcaption>Página 2 de 10</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/fluxogramas/page-03.png" alt="Página 3" loading="lazy" decoding="async"><figcaption>Página 3 de 10</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/fluxogramas/page-04.png" alt="Página 4" loading="lazy" decoding="async"><figcaption>Página 4 de 10</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/fluxogramas/page-05.png" alt="Página 5" loading="lazy" decoding="async"><figcaption>Página 5 de 10</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/fluxogramas/page-06.png" alt="Página 6" loading="lazy" decoding="async"><figcaption>Página 6 de 10</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/fluxogramas/page-07.png" alt="Página 7" loading="lazy" decoding="async"><figcaption>Página 7 de 10</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/fluxogramas/page-08.png" alt="Página 8" loading="lazy" decoding="async"><figcaption>Página 8 de 10</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/fluxogramas/page-09.png" alt="Página 9" loading="lazy" decoding="async"><figcaption>Página 9 de 10</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/fluxogramas/page-10.png" alt="Página 10" loading="lazy" decoding="async"><figcaption>Página 10 de 10</figcaption></figure>
+    </div>
+    </section>
+<section class="tutoria" id="doc-diagnostico" hidden>
+      <div class="tut-header">
+        <div class="tut-crumb">Documento 02 · 6 páginas</div>
+        <h1 class="tut-title">Diagnóstico e Tratamento</h1>
+      </div>
+    <div class="pdf-viewer">
+      <figure class="pdf-page"><img src="assets/materiais_ac1/diagnostico/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 6</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/diagnostico/page-02.png" alt="Página 2" loading="lazy" decoding="async"><figcaption>Página 2 de 6</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/diagnostico/page-03.png" alt="Página 3" loading="lazy" decoding="async"><figcaption>Página 3 de 6</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/diagnostico/page-04.png" alt="Página 4" loading="lazy" decoding="async"><figcaption>Página 4 de 6</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/diagnostico/page-05.png" alt="Página 5" loading="lazy" decoding="async"><figcaption>Página 5 de 6</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais_ac1/diagnostico/page-06.png" alt="Página 6" loading="lazy" decoding="async"><figcaption>Página 6 de 6</figcaption></figure>
+    </div>
+    </section>
+</main>
+
+<div class="page-nav">
+  <button title="Voltar ao topo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+  <button title="Ir para o fim" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})">↓</button>
+</div>
+
+<script>
+  function selectDoc(id) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tut === id));
+    document.querySelectorAll('.tutoria').forEach(s => s.hidden = (s.id !== 'doc-' + id));
+    window.scrollTo({top: 0, behavior: 'instant'});
+  }
+  function toggleSidebar() {
+    const hidden = document.body.classList.toggle('sidebar-hidden');
+    try { localStorage.setItem('sidebarHidden', hidden ? '1' : '0'); } catch (e) {}
+  }
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'b' || e.key === 'B') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const t = e.target; const tag = (t && t.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || (t && t.isContentEditable)) return;
+      toggleSidebar();
+    }
+  });
+</script>
+
+</body>
+</html>
