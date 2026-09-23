@@ -120,7 +120,14 @@
     font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
     color: var(--muted); padding: 0 12px 10px; font-weight: 600;
   }
-  .tabs { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; }
+  .tabs { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+  #tabs { flex: 1 1 auto; min-height: 0; }
+  #conf-tabs { flex: 0 0 auto; }
+  .tabs-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 8px 12px;
+  }
   .tab {
     background: transparent; color: var(--muted-2);
     border: 1px solid transparent;
@@ -314,51 +321,59 @@
   </div>
   <div class="tabs-label">Tutorias</div>
   <nav class="tabs" id="tabs">
-    <button class="tab active" data-tut="1" onclick="selectTut(1)">
+    <button class="tab active" data-tut="tut-1" onclick="selectItem('tut-1')">
       <span class="tab-num">01</span>
       <span class="tab-name">Hepatites Virais A, B e C</span>
     </button>
-    <button class="tab" data-tut="2" onclick="selectTut(2)">
+    <button class="tab" data-tut="tut-2" onclick="selectItem('tut-2')">
       <span class="tab-num">02</span>
       <span class="tab-name">Tromboembolismo Pulmonar Agudo</span>
     </button>
-    <button class="tab" data-tut="3" onclick="selectTut(3)">
+    <button class="tab" data-tut="tut-3" onclick="selectItem('tut-3')">
       <span class="tab-num">03</span>
       <span class="tab-name">Cirrose Hepática</span>
     </button>
-    <button class="tab" data-tut="4" onclick="selectTut(4)">
+    <button class="tab" data-tut="tut-4" onclick="selectItem('tut-4')">
       <span class="tab-num">04</span>
       <span class="tab-name">Complicações da Cirrose</span>
     </button>
-    <button class="tab" data-tut="5" onclick="selectTut(5)">
+    <button class="tab" data-tut="tut-5" onclick="selectItem('tut-5')">
       <span class="tab-num">05</span>
-      <span class="tab-name">Em breve</span>
+      <span class="tab-name">Tuberculose</span>
     </button>
-    <button class="tab" data-tut="6" onclick="selectTut(6)">
+    <button class="tab" data-tut="tut-6" onclick="selectItem('tut-6')">
       <span class="tab-num">06</span>
       <span class="tab-name">Em breve</span>
     </button>
-    <button class="tab" data-tut="7" onclick="selectTut(7)">
+    <button class="tab" data-tut="tut-7" onclick="selectItem('tut-7')">
       <span class="tab-num">07</span>
       <span class="tab-name">Em breve</span>
     </button>
-    <button class="tab" data-tut="8" onclick="selectTut(8)">
+    <button class="tab" data-tut="tut-8" onclick="selectItem('tut-8')">
       <span class="tab-num">08</span>
       <span class="tab-name">Em breve</span>
     </button>
-    <button class="tab" data-tut="9" onclick="selectTut(9)">
+    <button class="tab" data-tut="tut-9" onclick="selectItem('tut-9')">
       <span class="tab-num">09</span>
       <span class="tab-name">Em breve</span>
     </button>
-    <button class="tab" data-tut="10" onclick="selectTut(10)">
+    <button class="tab" data-tut="tut-10" onclick="selectItem('tut-10')">
       <span class="tab-num">10</span>
       <span class="tab-name">Em breve</span>
+    </button>
+  </nav>
+  <div class="tabs-divider"></div>
+  <div class="tabs-label">Conferências</div>
+  <nav class="tabs" id="conf-tabs">
+    <button class="tab" data-tut="conf-ada-diabetes" onclick="selectItem('conf-ada-diabetes')">
+      <span class="tab-num">C01</span>
+      <span class="tab-name">ADA — Diabetes 2026 (Resumo Clínico)</span>
     </button>
   </nav>
 </aside>
 
 <main id="main">
-<section class="tutoria" id="tut-1">
+<section class="tutoria" id="item-tut-1">
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 01 · 47 páginas</div>
         <h1 class="tut-title">Hepatites Virais A, B e C</h1>
@@ -413,7 +428,7 @@
       <figure class="pdf-page"><img src="assets/materiais/hepatites/page-47.png" alt="Página 47" loading="lazy" decoding="async"><figcaption>Página 47 de 47</figcaption></figure>
     </div>
     </section>
-<section class="tutoria" id="tut-2" hidden>
+<section class="tutoria" id="item-tut-2" hidden>
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 02 · 45 páginas</div>
         <h1 class="tut-title">Tromboembolismo Pulmonar Agudo</h1>
@@ -466,7 +481,7 @@
       <figure class="pdf-page"><img src="assets/materiais/tep/page-45.png" alt="Página 45" loading="lazy" decoding="async"><figcaption>Página 45 de 45</figcaption></figure>
     </div>
     </section>
-<section class="tutoria" id="tut-3" hidden>
+<section class="tutoria" id="item-tut-3" hidden>
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 03 · 30 páginas</div>
         <h1 class="tut-title">Cirrose Hepática</h1>
@@ -504,7 +519,7 @@
       <figure class="pdf-page"><img src="assets/materiais/cirrose/page-30.png" alt="Página 30" loading="lazy" decoding="async"><figcaption>Página 30 de 30</figcaption></figure>
     </div>
     </section>
-<section class="tutoria" id="tut-4" hidden>
+<section class="tutoria" id="item-tut-4" hidden>
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 04 · 29 páginas</div>
         <h1 class="tut-title">Complicações da Cirrose</h1>
@@ -541,23 +556,46 @@
       <figure class="pdf-page"><img src="assets/materiais/cirrose-complicacoes/page-29.png" alt="Página 29" loading="lazy" decoding="async"><figcaption>Página 29 de 29</figcaption></figure>
     </div>
     </section>
-<section class="tutoria" id="tut-5" hidden>
+<section class="tutoria" id="item-tut-5" hidden>
       <div class="tut-header">
-        <div class="tut-crumb">Tutoria 05 · —</div>
-        <h1 class="tut-title">Em breve</h1>
+        <div class="tut-crumb">Tutoria 05 · 31 páginas</div>
+        <h1 class="tut-title">Tuberculose</h1>
       </div>
-    <div class="tutoria-empty">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-        </svg>
-      </div>
-      <h3>Tutoria 5 — Em breve</h3>
-      <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
+    <div class="pdf-viewer">
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-02.png" alt="Página 2" loading="lazy" decoding="async"><figcaption>Página 2 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-03.png" alt="Página 3" loading="lazy" decoding="async"><figcaption>Página 3 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-04.png" alt="Página 4" loading="lazy" decoding="async"><figcaption>Página 4 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-05.png" alt="Página 5" loading="lazy" decoding="async"><figcaption>Página 5 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-06.png" alt="Página 6" loading="lazy" decoding="async"><figcaption>Página 6 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-07.png" alt="Página 7" loading="lazy" decoding="async"><figcaption>Página 7 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-08.png" alt="Página 8" loading="lazy" decoding="async"><figcaption>Página 8 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-09.png" alt="Página 9" loading="lazy" decoding="async"><figcaption>Página 9 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-10.png" alt="Página 10" loading="lazy" decoding="async"><figcaption>Página 10 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-11.png" alt="Página 11" loading="lazy" decoding="async"><figcaption>Página 11 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-12.png" alt="Página 12" loading="lazy" decoding="async"><figcaption>Página 12 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-13.png" alt="Página 13" loading="lazy" decoding="async"><figcaption>Página 13 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-14.png" alt="Página 14" loading="lazy" decoding="async"><figcaption>Página 14 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-15.png" alt="Página 15" loading="lazy" decoding="async"><figcaption>Página 15 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-16.png" alt="Página 16" loading="lazy" decoding="async"><figcaption>Página 16 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-17.png" alt="Página 17" loading="lazy" decoding="async"><figcaption>Página 17 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-18.png" alt="Página 18" loading="lazy" decoding="async"><figcaption>Página 18 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-19.png" alt="Página 19" loading="lazy" decoding="async"><figcaption>Página 19 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-20.png" alt="Página 20" loading="lazy" decoding="async"><figcaption>Página 20 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-21.png" alt="Página 21" loading="lazy" decoding="async"><figcaption>Página 21 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-22.png" alt="Página 22" loading="lazy" decoding="async"><figcaption>Página 22 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-23.png" alt="Página 23" loading="lazy" decoding="async"><figcaption>Página 23 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-24.png" alt="Página 24" loading="lazy" decoding="async"><figcaption>Página 24 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-25.png" alt="Página 25" loading="lazy" decoding="async"><figcaption>Página 25 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-26.png" alt="Página 26" loading="lazy" decoding="async"><figcaption>Página 26 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-27.png" alt="Página 27" loading="lazy" decoding="async"><figcaption>Página 27 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-28.png" alt="Página 28" loading="lazy" decoding="async"><figcaption>Página 28 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-29.png" alt="Página 29" loading="lazy" decoding="async"><figcaption>Página 29 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-30.png" alt="Página 30" loading="lazy" decoding="async"><figcaption>Página 30 de 31</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-31.png" alt="Página 31" loading="lazy" decoding="async"><figcaption>Página 31 de 31</figcaption></figure>
     </div>
     </section>
-<section class="tutoria" id="tut-6" hidden>
+<section class="tutoria" id="item-tut-6" hidden>
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 06 · —</div>
         <h1 class="tut-title">Em breve</h1>
@@ -573,7 +611,7 @@
       <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
     </div>
     </section>
-<section class="tutoria" id="tut-7" hidden>
+<section class="tutoria" id="item-tut-7" hidden>
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 07 · —</div>
         <h1 class="tut-title">Em breve</h1>
@@ -589,7 +627,7 @@
       <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
     </div>
     </section>
-<section class="tutoria" id="tut-8" hidden>
+<section class="tutoria" id="item-tut-8" hidden>
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 08 · —</div>
         <h1 class="tut-title">Em breve</h1>
@@ -605,7 +643,7 @@
       <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
     </div>
     </section>
-<section class="tutoria" id="tut-9" hidden>
+<section class="tutoria" id="item-tut-9" hidden>
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 09 · —</div>
         <h1 class="tut-title">Em breve</h1>
@@ -621,7 +659,7 @@
       <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
     </div>
     </section>
-<section class="tutoria" id="tut-10" hidden>
+<section class="tutoria" id="item-tut-10" hidden>
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 10 · —</div>
         <h1 class="tut-title">Em breve</h1>
@@ -637,6 +675,65 @@
       <p>Envie o PDF ou resumo desta tutoria no chat e ele será adicionado aqui.</p>
     </div>
     </section>
+<section class="tutoria" id="item-conf-ada-diabetes" hidden>
+      <div class="tut-header">
+        <div class="tut-crumb">Conferência C01 · 51 páginas</div>
+        <h1 class="tut-title">ADA — Diabetes 2026 (Resumo Clínico)</h1>
+      </div>
+    <div class="pdf-viewer">
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-02.png" alt="Página 2" loading="lazy" decoding="async"><figcaption>Página 2 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-03.png" alt="Página 3" loading="lazy" decoding="async"><figcaption>Página 3 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-04.png" alt="Página 4" loading="lazy" decoding="async"><figcaption>Página 4 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-05.png" alt="Página 5" loading="lazy" decoding="async"><figcaption>Página 5 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-06.png" alt="Página 6" loading="lazy" decoding="async"><figcaption>Página 6 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-07.png" alt="Página 7" loading="lazy" decoding="async"><figcaption>Página 7 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-08.png" alt="Página 8" loading="lazy" decoding="async"><figcaption>Página 8 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-09.png" alt="Página 9" loading="lazy" decoding="async"><figcaption>Página 9 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-10.png" alt="Página 10" loading="lazy" decoding="async"><figcaption>Página 10 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-11.png" alt="Página 11" loading="lazy" decoding="async"><figcaption>Página 11 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-12.png" alt="Página 12" loading="lazy" decoding="async"><figcaption>Página 12 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-13.png" alt="Página 13" loading="lazy" decoding="async"><figcaption>Página 13 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-14.png" alt="Página 14" loading="lazy" decoding="async"><figcaption>Página 14 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-15.png" alt="Página 15" loading="lazy" decoding="async"><figcaption>Página 15 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-16.png" alt="Página 16" loading="lazy" decoding="async"><figcaption>Página 16 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-17.png" alt="Página 17" loading="lazy" decoding="async"><figcaption>Página 17 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-18.png" alt="Página 18" loading="lazy" decoding="async"><figcaption>Página 18 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-19.png" alt="Página 19" loading="lazy" decoding="async"><figcaption>Página 19 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-20.png" alt="Página 20" loading="lazy" decoding="async"><figcaption>Página 20 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-21.png" alt="Página 21" loading="lazy" decoding="async"><figcaption>Página 21 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-22.png" alt="Página 22" loading="lazy" decoding="async"><figcaption>Página 22 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-23.png" alt="Página 23" loading="lazy" decoding="async"><figcaption>Página 23 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-24.png" alt="Página 24" loading="lazy" decoding="async"><figcaption>Página 24 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-25.png" alt="Página 25" loading="lazy" decoding="async"><figcaption>Página 25 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-26.png" alt="Página 26" loading="lazy" decoding="async"><figcaption>Página 26 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-27.png" alt="Página 27" loading="lazy" decoding="async"><figcaption>Página 27 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-28.png" alt="Página 28" loading="lazy" decoding="async"><figcaption>Página 28 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-29.png" alt="Página 29" loading="lazy" decoding="async"><figcaption>Página 29 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-30.png" alt="Página 30" loading="lazy" decoding="async"><figcaption>Página 30 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-31.png" alt="Página 31" loading="lazy" decoding="async"><figcaption>Página 31 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-32.png" alt="Página 32" loading="lazy" decoding="async"><figcaption>Página 32 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-33.png" alt="Página 33" loading="lazy" decoding="async"><figcaption>Página 33 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-34.png" alt="Página 34" loading="lazy" decoding="async"><figcaption>Página 34 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-35.png" alt="Página 35" loading="lazy" decoding="async"><figcaption>Página 35 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-36.png" alt="Página 36" loading="lazy" decoding="async"><figcaption>Página 36 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-37.png" alt="Página 37" loading="lazy" decoding="async"><figcaption>Página 37 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-38.png" alt="Página 38" loading="lazy" decoding="async"><figcaption>Página 38 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-39.png" alt="Página 39" loading="lazy" decoding="async"><figcaption>Página 39 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-40.png" alt="Página 40" loading="lazy" decoding="async"><figcaption>Página 40 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-41.png" alt="Página 41" loading="lazy" decoding="async"><figcaption>Página 41 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-42.png" alt="Página 42" loading="lazy" decoding="async"><figcaption>Página 42 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-43.png" alt="Página 43" loading="lazy" decoding="async"><figcaption>Página 43 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-44.png" alt="Página 44" loading="lazy" decoding="async"><figcaption>Página 44 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-45.png" alt="Página 45" loading="lazy" decoding="async"><figcaption>Página 45 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-46.png" alt="Página 46" loading="lazy" decoding="async"><figcaption>Página 46 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-47.png" alt="Página 47" loading="lazy" decoding="async"><figcaption>Página 47 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-48.png" alt="Página 48" loading="lazy" decoding="async"><figcaption>Página 48 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-49.png" alt="Página 49" loading="lazy" decoding="async"><figcaption>Página 49 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-50.png" alt="Página 50" loading="lazy" decoding="async"><figcaption>Página 50 de 51</figcaption></figure>
+      <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-51.png" alt="Página 51" loading="lazy" decoding="async"><figcaption>Página 51 de 51</figcaption></figure>
+    </div>
+    </section>
 </main>
 
 <div class="page-nav">
@@ -645,9 +742,9 @@
 </div>
 
 <script>
-  function selectTut(n) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', +t.dataset.tut === n));
-    document.querySelectorAll('.tutoria').forEach(s => s.hidden = (s.id !== 'tut-' + n));
+  function selectItem(id) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tut === id));
+    document.querySelectorAll('.tutoria').forEach(s => s.hidden = (s.id !== 'item-' + id));
     window.scrollTo({top: 0, behavior: 'instant'});
   }
   function toggleSidebar() {
