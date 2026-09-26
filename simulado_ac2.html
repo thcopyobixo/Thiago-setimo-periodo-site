@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulado AC2 · Sétimo Período</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --panel: #0f1420;
+    --panel-2: #1a2333;
+    --border: #1e2a44;
+    --border-hover: #2d4166;
+    --accent: #3b82f6;
+    --accent-2: #60a5fa;
+    --accent-3: #1d4ed8;
+    --accent-glow: rgba(59,130,246,.35);
+    --text: #f8fafc;
+    --muted: #64748b;
+    --muted-2: #94a3b8;
+    --ok: #10b981;
+    --ok-glow: rgba(16,185,129,.3);
+    --err: #ef4444;
+    --err-glow: rgba(239,68,68,.3);
+    --warn: #f59e0b;
+    --sidebar-w: 300px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "cv02","cv03","cv04","cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(circle at 15% 20%, rgba(59,130,246,.08) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, rgba(29,78,216,.06) 0%, transparent 50%),
+      var(--bg);
+    min-height: 100vh;
+  }
+  [hidden] { display: none !important; }
+
+  aside.sidebar {
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: linear-gradient(180deg, rgba(15,20,32,.6), rgba(0,0,0,.9));
+    border-right: 1px solid var(--border);
+    padding: 60px 20px 24px;
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0;
+    overflow-y: auto;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    transition: transform .35s cubic-bezier(.4,.2,.2,1);
+  }
+  body.sidebar-hidden aside.sidebar { transform: translateX(-100%); }
+  main {
+    margin-left: var(--sidebar-w);
+    transition: margin-left .35s cubic-bezier(.4,.2,.2,1);
+    min-height: 100vh;
+    padding: 48px 60px 80px;
+  }
+  body.sidebar-hidden main { margin-left: 0; }
+  body.no-transition aside.sidebar,
+  body.no-transition main { transition: none !important; }
+
+  .sidebar-toggle {
+    position: fixed;
+    top: 14px; left: 14px;
+    z-index: 100;
+    width: 36px; height: 36px;
+    padding: 0;
+    background: rgba(15,20,32,.85);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted-2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+    backdrop-filter: blur(8px);
+    font-family: inherit;
+  }
+  .sidebar-toggle:hover {
+    color: var(--accent-2); border-color: var(--accent);
+    background: rgba(59,130,246,.15);
+  }
+  .sidebar-toggle svg { transition: transform .35s cubic-bezier(.4,.2,.2,1); }
+  body.sidebar-hidden .sidebar-toggle svg { transform: rotate(180deg); }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted-2); text-decoration: none;
+    font-size: 12px; font-weight: 500; letter-spacing: .5px;
+    padding: 8px 12px; border-radius: 8px;
+    border: 1px solid transparent;
+    align-self: flex-start;
+    transition: all .2s;
+  }
+  .back-link:hover { color: var(--accent-2); background: var(--panel); border-color: var(--border); }
+  .back-link svg { transition: transform .2s; }
+  .back-link:hover svg { transform: translateX(-2px); }
+
+  .brand {
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand h1 {
+    margin: 0; font-family: 'Space Grotesk', sans-serif;
+    font-size: 30px; letter-spacing: 3px; font-weight: 700;
+    background: linear-gradient(135deg,#60a5fa 0%,#3b82f6 50%,#1d4ed8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1;
+  }
+  .brand .sub {
+    color: var(--muted); font-size: 10px;
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-top: 8px; font-weight: 500;
+  }
+
+  /* Overview of questions in sidebar */
+  .q-list-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); padding: 0 12px 10px; font-weight: 600;
+  }
+  .q-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    padding: 0 4px 20px;
+  }
+  .q-cell {
+    width: 100%; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px; font-weight: 600;
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--muted-2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .q-cell:hover { border-color: var(--border-hover); color: var(--text); }
+  .q-cell.current { background: linear-gradient(135deg, var(--accent-3), var(--accent)); color:#fff; border-color: transparent; box-shadow: 0 4px 12px var(--accent-glow); }
+  .q-cell.correct { background: rgba(16,185,129,.15); color: var(--ok); border-color: var(--ok); }
+  .q-cell.wrong { background: rgba(239,68,68,.15); color: var(--err); border-color: var(--err); }
+  .q-cell.current.correct { background: var(--ok); color: #fff; box-shadow: 0 4px 12px var(--ok-glow); }
+  .q-cell.current.wrong { background: var(--err); color: #fff; box-shadow: 0 4px 12px var(--err-glow); }
+
+  /* Main content */
+  .toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+  }
+  .crumb {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent-2);
+    font-weight: 600;
+  }
+  .actions { display: flex; gap: 8px; }
+  .btn {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 16px; border-radius: 10px;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .btn:hover { background: var(--panel-2); border-color: var(--border-hover); }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; border-color: transparent; font-weight: 600;
+    box-shadow: 0 8px 20px var(--accent-glow);
+  }
+  .btn.primary:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: .35; cursor: not-allowed; }
+
+  .progress-bar {
+    height: 4px; background: var(--panel);
+    border-radius: 999px; overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-3), var(--accent), var(--accent-2));
+    transition: width .3s ease;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .question-card {
+    max-width: 820px;
+    margin: 0 auto;
+    animation: fadeUp .35s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .q-number {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(59,130,246,.12);
+    border: 1px solid rgba(59,130,246,.35);
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-2);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .q-enun {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #e2e8f0;
+    margin-bottom: 28px;
+    background: linear-gradient(145deg, #0f1420, #0a0e18);
+    border: 1px solid var(--border);
+    padding: 24px 28px;
+    border-radius: 14px;
+  }
+
+  .alts { display: flex; flex-direction: column; gap: 10px; }
+  .alt {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: linear-gradient(145deg, #0f1420, #0a0e18);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .2s cubic-bezier(.34,1.2,.64,1);
+    text-align: left;
+    font-family: inherit;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.55;
+    width: 100%;
+  }
+  .alt:hover:not(:disabled) {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(59,130,246,.15);
+  }
+  .alt:disabled { cursor: default; }
+  .alt-key {
+    flex-shrink: 0;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent-2);
+    transition: all .2s;
+  }
+  .alt:hover:not(:disabled) .alt-key { background: var(--accent); color: #fff; border-color: transparent; }
+  .alt-text { flex: 1; }
+  .alt.selected { border-color: var(--accent); background: rgba(59,130,246,.08); }
+  .alt.selected .alt-key { background: var(--accent); color: #fff; border-color: transparent; }
+  .alt.correct-alt {
+    border-color: var(--ok);
+    background: rgba(16,185,129,.1);
+    box-shadow: 0 0 0 1px var(--ok), 0 8px 20px var(--ok-glow);
+  }
+  .alt.correct-alt .alt-key { background: var(--ok); color: #fff; border-color: transparent; }
+  .alt.wrong-alt {
+    border-color: var(--err);
+    background: rgba(239,68,68,.08);
+    box-shadow: 0 0 0 1px var(--err);
+  }
+  .alt.wrong-alt .alt-key { background: var(--err); color: #fff; border-color: transparent; }
+  .alt-badge {
+    margin-left: 8px;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 999px;
+    letter-spacing: 1px; text-transform: uppercase;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .alt.correct-alt .alt-badge {
+    background: var(--ok); color: #fff;
+  }
+  .alt.wrong-alt .alt-badge {
+    background: var(--err); color: #fff;
+  }
+
+  .confirm-wrap {
+    margin-top: 24px;
+    display: flex; justify-content: center;
+  }
+  .btn-confirm {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff;
+    border: 1px solid transparent;
+    padding: 14px 32px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: .3px;
+    box-shadow: 0 10px 24px var(--accent-glow);
+    transition: all .2s cubic-bezier(.34,1.2,.64,1);
+    min-width: 260px;
+  }
+  .btn-confirm:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px var(--accent-glow);
+  }
+  .btn-confirm:active:not(:disabled) { transform: translateY(0); }
+  .btn-confirm:disabled {
+    background: var(--panel);
+    color: var(--muted);
+    border-color: var(--border);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  .feedback-panel {
+    margin-top: 24px;
+    animation: slideDown .4s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+  .feedback-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .5px;
+  }
+  .feedback-header.correct {
+    background: rgba(16,185,129,.12);
+    border: 1px solid var(--ok);
+    color: var(--ok);
+  }
+  .feedback-header.wrong {
+    background: rgba(239,68,68,.12);
+    border: 1px solid var(--err);
+    color: var(--err);
+  }
+
+  .gabarito-toggle {
+    margin-top: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 12px 18px;
+    border-radius: 10px;
+    color: var(--text);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all .2s;
+  }
+  .gabarito-toggle:hover { border-color: var(--accent); color: var(--accent-2); }
+  .gabarito-toggle svg { transition: transform .3s; }
+  .gabarito-toggle.open svg { transform: rotate(90deg); }
+
+  .gabarito-body {
+    margin-top: 14px;
+    padding: 20px 24px;
+    background: linear-gradient(145deg, rgba(59,130,246,.06), rgba(59,130,246,.02));
+    border: 1px solid rgba(59,130,246,.25);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    line-height: 1.7;
+    font-size: 14.5px;
+    color: #dbeafe;
+    animation: slideDown .3s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .gabarito-body .gab-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .gabarito-body .gab-answer {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--ok); margin-bottom: 10px;
+  }
+
+  .nav-buttons {
+    display: flex; justify-content: space-between; gap: 12px;
+    margin-top: 32px;
+    max-width: 820px; margin-left: auto; margin-right: auto;
+  }
+  .nav-btn {
+    flex: 1;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all .2s;
+  }
+  .nav-btn:hover:not(:disabled) { background: var(--panel-2); border-color: var(--border-hover); transform: translateY(-1px); }
+  .nav-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .nav-btn.primary {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; border-color: transparent;
+    box-shadow: 0 8px 20px var(--accent-glow);
+  }
+  .nav-btn.primary:hover:not(:disabled) { transform: translateY(-2px); }
+
+  /* End screen */
+  .end-screen {
+    max-width: 640px; margin: 0 auto; text-align: center;
+    padding-top: 40px;
+    animation: fadeUp .5s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .end-screen h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 34px; font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: -.5px;
+  }
+  .end-screen .subtitle {
+    color: var(--muted-2); font-size: 15px;
+    margin-bottom: 40px;
+  }
+  .donut {
+    width: 240px; height: 240px;
+    margin: 0 auto 32px; position: relative;
+  }
+  .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .donut .track { fill: none; stroke: var(--panel); stroke-width: 14; }
+  .donut .fill-arc {
+    fill: none; stroke-width: 14; stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s cubic-bezier(.4,.2,.2,1);
+  }
+  .donut .center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .donut .pct {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 56px; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1;
+  }
+  .donut .pct-label {
+    font-size: 11px; color: var(--muted-2);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-top: 4px; font-weight: 600;
+  }
+  .badge {
+    display: inline-flex; padding: 12px 24px;
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px; font-weight: 700;
+    letter-spacing: .5px;
+    margin-bottom: 32px;
+  }
+  .badge.excelente { background: rgba(16,185,129,.15); color: var(--ok); border: 1px solid var(--ok); }
+  .badge.otimo { background: rgba(59,130,246,.15); color: var(--accent-2); border: 1px solid var(--accent); }
+  .badge.regular { background: rgba(245,158,11,.15); color: var(--warn); border: 1px solid var(--warn); }
+  .badge.melhorar { background: rgba(239,68,68,.15); color: var(--err); border: 1px solid var(--err); }
+  .end-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin-bottom: 32px;
+  }
+  .end-stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 16px;
+  }
+  .end-stat .val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px; font-weight: 700; line-height: 1;
+  }
+  .end-stat.correct .val { color: var(--ok); }
+  .end-stat.wrong .val { color: var(--err); }
+  .end-stat .lbl {
+    font-size: 11px; color: var(--muted-2);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-top: 8px; font-weight: 600;
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+  @media (max-width: 900px) {
+    aside.sidebar {
+      width: 100%; height: auto;
+      position: relative; top: auto; left: auto;
+      padding: 60px 20px 20px;
+      transform: none;
+    }
+    body.sidebar-hidden aside.sidebar { transform: none; display: none; }
+    .brand h1 { font-size: 26px; }
+    main { padding: 24px 16px 60px; margin-left: 0; }
+    body.sidebar-hidden main { margin-left: 0; }
+    .q-grid { grid-template-columns: repeat(10, 1fr); }
+  }
+</style>
+</head>
+<body>
+<script>
+  try { if (localStorage.getItem('sidebarHidden') === '1') { document.body.classList.add('sidebar-hidden','no-transition'); requestAnimationFrame(() => document.body.classList.remove('no-transition')); } } catch (e) {}
+</script>
+
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Alternar barra lateral" title="Alternar barra lateral (B)">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+    <rect x="3" y="4" width="18" height="16" rx="2"/>
+    <line x1="9" y1="4" x2="9" y2="20"/>
+  </svg>
+</button>
+
+<aside class="sidebar">
+  <a href="index.html" class="back-link" title="Voltar ao Sétimo Período">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    <span>Sétimo Período</span>
+  </a>
+  <div class="brand">
+    <h1>SIMULADO</h1>
+    <div class="sub">AC 2 · 50 questões</div>
+  </div>
+  <div class="q-list-label">Navegação</div>
+  <div class="q-grid" id="qGrid"></div>
+</aside>
+
+<main id="main">
+  <div id="quiz"></div>
+</main>
+
+<script>
+const QUESTIONS = [
+  {
+    n: 1,
+    enunciado: "Mulher, 48 anos, assintomática, procura atendimento de rotina. IMC 31 kg/m2, circunferência abdominal 98 cm. Mãe com diabetes mellitus tipo 2. Exames laboratoriais: glicemia de jejum 118 mg/dL e hemoglobina glicada (HbA1c) 6,2%. Após repetição dos exames em nova amostra, os valores se confirmam. Com base nos critérios diagnósticos da ADA 2026, qual é o diagnóstico correto dessa paciente?",
+    alternativas: {
+      "A": "Diabetes mellitus tipo 2",
+      "B": "Pré-diabetes",
+      "C": "Resultado normal, sem necessidade de intervenção",
+      "D": "Diabetes mellitus tipo MODY",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — Pré-diabetes. Os critérios da ADA 2026 definem pré-diabetes quando: glicemia de jejum entre 100–125 mg/dL (glicemia de jejum alterada), HbA1c entre 5,7–6,4%, ou TOTG 2h entre 140–199 mg/dL. A paciente apresenta glicemia de jejum 118 mg/dL e HbA1c 6,2%, ambos na faixa de pré-diabetes. Para diagnóstico de DM2, seriam necessários: glicemia de jejum ≥ 126 mg/dL, HbA1c ≥ 6,5%, TOTG ≥ 200 mg/dL ou glicemia aleatória ≥ 200 mg/dL com sintomas. A alternativa A está incorreta pois os valores estão abaixo dos pontos de corte para DM2. A alternativa C está incorreta pois os valores não são normais. A alternativa D está incorreta pois o MODY requer critérios clínicos específicos (história familiar autossômica dominante, diagnóstico em < 25 anos)."
+  },
+  {
+    n: 2,
+    enunciado: "Homem, 32 anos, profissional de saúde, procura atendimento após acidente com material biológico há 4 semanas. Assintomático. Exames do paciente-fonte: HBsAg positivo, HBeAg positivo. Exames do profissional acidentado: HBsAg negativo, anti-HBc total negativo, anti-HBs 285 mUI/mL. Qual é a interpretação correta do perfil sorológico do profissional acidentado?",
+    alternativas: {
+      "A": "Infecção aguda por hepatite B em fase inicial",
+      "B": "Infecção crônica por hepatite B em fase de imunotolerância",
+      "C": "Imunidade vacinal contra hepatite B, sem necessidade de profilaxia pós-exposição",
+      "D": "Janela imunológica da hepatite B, necessitando de HBV-DNA para confirmação",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Imunidade vacinal. O perfil sorológico com HBsAg negativo, anti-HBc total negativo e anti-HBs positivo (> 10 mUI/mL, neste caso 285 mUI/mL) é compatível com imunidade por vacinação. Na imunidade natural (infecção resolvida), o anti-HBc total seria positivo junto com o anti-HBs positivo. A ausência de anti-HBc total exclui infecção prévia ou atual. A alternativa A está incorreta pois na infecção aguda o HBsAg seria positivo. A alternativa B está incorreta pois na infecção crônica o HBsAg seria positivo. A alternativa D está incorreta pois na janela imunológica o anti-HBc IgM estaria positivo com HBsAg negativo e anti-HBs ainda negativo."
+  },
+  {
+    n: 3,
+    enunciado: "Mulher, 45 anos, obesa (IMC 34 kg/m2), com antecedente de colelitíase, apresenta dor abdominal intensa em faixa no andar superior do abdome, de início súbito há 8 horas, com irradiação para o dorso, associada a náuseas e vômitos. Exame físico: abdome tenso, doloroso à palpação profunda em epigástrio, com descompressão brusca negativa. Exames: amilase 180 U/L (VR até 100 U/L), lipase 950 U/L (VR até 60 U/L), leucócitos 14.200/mm3. Sobre o diagnóstico de pancreatite aguda, quantos critérios são necessários para confirmação?",
+    alternativas: {
+      "A": "Pelo menos 2 dos 3 critérios: dor abdominal típica, elevação de enzimas ≥ 3× o limite superior e achados de imagem compatíveis",
+      "B": "Os 3 critérios devem estar presentes obrigatoriamente para o diagnóstico",
+      "C": "A confirmação por tomografia computadorizada com contraste é indispensável em todos os casos",
+      "D": "Apenas a elevação da amilase acima de 3 vezes o normal é suficiente para o diagnóstico",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — Pelo menos 2 dos 3 critérios. O diagnóstico de pancreatite aguda requer pelo menos 2 dos 3 critérios: (1) dor abdominal típica (epigástrica, intensa, com irradiação para o dorso); (2) elevação de enzimas pancreáticas (amilase e/ou lipase) ≥ 3 vezes o limite superior da normalidade — sendo a lipase preferida por maior sensibilidade e especificidade; (3) achados de imagem compatíveis (TC, RM ou USG). A paciente preenche 2 critérios (dor típica e lipase 950 U/L, > 3× o normal), confirmando o diagnóstico sem necessidade de imagem. A alternativa B está incorreta pois NÃO são necessários todos os 3. A alternativa C está incorreta pois a TC não é obrigatória. A alternativa D está incorreta pois a amilase isolada é menos específica e o critério exige elevação ≥ 3×."
+  },
+  {
+    n: 4,
+    enunciado: "Homem, 58 anos, etilista crônico (consumo > 60 g/dia há 25 anos), apresenta icterícia progressiva, aumento do volume abdominal e edema de membros inferiores há 3 semanas. Exame físico: aranhas vasculares em tronco, eritema palmar, ascite moderada, hepatoesplenomegalia. Exames: albumina 2,4 g/dL, bilirrubina total 4,8 mg/dL, INR 1,9, creatinina 1,1 mg/dL. Não apresenta encefalopatia. Considerando a classificação de Child-Pugh, este paciente se enquadra em qual classe?",
+    alternativas: {
+      "A": "Child-Pugh A (5–6 pontos) — doença compensada",
+      "B": "Child-Pugh B (7–9 pontos) — comprometimento funcional moderado",
+      "C": "Child-Pugh A (5–6 pontos) — pois não há encefalopatia",
+      "D": "Child-Pugh C (10–15 pontos) — doença descompensada grave",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — Child-Pugh C. Calculando: albumina 2,4 g/dL = 3 pontos (< 2,8); bilirrubina 4,8 mg/dL = 3 pontos (> 3,0); INR 1,9 = 2 pontos (1,7–2,3); ascite moderada = 2 pontos (moderada/controlada com diuréticos); encefalopatia ausente = 1 ponto. Total: 3+3+2+2+1 = 11 pontos → Child-Pugh C (10–15 pontos). A alternativa A está incorreta (5–6 pontos). A alternativa B está incorreta (7–9 pontos). A alternativa C está incorreta pois a classificação não se baseia apenas na encefalopatia."
+  },
+  {
+    n: 5,
+    enunciado: "Homem, 60 anos, cirrótico por álcool (Child-Pugh C), com ascite volumosa, é internado com febre (38,5 °C), dor abdominal difusa e piora do estado geral. Paracentese diagnóstica: líquido ascítico com 420 células/mm3 (82% polimorfonucleares = 344 PMN/mm3), proteínas 0,8 g/dL, glicose 95 mg/dL, LDH 110 U/L. Cultura do líquido ascítico pendente. Qual é o diagnóstico e a conduta inicial?",
+    alternativas: {
+      "A": "Peritonite secundária — solicitar TC de abdome e encaminhar para cirurgia",
+      "B": "Peritonite bacteriana espontânea — iniciar cefotaxima 2 g IV 8/8h e albumina (1,5 g/kg no D1 e 1,0 g/kg no D3)",
+      "C": "Bacterascite — aguardar resultado da cultura antes de iniciar antibiótico",
+      "D": "Ascite não complicada — ajustar diuréticos e observar clinicamente",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — PBE com cefotaxima + albumina. O diagnóstico de PBE é feito pela contagem de PMN ≥ 250 células/mm³ no líquido ascítico, independentemente do resultado da cultura. Neste caso, PMN = 344/mm³. O tratamento é cefotaxima 2 g IV 8/8h por 5 dias (ou cefalosporina de 3ª geração equivalente). A albumina (1,5 g/kg no D1 e 1,0 g/kg no D3) reduz a mortalidade de 29% para 10% ao prevenir a SHR. A alternativa A está incorreta pois a peritonite secundária apresenta múltiplos germes, proteína > 1 g/dL, glicose < 50 mg/dL e LDH elevada — critérios ausentes aqui. A alternativa C está incorreta pois bacterascite (cultura positiva com PMN < 250) não se aplica aqui, e o tratamento da PBE não deve aguardar cultura. A alternativa D está incorreta pois PMN ≥ 250 já define PBE."
+  },
+  {
+    n: 6,
+    enunciado: "Homem, 35 anos, previamente hígido, apresenta tosse produtiva há 4 semanas, sudorese noturna, perda de 6 kg e febre vespertina. Radiografia de tórax: infiltrado em segmento apical do lobo superior direito com cavitação. Baciloscopia do escarro (BAAR): positiva (++). Anti-HIV negativo. Qual é o esquema terapêutico inicial recomendado para tuberculose pulmonar em adultos (≥ 10 anos)?",
+    alternativas: {
+      "A": "Fase intensiva: rifampicina + isoniazida + pirazinamida + etambutol por 2 meses; fase de manutenção: rifampicina + isoniazida por 4 meses (2RHZE/4RH)",
+      "B": "Rifampicina + isoniazida por 9 meses contínuos",
+      "C": "Fase intensiva: rifampicina + isoniazida + pirazinamida por 2 meses; fase de manutenção: rifampicina + isoniazida por 7 meses (2RHZ/7RH)",
+      "D": "Fase intensiva: rifampicina + isoniazida + pirazinamida + etambutol + estreptomicina por 3 meses",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — 2RHZE/4RH. O esquema básico para TB pulmonar em adultos (≥ 10 anos) é: fase intensiva com RHZE (rifampicina + isoniazida + pirazinamida + etambutol) por 2 meses, seguida de fase de manutenção com RH (rifampicina + isoniazida) por 4 meses — totalizando 6 meses. A lógica das 3 populações bacilares justifica cada droga: R>H para bacilos de crescimento rápido em cavidades; Z>R para bacilos em meio ácido (caseo); Z>R>H para bacilos intramacrofágicos. A alternativa B está incorreta (falta pirazinamida e etambutol na fase intensiva). A alternativa C tem duração excessiva (9 meses). A alternativa D inclui estreptomicina que não faz parte do esquema básico."
+  },
+  {
+    n: 7,
+    enunciado: "Mulher, 45 anos, pós-operatório de 10 dias de artroplastia total de quadril, apresenta dispneia súbita e dor torácica pleurítica. FC 105 bpm, FR 22 irpm, PA 128/80 mmHg, SatO2 93% em ar ambiente. Sem sinais clínicos de TVP, sem hemoptise, sem câncer ativo, sem TEP prévio. Pelo escore de Wells, qual é a probabilidade pré-teste e a conduta diagnóstica inicial mais adequada?",
+    alternativas: {
+      "A": "Probabilidade baixa (< 2 pontos) — aplicar critérios PERC para exclusão",
+      "B": "Probabilidade alta (> 6 pontos) — solicitar angiotomografia de tórax (CTPA) diretamente",
+      "C": "Probabilidade intermediária (2–6 pontos: imobilização 1,5 + FC > 100 = 1,5 + TEP mais provável 3 = 6 pontos) — solicitar D-dímero",
+      "D": "Probabilidade baixa — nenhum critério de Wells preenchido, alta hospitalar",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Probabilidade intermediária, solicitar D-dímero. Pelo escore de Wells: imobilização recente (pós-op) = 1,5 ponto; FC > 100 = 1,5 ponto; TEP como diagnóstico mais provável = 3 pontos. Total: 6 pontos (Wells padrão 2–6 = intermediário; Wells modificado > 4 = provável). Sem outros critérios (TVP −, hemoptise −, câncer −, TEP prévio −). Na probabilidade intermediária, o D-dímero pode ser utilizado como teste de exclusão. Se negativo (ou ajustado pela idade), exclui TEP. Se positivo, segue-se com CTPA. A alternativa A está incorreta (pontuação não é < 2). A alternativa B está incorreta pois 6 pontos no Wells padrão não indica probabilidade alta (> 6 seria alta). A alternativa D está incorreta pois há critérios preenchidos."
+  },
+  {
+    n: 8,
+    enunciado: "Homem, 22 anos, portador de diabetes mellitus tipo 1, é trazido ao pronto-socorro com náuseas, vômitos, dor abdominal difusa e rebaixamento do nível de consciência há 12 horas. Faz uso regular de insulina glargina e lispro. Exame físico: desidratado (3+/4+), PA 90×60 mmHg, FC 118 bpm, FR 32 irpm com respiração de Kussmaul, temperatura 36,2 °C. Exames: glicemia 480 mg/dL, pH arterial 7,12, bicarbonato 8 mEq/L, cetonemia fortemente positiva, potássio 5,8 mEq/L, sódio 131 mEq/L, creatinina 1,9 mg/dL. Qual é a conduta inicial mais adequada?",
+    alternativas: {
+      "A": "Administrar bicarbonato de sódio intravenoso imediatamente",
+      "B": "Iniciar insulina regular em bolus intravenoso e manter infusão contínua",
+      "C": "Administrar insulina subcutânea de ação rápida e hidratação oral",
+      "D": "Iniciar reposição volêmica com solução salina 0,9% e postergar insulina até potássio < 5,3 mEq/L",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — Hidratação com SF 0,9% e postergar insulina até K < 5,3 mEq/L. O paciente apresenta cetoacidose diabética (CAD) grave: glicemia > 250, pH < 7,3, bicarbonato < 18, cetonemia positiva. A conduta inicial é: (1) reposição volêmica agressiva com SF 0,9%; (2) a insulina deve ser iniciada APÓS garantir que o potássio seja < 5,3 mEq/L, pois a insulina causa influxo celular de K+ e pode precipitar arritmias por hipocalemia. Com K+ = 5,8 mEq/L, a insulina deve ser postergada. A alternativa A está incorreta pois o bicarbonato IV só é indicado se pH < 6,9. A alternativa B está incorreta pois não se deve iniciar insulina com K > 5,3. A alternativa C está incorreta pois a via subcutânea e a hidratação oral são inadequadas na CAD grave."
+  },
+  {
+    n: 9,
+    enunciado: "Mulher, 55 anos, encaminhada ao ambulatório após identificação de anti-HCV reagente em triagem sorológica. Nega uso de drogas injetáveis, mas relata hemotransfusão em 1988 após acidente automobilístico. Assintomática, exame físico sem estigmas de hepatopatia crônica. AST 48 U/L, ALT 62 U/L, bilirrubinas normais, INR 1,0, plaquetas 195.000/mm3. Para confirmar a presença de infecção ativa pelo vírus da hepatite C, qual exame deve ser solicitado?",
+    alternativas: {
+      "A": "HCV-RNA (carga viral) por PCR",
+      "B": "Repetição do anti-HCV em nova amostra",
+      "C": "Genotipagem do HCV",
+      "D": "Biópsia hepática com pesquisa de antígenos virais",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — HCV-RNA por PCR. O anti-HCV é um teste de triagem que indica contato prévio com o vírus, mas não diferencia infecção ativa de infecção resolvida. Até 15–50% dos pacientes com anti-HCV positivo podem ter clearance espontâneo do vírus. A confirmação de infecção ativa requer a detecção do HCV-RNA (carga viral) por PCR. A alternativa B está incorreta pois repetir o anti-HCV não confirma infecção ativa. A alternativa C (genotipagem) é indicada após confirmação da infecção, para guiar o tratamento. A alternativa D está incorreta pois biópsia não é utilizada para diagnóstico etiológico."
+  },
+  {
+    n: 10,
+    enunciado: "Homem, 52 anos, etilista crônico, é internado com pancreatite aguda. Nas primeiras 24 horas, apresenta: FC 108 bpm, FR 24 irpm, temperatura 38,4 °C, leucócitos 16.800/mm3. PA 100×65 mmHg, débito urinário 0,4 mL/kg/h. Amilase 1.200 U/L, lipase 2.800 U/L. TC de abdome na admissão sem evidências de necrose. Qual é o melhor preditor de gravidade nas primeiras 48 horas de pancreatite aguda?",
+    alternativas: {
+      "A": "Nível sérico de lipase, pois quanto mais elevado, maior a gravidade",
+      "B": "Presença de SIRS persistente (> 48 horas)",
+      "C": "Escore de Ranson calculado na admissão",
+      "D": "Achados tomográficos de necrose pancreática na admissão",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — SIRS persistente (> 48h). O melhor preditor de gravidade na pancreatite aguda é a presença de SIRS persistente (> 48 horas), definida por ≥ 2 critérios: FC > 90, FR > 20, T > 38°C ou < 36°C, leucócitos > 12.000 ou < 4.000. O paciente preenche SIRS (FC 108, FR 24, T 38,4°C, leucócitos 16.800). A alternativa A está incorreta pois o nível de lipase NÃO se correlaciona com a gravidade — essa é uma armadilha clássica de prova. A alternativa C está incorreta pois o Ranson necessita de 48h para ser completado e é inferior à SIRS persistente. A alternativa D está incorreta pois a TC na admissão pode subestimar a necrose, que se desenvolve tipicamente após 48–72 horas."
+  },
+  {
+    n: 11,
+    enunciado: "Homem, 62 anos, portador de cirrose hepática por hepatite C (Child-Pugh B), é trazido ao pronto-socorro pela família com confusão mental, inversão do ciclo sono-vigília e flapping (asterixis) há 2 dias. Não apresenta febre. A família relata que o paciente iniciou uso de furosemida por conta própria na semana anterior. Sobre o tratamento da encefalopatia hepática neste paciente, qual é a conduta CORRETA?",
+    alternativas: {
+      "A": "Restrição proteica rigorosa (< 0,5 g/kg/dia) para reduzir a produção de amônia",
+      "B": "Lactulose em dose única, seguida de neomicina oral por 14 dias",
+      "C": "Lactulose 25–45 mL, 2–3×/dia (meta: 2–3 evacuações pastosas/dia) associada a rifaximina 550 mg 12/12h, com aporte proteico de 1,2–1,5 g/kg/dia",
+      "D": "Transplante hepático de urgência, pois a encefalopatia grau 2 indica falência hepática irreversível",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Lactulose + rifaximina + proteína 1,2–1,5 g/kg/dia. O tratamento da encefalopatia hepática inclui: lactulose 25–45 mL 2–3×/dia com meta de 2–3 evacuações pastosas/dia (primeira linha), associada a rifaximina 550 mg 12/12h (NNT = 4 para prevenção de recorrência). A proteína NÃO deve ser restrita — recomenda-se 1,2–1,5 g/kg/dia, pois a restrição proteica piora a sarcopenia e o prognóstico. O precipitante deve ser identificado e tratado (neste caso, uso de diuréticos por conta própria). A alternativa A está incorreta pois a restrição proteica é prejudicial. A alternativa B está incorreta pois neomicina tem toxicidade (oto e nefrotoxicidade) e não é primeira escolha. A alternativa D está incorreta pois encefalopatia grau 2 não indica transplante de urgência."
+  },
+  {
+    n: 12,
+    enunciado: "Mulher, 58 anos, portadora de cirrose hepática compensada (Child-Pugh",
+    alternativas: {
+      "A": "Paracentese de grande volume com reposição de albumina",
+      "B": "Furosemida 80 mg/dia isoladamente",
+      "C": "TIPS eletiva como tratamento de primeira linha",
+      "D": "Restrição de sódio (2 g/dia) associada a espironolactona 100 mg/dia, podendo associar furosemida 40 mg/dia",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — Restrição de sódio + espironolactona ± furosemida. A ascite grau 2 (moderada) é tratada com: restrição de sódio a 2 g/dia + espironolactona (dose inicial 100 mg/dia, máxima 400 mg/dia), podendo associar furosemida (40 mg/dia, máxima 160 mg/dia) na proporção 100:40. Meta de perda ponderal: 0,5 kg/dia sem edema periférico ou até 1 kg/dia com edema. A alternativa A está incorreta pois paracentese de grande volume é para ascite grau 3 (tensa). A alternativa B está incorreta pois furosemida isolada causa mais distúrbios eletrolíticos. A alternativa C está incorreta pois TIPS não é primeira linha."
+  },
+  {
+    n: 13,
+    enunciado: "Mulher, 42 anos, com tosse produtiva há 3 semanas, febre e emagrecimento. Baciloscopia do escarro negativa. Radiografia de tórax com opacidade heterogênea no lobo superior esquerdo. Anti-HIV negativo. O médico decide solicitar o teste rápido molecular para tuberculose (TRM-TB / GeneXpert). Sobre o TRM-TB, assinale a alternativa CORRETA:",
+    alternativas: {
+      "A": "Possui sensibilidade de aproximadamente 90% em adultos e detecta simultaneamente resistência à rifampicina",
+      "B": "Possui sensibilidade de 99% e substitui completamente a necessidade de cultura",
+      "C": "Detecta resistência a isoniazida e rifampicina simultaneamente",
+      "D": "Deve ser realizado apenas em pacientes HIV-positivos com baciloscopia negativa",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — Sensibilidade ~90% em adultos e detecta resistência à rifampicina. O TRM-TB (GeneXpert MTB/RIF) é um teste molecular automatizado que detecta DNA do M. tuberculosis e mutações no gene rpoB (resistência à rifampicina) em 2 horas. Sensibilidade: ~90% em adultos e ~66% em crianças. A alternativa B está incorreta pois a sensibilidade não é 99% e a cultura continua necessária para teste de sensibilidade completo e para casos com TRM-TB negativo. A alternativa C está incorreta pois detecta apenas resistência à rifampicina, não à isoniazida. A alternativa D está incorreta pois o TRM-TB é indicado para todos os pacientes com suspeita de TB, não apenas HIV-positivos."
+  },
+  {
+    n: 14,
+    enunciado: "Homem, 58 anos, diagnosticado com TEP agudo sintomático, Categoria B pelo sistema de classificação AHA/ACC 2026 (sPESI = 0, sem disfunção de VD ou elevação de biomarcadores). Função renal preservada (ClCr 85 mL/min). Sem contraindicação à anticoagulação. Sobre a terapia anticoagulante, qual é a recomendação de primeira linha?",
+    alternativas: {
+      "A": "Heparina não fracionada (HNF) intravenosa seguida de antagonista de vitamina K (AVK)",
+      "B": "Anticoagulante oral direto (DOAC), que é preferido sobre o AVK (Classe 1)",
+      "C": "Heparina de baixo peso molecular (HBPM) subcutânea isoladamente por 6 meses",
+      "D": "Fondaparinux subcutâneo seguido de AVK com meta de INR 2–3",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — DOAC preferido sobre AVK (Classe 1). A diretriz AHA/ACC 2026 recomenda DOAC sobre AVK como anticoagulante oral de primeira linha no TEP agudo (Classe 1, NE B-R). O tratamento segue 3 fases: iniciação (7–21 dias com dose aumentada ou anticoagulação parenteral), inicial (3–6 meses) e estendida. Também se recomenda HBPM sobre HNF como anticoagulação parenteral (Classe 1). A alternativa A está incorreta pois HNF + AVK não é a primeira escolha. A alternativa C está incorreta pois HBPM isolada por 6 meses não é o padrão. A alternativa D está incorreta pois DOAC é preferido sobre fondaparinux + AVK."
+  },
+  {
+    n: 15,
+    enunciado: "Homem, 78 anos, portador de diabetes mellitus tipo 2 há 20 anos, hipertensão arterial e doença renal crônica estágio 3b (TFG 38 mL/min). Apresenta histórico de dois episódios de hipoglicemia grave nos últimos 6 meses (nível 3, com necessidade de assistência de terceiros). Faz uso de insulina NPH 30 UI ao deitar e glimepirida 4 mg/dia. HbA1c atual: 6,4%. Segundo as diretrizes da ADA 2026, qual é a meta de HbA1c mais adequada para este paciente?",
+    alternativas: {
+      "A": "< 6,5%, mantendo o tratamento atual para controle intensivo",
+      "B": "< 7,0%, padrão recomendado para a maioria dos adultos com DM2",
+      "C": "< 7,5%, meta intermediária para pacientes com doença renal crônica",
+      "D": "< 8,0%, com simplificação do esquema terapêutico para reduzir hipoglicemias",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — HbA1c < 8% com simplificação do esquema. A ADA 2026 recomenda metas individualizadas. Para pacientes idosos com comorbidades significativas, doença renal crônica avançada, hipoglicemias graves recorrentes e expectativa de vida limitada, a meta de HbA1c é < 8%. Este paciente tem 78 anos, DRC estágio 3b, e hipoglicemias graves de repetição (nível 3). O esquema deve ser simplificado (suspender sulfonilureia, ajustar insulina). A alternativa A está incorreta (meta muito rigorosa para este perfil). A alternativa B está incorreta (meta padrão, mas inapropriada aqui). A alternativa C não corresponde a nenhuma meta formal da ADA."
+  },
+  {
+    n: 16,
+    enunciado: "Criança, 6 anos, previamente hígida, apresenta febre, mal-estar, icterícia e colúria há 5 dias. A mãe relata que três colegas da escola apresentaram quadro semelhante nas últimas semanas. Exame físico: ictérica (2+/4+), hepatomegalia discreta e dolorosa. Exames: AST 980 U/L, ALT 1.120 U/L, bilirrubina total 5,8 mg/dL (direta 4,2 mg/dL). IgM anti-HAV reagente. Sobre esta doença, qual afirmativa é CORRETA?",
+    alternativas: {
+      "A": "A cronificação ocorre em até 10% dos casos em crianças",
+      "B": "A principal via de transmissão é percutânea, por contato com sangue contaminado",
+      "C": "Não há evolução para hepatite crônica, independentemente da faixa etária",
+      "D": "O diagnóstico é confirmado pela presença de IgG anti-HAV isolado na fase aguda",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Não cronifica, independentemente da idade. A hepatite A é causada pelo HAV (RNA Picornaviridae), transmitido pela via fecal-oral. É uma hepatite autolimitada que NUNCA evolui para forma crônica, independentemente da faixa etária. O diagnóstico na fase aguda é confirmado pela presença de IgM anti-HAV. A alternativa A está incorreta pois a hepatite A não cronifica. A alternativa B está incorreta pois a via de transmissão é fecal-oral, não percutânea. A alternativa D está incorreta pois o IgG anti-HAV isolado indica imunidade, não fase aguda (na fase aguda, o IgM anti-HAV está presente)."
+  },
+  {
+    n: 17,
+    enunciado: "Mulher, 38 anos, internada há 18 dias com pancreatite aguda necrotizante de etiologia biliar. Evoluiu com febre persistente (38,8 °C), leucocitose (22.000/mm3) e piora clínica a partir do 14° dia. TC de abdome com contraste evidencia coleção heterogênea peripancreática com paredes espessas e presença de gás em seu interior. Segundo a classificação de Atlanta revisada (2012), qual é o diagnóstico desta complicação local?",
+    alternativas: {
+      "A": "Necrose encapsulada (walled-off necrosis — WON) infectada",
+      "B": "Pseudocisto pancreático infectado",
+      "C": "Coleção necrótica aguda (acute necrotic collection — ANC)",
+      "D": "Coleção peripancreática aguda (acute peripancreatic fluid collection — APFC)",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — Necrose encapsulada (WON) infectada. Pela classificação de Atlanta revisada (2012), as complicações locais são classificadas pelo tempo e pelo conteúdo: até 4 semanas — APFC (sem necrose) ou ANC (com necrose); após 4 semanas — pseudocisto (sem necrose, parede definida) ou WON (com necrose encapsulada). Neste caso: 18 dias (> 4 semanas de evolução da doença considerando o tempo desde o início), coleção heterogênea com paredes espessas e gás = WON infectada. A presença de gás e as paredes definidas (encapsulação) após > 4 semanas são típicas. A alternativa B está incorreta pois pseudocisto contém líquido homogêneo sem necrose. A alternativa C está incorreta pois ANC ocorre nas primeiras 4 semanas e não tem encapsulação. A alternativa D está incorreta pois APFC não contém necrose."
+  },
+  {
+    n: 18,
+    enunciado: "Mulher, 55 anos, portadora de cirrose hepática por MASLD (Child-Pugh",
+    alternativas: {
+      "A": "Ligadura elástica das varizes associada a propranolol",
+      "B": "Betabloqueador não seletivo (carvedilol 6,25–12,5 mg/dia) OU ligadura elástica endoscópica",
+      "C": "TIPS eletiva para redução da pressão portal",
+      "D": "Observação clínica com endoscopia de controle anual, sem tratamento",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — BBNS ou ligadura (não combinar para profilaxia primária). Para profilaxia primária de hemorragia varicosa, as opções são betabloqueador não seletivo (carvedilol é o preferido, 6,25–12,5 mg/dia — estudo PREDESCI: HR 0,51) OU ligadura elástica endoscópica. As duas opções NÃO devem ser combinadas na profilaxia primária (a combinação é reservada para profilaxia secundária). A alternativa A está incorreta pois não se combina ligadura + BBNS na profilaxia primária. A alternativa C está incorreta pois TIPS eletiva não é indicada para profilaxia primária. A alternativa D está incorreta pois observação sem tratamento não é adequada para varizes de médio/grosso calibre."
+  },
+  {
+    n: 19,
+    enunciado: "Homem, 55 anos, cirrótico por álcool (Child-Pugh B), é admitido no pronto-socorro com hematêmese volumosa e instabilidade hemodinâmica (PA 80×50 mmHg, FC 128 bpm). Endoscopia digestiva alta de 6 meses atrás mostrava varizes esofágicas de grosso calibre. Hb na admissão: 7,2 g/dL. Sobre o manejo da hemorragia varicosa aguda, qual é o conjunto de medidas iniciais recomendado?",
+    alternativas: {
+      "A": "Transfusão de concentrado de hemácias para Hb-alvo > 10 g/dL, seguida de TIPS de urgência",
+      "B": "Somatostatina em bolus + endoscopia imediata + omissão de antibiótico até resultado de culturas",
+      "C": "Droga vasoativa (octreotida/terlipressina), endoscopia em até 12h, antibioticoprofilaxia (ceftriaxona por 7 dias) e transfusão com alvo de Hb 7–8 g/dL",
+      "D": "Balão de Sengstaken-Blakemore como primeira medida, seguido de cirurgia de derivação portossistêmica",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Vasoativo + EDA em 12h + ceftriaxona 7d + alvo Hb 7–8. O manejo da hemorragia varicosa aguda segue 5 pilares: (1) ressuscitação com alvo de Hb 7–8 g/dL (transfusão restritiva); (2) droga vasoativa (octreotida ou terlipressina) iniciada antes da endoscopia; (3) antibioticoprofilaxia com ceftriaxona 1 g/dia IV por 7 dias; (4) endoscopia terapêutica (ligadura) em até 12 horas; (5) considerar TIPS preemptiva em pacientes de alto risco. A alternativa A está incorreta pois Hb-alvo > 10 aumenta risco de ressangramento. A alternativa B está incorreta pois o antibiótico é obrigatório desde a admissão. A alternativa D está incorreta pois balão de Sengstaken é medida de resgate, não primeira linha."
+  },
+  {
+    n: 20,
+    enunciado: "Homem, 30 anos, HIV negativo, apresenta dor torácica pleurítica à esquerda, tosse seca e febre há 15 dias. Radiografia de tórax: derrame pleural à esquerda de moderado volume. Toracocentese diagnóstica: líquido amarelo-citrino, exsudato (proteínas 5,2 g/dL, relação proteína líquido/sérica > 0,5), predomínio linfocitário (92% linfócitos), glicose 55 mg/dL, ADA 78 U/L (referência: > 40 U/L sugestivo de TB). BAAR no líquido pleural negativo. Qual é o diagnóstico mais provável?",
+    alternativas: {
+      "A": "Derrame pleural parapneumônico complicado",
+      "B": "Mesotelioma pleural maligno",
+      "C": "Empiema pleural por Staphylococcus aureus",
+      "D": "Tuberculose pleural",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — Tuberculose pleural. O quadro clínico (jovem, febre, dor pleurítica) com líquido pleural exsudativo, predomínio linfocitário e ADA > 40 U/L (78 U/L) é altamente sugestivo de tuberculose pleural. A ADA > 40 U/L tem sensibilidade de 93% e especificidade de 97% para TB pleural. O BAAR no líquido pleural frequentemente é negativo (baixa sensibilidade na TB pleural). A alternativa A está incorreta pois o derrame parapneumônico tem predomínio de PMN. A alternativa B está incorreta pois mesotelioma tem apresentação mais insidiosa e ADA geralmente normal. A alternativa C está incorreta pois empiema por S. aureus teria aspecto purulento com predomínio de PMN."
+  },
+  {
+    n: 21,
+    enunciado: "Homem, 62 anos, apresenta dispneia há 2 dias e dor em panturrilha direita. Sem hemoptise, sem câncer ativo, sem cirurgia recente, sem TEP prévio, sem TVP clínica. FC 88 bpm, PA 135/82 mmHg, SatO2 96%. Escore de Wells simplificado: TEP não é o diagnóstico mais provável (< 4 pontos). D-dímero solicitado: 620 ng/mL (referência padrão < 500 ng/mL). Considerando o ajuste do D-dímero pela idade segundo a diretriz AHA/ACC 2026, como interpretar este resultado?",
+    alternativas: {
+      "A": "D-dímero normal para a idade (ponto de corte ajustado: idade × 10 = 620 ng/mL), TEP excluído",
+      "B": "D-dímero elevado, prosseguir com CTPA independentemente da idade",
+      "C": "O ajuste por idade não é recomendado pela diretriz AHA/ACC 2026",
+      "D": "D-dímero inconclusivo — repetir em 24 horas para confirmar",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — D-dímero normal para a idade, TEP excluído. A diretriz AHA/ACC 2026 recomenda o ajuste do D-dímero pela idade em pacientes > 50 anos com probabilidade pré-teste baixa ou intermediária: ponto de corte = idade × 10 ng/mL. Para 62 anos: 62 × 10 = 620 ng/mL. O resultado de 620 ng/mL está no limite do corte ajustado, portanto é considerado normal → TEP excluído sem necessidade de imagem. Essa estratégia aumenta a especificidade sem comprometer a sensibilidade. A alternativa B está incorreta pois o ajuste pela idade é recomendado. A alternativa C está incorreta pois a diretriz AHA/ACC 2026 explicitamente recomenda o ajuste. A alternativa D está incorreta pois não se repete D-dímero."
+  },
+  {
+    n: 22,
+    enunciado: "Mulher, 52 anos, portadora de diabetes mellitus tipo 2 e obesidade (IMC 36 kg/m2), procura atendimento com queixa de fadiga. Exames laboratoriais revelam: HbA1c 7,8%, AST 68 U/L, ALT 82 U/L, GGT 95 U/L, plaquetas 180.000/mm3. Ultrassonografia abdominal mostra esteatose hepática moderada. O índice FIB-4 calculado é de 2,8 (valor de referência: < 1,3 baixo risco; ≥ 2,67 alto risco de fibrose avançada). Sorologias para hepatites B e C são negativas. Considerando o diagnóstico de MASLD/MASH com fibrose avançada segundo a ADA 2026, qual medicamento, além do controle glicêmico, possui evidência de benefício hepático nesta condição?",
+    alternativas: {
+      "A": "Pioglitazona",
+      "B": "Empagliflozina",
+      "C": "Semaglutida",
+      "D": "Metformina",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Semaglutida. A ADA 2026 destaca a semaglutida (agonista do receptor de GLP-1) como medicamento com evidência de benefício hepático na MASLD/MASH. O FIB-4 ≥ 2,67 indica alto risco de fibrose avançada. A semaglutida demonstrou melhora histológica da NASH e redução da fibrose em ensaios clínicos, além de benefícios no peso e controle glicêmico. A alternativa A (pioglitazona) tem evidência limitada e efeitos colaterais relevantes (ganho ponderal, retenção hídrica). A alternativa B (empagliflozina) não tem a mesma evidência na MASH. A alternativa D (metformina) não demonstrou benefício histológico hepático."
+  },
+  {
+    n: 23,
+    enunciado: "Homem, 28 anos, procura atendimento com icterícia e astenia há 10 dias. Refere relação sexual desprotegida há 3 meses. Exames: AST 320 U/L, ALT 480 U/L, bilirrubina total 4,5 mg/dL. Sorologias: HBsAg negativo, anti-HBc total positivo (IgM anti-HBc positivo), anti-HBs negativo. Qual é a interpretação mais provável deste perfil sorológico?",
+    alternativas: {
+      "A": "Hepatite B crônica em fase de baixa replicação viral",
+      "B": "Hepatite B aguda em janela imunológica",
+      "C": "Imunidade natural prévia por infecção resolvida",
+      "D": "Resultado falso-positivo do anti-HBc, devendo-se repetir os exames",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — Hepatite B aguda em janela imunológica. A janela imunológica é o período entre o desaparecimento do HBsAg e o aparecimento do anti-HBs. Nesta fase, o único marcador sorológico positivo pode ser o anti-HBc (IgM positivo na fase aguda). O perfil: HBsAg negativo + anti-HBc IgM positivo + anti-HBs negativo é patognomônico da janela imunológica de hepatite B aguda. A alternativa A está incorreta pois na fase de baixa replicação o HBsAg estaria positivo. A alternativa C está incorreta pois na imunidade natural o anti-HBs estaria positivo e o anti-HBc IgM negativo. A alternativa D está incorreta pois o quadro clínico compatível + anti-HBc IgM positivo confirma o diagnóstico."
+  },
+  {
+    n: 24,
+    enunciado: "Homem, 60 anos, internado com pancreatite aguda necrotizante estéril, confirmada por TC de abdome com contraste no 7° dia de internação. Apresenta febre baixa (37,8 °C), leucócitos 13.500/mm3 e PCR 180 mg/L. Hemocultura negativa. A equipe médica discute a necessidade de antibioticoterapia profilática para prevenir infecção da necrose pancreática. Qual é a conduta recomendada?",
+    alternativas: {
+      "A": "Iniciar carbapenêmico (imipenem) profilático por 14 dias",
+      "B": "Iniciar ciprofloxacino associado a metronidazol",
+      "C": "Realizar punção aspirativa guiada por TC para cultura antes de iniciar antibiótico",
+      "D": "Antibióticos profiláticos NÃO estão indicados na necrose estéril",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — Antibióticos profiláticos NÃO estão indicados na necrose estéril. As diretrizes atuais não recomendam antibioticoterapia profilática na necrose pancreática estéril. Metanálises e estudos randomizados demonstraram que antibióticos profiláticos não reduzem a infecção da necrose, a necessidade de intervenção cirúrgica ou a mortalidade, mas aumentam o risco de resistência bacteriana e infecção fúngica. A alternativa A está incorreta pois não se indica carbapenêmico profilático. A alternativa B está incorreta pelo mesmo motivo. A alternativa C está incorreta pois a punção aspirativa para cultura não é indicada de rotina na necrose estéril."
+  },
+  {
+    n: 25,
+    enunciado: "Homem, 55 anos, cirrótico por hepatite C (Child-Pugh C), apresenta piora progressiva da função renal. Creatinina basal: 0,9 mg/dL há 3 meses; creatinina atual: 2,8 mg/dL. Diuréticos foram suspensos e realizada expansão volêmica com albumina 1 g/kg/dia por 2 dias sem resposta. Urina I sem alterações, ultrassonografia renal normal. Excluídas causas pré-renais (desidratação), renais intrínsecas (nefrotóxicos) e pós-renais (obstrução). Qual é o tratamento de primeira linha para a síndrome hepatorrenal tipo AKI (SHR-AKI)?",
+    alternativas: {
+      "A": "Terlipressina associada a albumina intravenosa",
+      "B": "Hemodiálise de urgência",
+      "C": "Noradrenalina em infusão contínua isoladamente",
+      "D": "Reposição volêmica com cristaloides em doses maiores",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — Terlipressina + albumina. O tratamento de primeira linha da SHR-AKI é terlipressina (análogo da vasopressina) 1 mg IV 4–6h associada a albumina 20–40 g/dia. O estudo CONFIRM (n=300) demonstrou resposta ao tratamento em 32% vs 17% com placebo. A noradrenalina é uma alternativa quando terlipressina não está disponível. A alternativa B está incorreta pois a hemodiálise não trata a causa. A alternativa C está incorreta pois noradrenalina isolada (sem albumina) não é a primeira escolha. A alternativa D está incorreta pois a expansão com albumina já foi tentada sem resposta — o critério diagnóstico de SHR-AKI exige ausência de resposta à expansão."
+  },
+  {
+    n: 26,
+    enunciado: "Mulher, 63 anos, portadora de cirrose hepática (Child-Pugh C), com ascite refratária em uso de espironolactona e furosemida em dose máxima. Exames: sódio sérico 122 mEq/L, osmolaridade sérica 258 mOsm/kg, osmolaridade urinária 320 mOsm/kg, sódio urinário 35 mEq/L. Paciente consciente, sem sintomas neurológicos. Sobre a hiponatremia neste contexto, qual é a conduta mais adequada?",
+    alternativas: {
+      "A": "Administração de solução salina hipertônica 3% em infusão rápida",
+      "B": "Restrição hídrica e suspensão ou redução dos diuréticos",
+      "C": "Demeclocidina oral para bloquear o efeito do ADH",
+      "D": "Correção imediata do sódio em 15 mEq/L nas primeiras 24 horas",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — Restrição hídrica e ajuste de diuréticos. A hiponatremia na cirrose é tipicamente dilucional (hipervolêmica/hipotônica), causada por excesso de ADH estimulado pela redução do volume arterial efetivo. O sódio urinário > 30 mEq/L com osmolaridade urinária > osmolaridade sérica confirma o mecanismo. O manejo inicial inclui: restrição hídrica (< 1–1,5 L/dia) e suspensão ou redução dos diuréticos (que podem agravar a hiponatremia). A alternativa A está incorreta pois salina hipertônica só está indicada em hiponatremia grave com sintomas neurológicos agudos. A alternativa C está incorreta pois demeclocidina não é recomendada rotineiramente. A alternativa D está incorreta pois a correção máxima deve ser ≤ 8 mEq/L em 24h para evitar mielinólise pontina."
+  },
+  {
+    n: 27,
+    enunciado: "Homem, 38 anos, diagnosticado com tuberculose pulmonar e HIV (CD4: 42 células/mm3, carga viral 180.000 cópias/mL). Iniciou o tratamento para TB com RHZE. A equipe discute o momento ideal para iniciar a terapia antirretroviral (TARV). De acordo com as recomendações, quando a TARV deve ser iniciada?",
+    alternativas: {
+      "A": "Simultaneamente ao início do tratamento para TB",
+      "B": "Após o término completo do tratamento para TB (6 meses)",
+      "C": "Na 8ª semana de tratamento para TB, independentemente do CD4",
+      "D": "Nas primeiras 2 semanas de tratamento para TB, pois CD4 < 50 células/mm3",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — Nas primeiras 2 semanas, pois CD4 < 50. Em pacientes com coinfecção TB-HIV, o momento de início da TARV depende do CD4: CD4 < 50 células/mm³ → TARV nas primeiras 2 semanas de tratamento para TB; CD4 ≥ 50 células/mm³ → TARV na 8ª semana. O início precoce reduz mortalidade em pacientes muito imunossuprimidos, apesar do risco de síndrome inflamatória da reconstituição imune (SIR), que ocorre em 8–43% dos casos. A alternativa A está incorreta pois o início simultâneo aumenta efeitos adversos e interações sem benefício adicional. A alternativa B está incorreta pois esperar 6 meses é inadequado em pacientes com CD4 tão baixo. A alternativa C está incorreta pois o momento depende do CD4."
+  },
+  {
+    n: 28,
+    enunciado: "Mulher, 50 anos, diagnosticada com TEP agudo por CTPA. Apresenta dispneia, FC 112 bpm, PA 105/68 mmHg (estável), SatO2 91% em ar ambiente. Ecocardiograma: VD/VE 1,2 (dilatação de VD), TAPSE 1,4 cm. Troponina I 0,85 ng/mL (elevada), BNP 380 pg/mL (elevado). PESI 95 pontos (classe III). Sem hipotensão sustentada. De acordo com o sistema de Categorias Clínicas AHA/ACC 2026, qual é a classificação desta paciente?",
+    alternativas: {
+      "A": "Categoria B — escore baixo, sem marcadores de gravidade",
+      "B": "Categoria D1 — falência cardiopulmonar incipiente",
+      "C": "Categoria C3 — escore elevado com disfunção de VD E biomarcador anormal, acrescido de modificador R (respiratório)",
+      "D": "Categoria E1 — choque cardiogênico estabelecido",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Categoria C3 com modificador R. Pelo sistema AHA/ACC 2026: paciente sintomática com PESI > 85 (escore elevado) → Categorias C. VD dilatado (VD/VE ≥ 1,0 = disfunção de VD) E biomarcadores anormais (troponina + BNP elevados) → C3. A SatOI 91% necessitando de suplementação configura o modificador R (respiratório). Sem hipotensão sustentada, portanto não é categoria D ou E. A alternativa A está incorreta (PESI > 85 exclui Categoria B). A alternativa B está incorreta pois D1 requer hipotensão transitória. A alternativa D está incorreta pois E1 requer choque cardiogênico estabelecido."
+  },
+  {
+    n: 29,
+    enunciado: "Mulher, 35 anos, assintomática, IMC 33 kg/m2, com antecedente de diabetes gestacional na última gravidez há 2 anos. Exames laboratoriais: glicemia de jejum 112 mg/dL, HbA1c 6,0%, TOTG 75 g com glicemia de 2 horas de 155 mg/dL. Exame físico sem alterações relevantes. De acordo com as recomendações da ADA 2026 para prevenção de diabetes mellitus tipo 2 em pacientes com pré-diabetes, qual intervenção farmacológica pode ser considerada?",
+    alternativas: {
+      "A": "Metformina",
+      "B": "Acarbose",
+      "C": "Semaglutida",
+      "D": "Insulina glargina em dose baixa",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — Metformina. A ADA 2026 recomenda metformina como opção farmacológica para prevenção de DM2 em pacientes com pré-diabetes, especialmente em indivíduos com IMC ≥ 35 kg/m², idade < 60 anos e mulheres com história de diabetes gestacional. Esta paciente preenche múltiplos critérios (IMC 33, idade 35, diabetes gestacional prévia). A alternativa B (acarbose) tem evidência limitada e não é recomendação primária. A alternativa C (semaglutida) não está indicada para prevenção primária de DM2. A alternativa D (insulina) não está indicada para pré-diabetes."
+  },
+  {
+    n: 30,
+    enunciado: "Recém-nascido de mãe portadora de hepatite B crônica (HBsAg positivo, HBeAg positivo, HBV-DNA > 200.000 UI/mL) recebeu imunoglobulina anti-hepatite B (HBIG) e primeira dose da vacina nas primeiras 12 horas de vida. Apesar dessas medidas, o pediatra explica aos pais que a transmissão vertical do HBV pode ter consequências particularmente graves. Qual é a taxa de cronificação da hepatite B quando a infecção ocorre no período perinatal?",
+    alternativas: {
+      "A": "Inferior a 5%, semelhante à infecção adquirida na vida adulta",
+      "B": "Aproximadamente 90%, devido à imaturidade imunológica neonatal",
+      "C": "Em torno de 30–50%, com risco intermediário entre neonatos e adultos",
+      "D": "100% dos casos evoluem para cirrose hepática em 10 anos",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — Aproximadamente 90%. A taxa de cronificação da hepatite B depende fundamentalmente da idade na infecção: infecção perinatal → ~90% de cronificação (devido à imaturidade imunológica); infecção na infância (1–5 anos) → 20–30%; infecção em adultos → < 5%. A imunotolerância do sistema imune neonatal ao HBV é o mecanismo principal. A alternativa A está incorreta (< 5% é a taxa em adultos). A alternativa C está incorreta (30–50% não é a taxa perinatal). A alternativa D está incorreta pois nem todos evoluem para cirrose, e a taxa de cronificação não é 100%."
+  },
+  {
+    n: 31,
+    enunciado: "Mulher, 42 anos, apresentou pancreatite aguda leve de etiologia biliar confirmada por ultrassonografia (cálculos na vesícula biliar, colédoco de calibre normal). Evoluiu sem complicações, com melhora da dor e normalização das enzimas pancreáticas no 4° dia de internação. Dieta oral reintroduzida com boa tolerância. A paciente pergunta quando deverá realizar a colecistectomia. Qual é a recomendação?",
+    alternativas: {
+      "A": "Colecistectomia eletiva ambulatorial em 4 a 6 semanas após a alta",
+      "B": "Colecistectomia deve ser adiada por pelo menos 3 meses",
+      "C": "Colecistectomia na mesma internação, antes da alta hospitalar",
+      "D": "Colecistectomia somente se houver novo episódio de pancreatite",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Colecistectomia na mesma internação. Na pancreatite aguda biliar leve, a colecistectomia deve ser realizada na mesma internação, antes da alta hospitalar. O adiamento da colecistectomia está associado a risco de recorrência de eventos biliares (pancreatite, colecistite, coledocolitíase) de até 18% em 6 semanas. A alternativa A está incorreta pois o adiamento para 4–6 semanas aumenta o risco de recorrência. A alternativa B está incorreta (3 meses é muito tardio para PA leve). A alternativa D está incorreta pois não se deve esperar recorrência."
+  },
+  {
+    n: 32,
+    enunciado: "Mulher, 60 anos, portadora de cirrose hepática compensada, será submetida a procedimento dentário eletivo (exodontia). Exames: INR 1,8, plaquetas 85.000/mm3, fibrinogênio 220 mg/dL. O dentista solicita correção do INR com plasma fresco congelado antes do procedimento. Sobre a coagulopatia do paciente cirrótico, assinale a alternativa CORRETA:",
+    alternativas: {
+      "A": "O INR não reflete o risco hemorrágico real no cirrótico, pois há reequilíbrio hemostático entre fatores pró e anticoagulantes",
+      "B": "A transfusão de plasma fresco congelado é mandatória sempre que o INR estiver acima de 1,5",
+      "C": "A plaquetopenia no cirrótico indica necessariamente alto risco de sangramento",
+      "D": "O uso de vitamina K intravenosa corrige eficazmente o INR em pacientes cirróticos",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — Reequilíbrio hemostático, INR não reflete risco real. No paciente cirrótico, ocorre um \"reequilíbrio hemostático\": há redução paralela tanto de fatores pró-coagulantes (II, V, VII, IX, X) quanto de anticoagulantes naturais (proteína C, proteína S, antitrombina). O INR, desenvolvido para monitorar AVK, mede apenas os fatores pró-coagulantes e portanto NÃO reflete o risco hemorrágico real no cirrótico. A transfusão de plasma para \"corrigir\" o INR é desnecessária, ineficaz e pode causar sobrecarga volêmica e piora da hipertensão portal. A alternativa B está incorreta pois plasma não é mandatório. A alternativa C está incorreta pois a plaquetopenia isolada não indica alto risco. A alternativa D está incorreta pois vitamina K não corrige o INR hepatopata."
+  },
+  {
+    n: 33,
+    enunciado: "Homem, 57 anos, cirrótico (Child-Pugh C), com ascite tensa e creatinina que subiu de 0,9 para 2,1 mg/dL em 48 horas. Diuréticos foram suspensos e realizada expansão com albumina 1 g/kg/dia por 2 dias consecutivos, sem melhora da creatinina (atual: 2,4 mg/dL). Ultrassom renal sem alterações. Sedimento urinário normal. Qual é o diagnóstico mais provável?",
+    alternativas: {
+      "A": "Necrose tubular aguda por nefrotoxicidade",
+      "B": "Nefropatia por IgA associada à cirrose",
+      "C": "Glomerulonefrite membranoproliferativa associada à hepatite C",
+      "D": "Síndrome hepatorrenal tipo AKI (SHR-AKI)",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — Síndrome hepatorrenal tipo AKI (SHR-AKI). Os critérios diagnósticos de SHR-AKI (ICA-AKI) são: (1) cirrose com ascite; (2) aumento da creatinina ≥ 0,3 mg/dL em 48h ou ≥ 50% em relação ao basal; (3) ausência de resposta à expansão com albumina por 2 dias; (4) exclusão de causas pré-renais, renais intrínsecas (nefrotóxicos, sedimento anormal) e pós-renais (obstrução). O paciente preenche todos os critérios. A alternativa A está incorreta pois NTA teria sedimento urinário alterado (cilindros granulosos). A alternativa B está incorreta pois nefropatia por IgA teria hematúria microscópica. A alternativa C está incorreta pois a hepatite C foi tratada (teria necessário dados de sorologias virais)."
+  },
+  {
+    n: 34,
+    enunciado: "Mulher, 30 anos, profissional de saúde, assintomática, realizou prova tuberculínica (PT) como parte de avaliação ocupacional. Resultado: induração de 12 mm. Radiografia de tórax normal. Nega contato recente com caso de TB ativa. Vacinada com BCG ao nascer. A paciente é diagnosticada com infecção latente por tuberculose (ILTB). Qual esquema de tratamento oferece a melhor proteção contra o desenvolvimento de TB ativa?",
+    alternativas: {
+      "A": "Isoniazida por 6 meses (6H) — 180 doses",
+      "B": "Isoniazida por 9 meses (9H) — 270 doses, com proteção estimada de ~90%",
+      "C": "Rifampicina por 4 meses (4R) — 120 doses",
+      "D": "Isoniazida + rifapentina semanal por 3 meses (3HP) — 12 doses",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — Isoniazida 9 meses (9H), proteção ~90%. O tratamento da ILTB visa eliminar bacilos latentes e prevenir a progressão para TB ativa. Os esquemas disponíveis são: 6H (180 doses), 9H (270 doses), 3HP (12 doses semanais) e 4R (120 doses). O esquema 9H oferece a melhor proteção, estimada em ~90%, sendo considerado o mais eficaz. A alternativa A (6H) tem proteção inferior (~69%). A alternativa C (4R) tem menor hepatotoxicidade mas proteção ligeiramente inferior. A alternativa D (3HP) tem melhor adesão (12 doses) porém é contraindicada com inibidores de protease e dolutegravir."
+  },
+  {
+    n: 35,
+    enunciado: "Mulher, 42 anos, previamente hígida, desenvolveu TEP agudo 3 semanas após cesariana (parto a termo sem complicações). Foi tratada com HBPM durante a internação e transicionada para DOAC. Completou 3 meses de anticoagulação. Não apresentou recorrência. Sobre a duração da anticoagulação, qual é a conduta recomendada?",
+    alternativas: {
+      "A": "Anticoagulação por tempo indeterminado, pois TEP tem alta taxa de recorrência",
+      "B": "Manter anticoagulação por mais 3 meses (total de 6 meses) por segurança",
+      "C": "Suspender a anticoagulação ao completar 3–6 meses, pois cesariana é fator de risco maior reversível",
+      "D": "Trocar para AAS em dose baixa como alternativa à anticoagulação prolongada",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Suspender ao completar 3–6 meses (fator maior reversível). A duração da anticoagulação no TEP depende do fator de risco: fator maior reversível (cirurgia, cesariana, trauma, hospitalização > 72h) → suspender após 3–6 meses, pois a taxa de recorrência após suspensão é < 1%/ano; fator menor reversível → decisão compartilhada; fator persistente ou nenhum fator → continuar indefinidamente. Cesariana é classificada como fator maior reversível pela Tabela 9 da diretriz. A alternativa A está incorreta pois anticoagulação indefinida não é necessária com fator reversível. A alternativa B está incorreta pois o risco é o mesmo com 3–6 ou com 24 meses. A alternativa D está incorreta pois AAS não substitui anticoagulação."
+  },
+  {
+    n: 36,
+    enunciado: "Homem, 63 anos, portador de DM2 em uso de insulina NPH e metformina, é encontrado pela esposa sonolento e sudoreico em casa. Glicemia capilar: 42 mg/dL. Após administração de glicose oral pelo SAMU, o paciente recupera a consciência e é encaminhado ao pronto-socorro. Glicemia de controle na chegada: 68 mg/dL. De acordo com a classificação de hipoglicemia da ADA 2026, como este episódio deve ser categorizado?",
+    alternativas: {
+      "A": "Hipoglicemia nível 1 — glicemia < 70 mg/dL, sem necessidade de assistência",
+      "B": "Hipoglicemia nível 2 — glicemia < 54 mg/dL, clinicamente significativa",
+      "C": "Hipoglicemia nível 1 — pois o paciente se recuperou espontaneamente",
+      "D": "Hipoglicemia nível 3 — evento grave com necessidade de assistência de terceiros",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — Hipoglicemia nível 3. A classificação de hipoglicemia da ADA 2026 define 3 níveis: Nível 1 — glicemia < 70 mg/dL (alerta, autotratamento possível); Nível 2 — glicemia < 54 mg/dL (clinicamente significativa); Nível 3 — evento grave caracterizado pela necessidade de assistência de terceiros para tratamento, independentemente do valor de glicemia específico. Neste caso, o paciente foi encontrado sonolento e necessitou de assistência do SAMU (terceiros) → Nível 3. A alternativa A está incorreta (o critério definidor é a necessidade de assistência, não apenas o valor). A alternativa B está incorreta (< 54 é nível 2, mas a necessidade de assistência eleva para nível 3). A alternativa C está incorreta (não se recuperou espontaneamente — recebeu glicose pelo SAMU)."
+  },
+  {
+    n: 37,
+    enunciado: "Mulher, 62 anos, diagnosticada com hepatite C crônica (genótipo 1a), fibrose significativa (METAVIR F3 por elastografia). Sem comorbidades relevantes. Função renal e hepática preservadas. Anti-HIV negativo. Não realizou tratamento prévio. Sobre o manejo atual da hepatite C, assinale a alternativa CORRETA:",
+    alternativas: {
+      "A": "O tratamento com antivirais de ação direta (DAA) é indicado, com taxas de cura (RVS) superiores a 95%",
+      "B": "O tratamento está contraindicado em pacientes com fibrose avançada pelo risco de descompensação",
+      "C": "A vacinação contra hepatite C deve ser realizada antes do início do tratamento",
+      "D": "O interferon peguilado associado a ribavirina permanece como tratamento de primeira linha",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — DAA indicados, RVS > 95%. O tratamento da hepatite C evoluiu dramaticamente com os antivirais de ação direta (DAA), que atingem taxas de resposta virológica sustentada (RVS = cura) superiores a 95% em praticamente todos os genótipos, com tratamento oral de 8–12 semanas e excelente perfil de segurança. A alternativa B está incorreta pois fibrose avançada é indicação prioritária de tratamento, não contraindicação. A alternativa C está incorreta pois NÃO existe vacina contra hepatite C. A alternativa D está incorreta pois interferon peguilado + ribavirina foi substituído pelos DAA como primeira linha."
+  },
+  {
+    n: 38,
+    enunciado: "Mulher, 65 anos, portadora de coledocolitíase, será submetida a colangiopancreatografia retrógrada endoscópica (CPRE) para extração de cálculos. A equipe de endoscopia discute estratégias para reduzir o risco de pancreatite pós-CPRE, que ocorre em 5–15% dos procedimentos. Qual é a medida farmacológica recomendada para profilaxia de pancreatite pós-CPRE?",
+    alternativas: {
+      "A": "Octreotida subcutânea 30 minutos antes do procedimento",
+      "B": "Antibioticoprofilaxia com ciprofloxacino intravenoso",
+      "C": "Indometacina retal administrada imediatamente após a CPRE",
+      "D": "Aprotinina intravenosa durante o procedimento",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Indometacina retal pós-CPRE. A indometacina por via retal (100 mg), administrada imediatamente após a CPRE, é a medida farmacológica com melhor evidência para prevenção da pancreatite pós-CPRE. Múltiplos ensaios clínicos randomizados demonstraram redução significativa da incidência de pancreatite pós-CPRE. A alternativa A está incorreta pois octreotida não tem evidência consistente para esta indicação. A alternativa B está incorreta pois antibioticoprofilaxia não previne pancreatite. A alternativa D está incorreta pois aprotinina não é utilizada neste contexto."
+  },
+  {
+    n: 39,
+    enunciado: "Mulher, 62 anos, cirrótica (Child-Pugh C), com ascite refratária — necessita de paracenteses de alívio a cada 10–15 dias apesar de dose máxima de diuréticos. Creatinina 1,2 mg/dL, bilirrubina total 3,5 mg/dL, INR 1,6, MELD 18. Sem encefalopatia. Não há contraindicação anatômica ao procedimento. Qual é a abordagem mais eficaz para o manejo da ascite refratária?",
+    alternativas: {
+      "A": "Aumento adicional de furosemida acima de 160 mg/dia",
+      "B": "TIPS (shunt portossistêmico intra-hepático transjugular)",
+      "C": "Drenagem cirúrgica com peritoniostomia",
+      "D": "Shunt peritoniovenoso (LeVeen) como primeira escolha",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — TIPS. Na ascite refratária (resistente a diuréticos em dose máxima ou intolerante), o TIPS (transjugular intrahepatic portosystemic shunt) é a abordagem mais eficaz, demonstrando superioridade sobre paracenteses repetidas na sobrevida livre de transplante. Contraindicações ao TIPS incluem: encefalopatia hepática recorrente, insuficiência cardíaca direita, MELD > 18 (relativo), Child-Pugh > 13. A alternativa A está incorreta pois já está em dose máxima. A alternativa C está incorreta (peritoniostomia não é indicada). A alternativa D está incorreta pois shunt de LeVeen tem alta taxa de complicações e não é primeira escolha."
+  },
+  {
+    n: 40,
+    enunciado: "Homem, 58 anos, portador de cirrose hepática por hepatite B crônica (em tratamento com entecavir), Child-Pugh A. Último exame de rastreamento para carcinoma hepatocelular (CHC) há 7 meses. Qual é a estratégia de rastreamento recomendada para CHC em pacientes cirróticos?",
+    alternativas: {
+      "A": "TC de abdome com contraste a cada 12 meses",
+      "B": "Ressonância magnética de abdome anual com contraste hepatoespecífico",
+      "C": "Dosagem isolada de alfafetoproteína (AFP) sérica a cada 6 meses",
+      "D": "Ultrassonografia abdominal associada a dosagem de AFP a cada 6 meses",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — USG + AFP a cada 6 meses. O rastreamento de CHC em pacientes cirróticos é realizado com ultrassonografia abdominal associada à dosagem de alfafetoproteína (AFP) a cada 6 meses. A incidência de CHC em cirróticos é de 1–6% ao ano, justificando o rastreamento periódico. A alternativa A está incorreta pois TC não é o exame de rastreamento (é de confirmação). A alternativa B está incorreta pois RM não é exame de rastreamento de rotina. A alternativa C está incorreta pois AFP isolada tem sensibilidade insuficiente."
+  },
+  {
+    n: 41,
+    enunciado: "Homem, 50 anos, portador de cirrose hepática alcoólica (Child-Pugh",
+    alternativas: {
+      "A": "Suspender todas as drogas hepatotóxicas e, após normalização, reintroduzir sequencialmente: R + E → H → Z",
+      "B": "Manter o esquema completo com monitorização semanal das enzimas hepáticas",
+      "C": "Suspender apenas a pirazinamida e manter RHE",
+      "D": "Substituir todo o esquema por quinolona + aminoglicosídeo por 12 meses",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — Suspender e reintroduzir sequencialmente R+E → H → Z. Em pacientes com hepatopatia que desenvolvem hepatotoxicidade medicamentosa durante tratamento da TB, a regra é: suspender se TGO/TGP ≥ 3× o limite superior com sintomas ou ≥ 5× sem sintomas. Neste caso, AST 320 (> 3× com sintomas = indicação de suspensão). Após normalização das enzimas, a reintrodução é sequencial: R + E primeiro (menos hepatotóxicos) → H → Z (mais hepatotóxica). A alternativa B está incorreta pois manter o esquema com hepatotoxicidade estabelecida é perigoso. A alternativa C está incorreta pois a conduta é suspender todas e reintroduzir sequencialmente. A alternativa D está incorreta pois não se substitui todo o esquema imediatamente."
+  },
+  {
+    n: 42,
+    enunciado: "Homem, 45 anos, com antecedente de TEP recorrente (segundo episódio), em investigação. Exames: anticoagulante lúpico positivo, anticardiolipina IgG positivo em altos títulos, anti-β2-glicoproteína I positivo. Diagnóstico: síndrome antifosfolípide (SAF) trombótica. Paciente solicita o uso de apixabana pois \"não quer fazer exames de INR\". Qual é o anticoagulante recomendado para TEP em pacientes com SAF trombótica?",
+    alternativas: {
+      "A": "Apixabana, pois DOACs são superiores ao AVK em todas as indicações",
+      "B": "Rivaroxabana, pois tem menos interações medicamentosas",
+      "C": "Antagonista de vitamina K (varfarina) — o DOAC é contraindicado na SAF trombótica (Classe 1, NE A)",
+      "D": "HBPM subcutânea em dose plena por tempo indeterminado",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Varfarina (AVK) é obrigatória na SAF trombótica. A diretriz AHA/ACC 2026 estabelece que em pacientes com SAF trombótica, o AVK (varfarina) é preferido em vez de DOAC — recomendação Classe 1, NE A. Estudos demonstraram aumento de eventos tromboembólicos arteriais em pacientes com SAF trombótica tratados com DOAC, especialmente em pacientes triplo-positivos (anticoagulante lúpico + anticardiolipina + anti-β2-glicoproteína I). A alternativa A está incorreta pois DOACs são contraindicados na SAF trombótica. A alternativa B está incorreta pelo mesmo motivo. A alternativa D está incorreta pois HBPM indefinida não é o tratamento de escolha."
+  },
+  {
+    n: 43,
+    enunciado: "Homem, 59 anos, internado por hemorragia digestiva alta varicosa em paciente cirrótico (Child-Pugh B). Durante a internação, a equipe discute a indicação de profilaxia para peritonite bacteriana espontânea (PBE). Sobre as indicações de profilaxia antibiótica para PBE, assinale a alternativa que contempla TODAS as situações preconizadas:",
+    alternativas: {
+      "A": "Apenas pacientes com episódio prévio de PBE (profilaxia secundária)",
+      "B": "Hemorragia digestiva alta varicosa; proteína do líquido ascítico < 1,5 g/dL com critérios adicionais; e após episódio prévio de PBE",
+      "C": "Todos os pacientes cirróticos com ascite, independentemente de critérios adicionais",
+      "D": "Apenas pacientes em lista de transplante hepático",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — HDA + proteína < 1,5 com critérios + pós-PBE. As 3 indicações de profilaxia antibiótica para PBE são: (1) hemorragia digestiva alta varicosa (norfloxacino ou ceftriaxona por 7 dias); (2) proteína do líquido ascítico < 1,5 g/dL com critérios adicionais (Child-Pugh ≥ 9, bilirrubina ≥ 3 mg/dL ou creatinina ≥ 1,2 mg/dL — profilaxia primária); (3) após episódio prévio de PBE (profilaxia secundária com norfloxacino contínuo). A alternativa A está incompleta. A alternativa C está incorreta pois não é para todos os cirróticos com ascite. A alternativa D está incorreta pois a indicação não se restringe a pacientes em lista de transplante."
+  },
+  {
+    n: 44,
+    enunciado: "Mulher, 28 anos, portadora de DM1 desde os 12 anos, em uso de sistema de infusão contínua de insulina (bomba) e sensor de monitorização contínua da glicose (CGM). Na última consulta, o relatório do CGM mostra: tempo no alvo (TIR, 70–180 mg/dL) de 55%, tempo abaixo do alvo (TBR, < 70 mg/dL) de 6%, tempo acima do alvo (TAR, > 180 mg/dL) de 39%, coeficiente de variação 42%. HbA1c 7,9%. De acordo com as metas de CGM recomendadas pela ADA 2026, qual parâmetro está MAIS distante da meta recomendada?",
+    alternativas: {
+      "A": "Coeficiente de variação (meta < 36%)",
+      "B": "HbA1c (meta < 7,0%)",
+      "C": "Tempo acima do alvo (meta < 25%)",
+      "D": "Tempo no alvo (meta > 70%)",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — Tempo no alvo (TIR) mais distante da meta (> 70%). As metas de CGM da ADA 2026 para DM1 são: TIR (70–180 mg/dL) > 70%; TBR (< 70 mg/dL) < 4%; TAR (> 180 mg/dL) < 25%; coeficiente de variação < 36%. Analisando: TIR 55% vs meta > 70% → diferença de 15 pontos percentuais (21% abaixo da meta); TBR 6% vs meta < 4% → excede em 2pp; TAR 39% vs meta < 25% → excede em 14pp; CV 42% vs meta < 36% → excede em 6pp. O TIR está MAIS distante da meta em termos absolutos e relativos (55% é 21% abaixo de 70%), sendo o parâmetro que mais necessita de intervenção."
+  },
+  {
+    n: 45,
+    enunciado: "Homem, 48 anos, com pancreatite aguda necrotizante de etiologia alcoólica, evolui no 20° dia com febre alta (39,2 °C), calafrios, leucocitose (26.000/mm3) e instabilidade hemodinâmica. TC de abdome mostra necrose pancreática e peripancreática extensa com bolhas de gás. Hemocultura positiva para Escherichia coli. Sobre a necrose pancreática infectada, assinale a alternativa CORRETA:",
+    alternativas: {
+      "A": "A presença de gás na TC é indicativo de infecção e justifica antibioticoterapia; a abordagem preferencialmente deve ser postergada (step-up approach)",
+      "B": "A necrosectomia cirúrgica aberta imediata é o tratamento de primeira escolha",
+      "C": "Antibióticos isolados são suficientes, sem necessidade de drenagem ou desbridamento",
+      "D": "A punção aspirativa por agulha fina é obrigatória antes de qualquer tratamento",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — Gás na TC indica infecção; step-up approach preferível. A presença de gás na TC em área de necrose pancreática é indicativo de infecção (sensibilidade ~50–100%). A hemocultura positiva confirma o processo infeccioso sistêmico. O manejo atual preconiza o step-up approach: antibioticoterapia dirigida → drenagem percutânea/endoscópica se não houver melhora → necrosectomia cirúrgica como último recurso. A alternativa B está incorreta pois a cirurgia aberta imediata tem maior morbimortalidade que o step-up approach. A alternativa C está incorreta pois antibióticos isolados são insuficientes na maioria dos casos de necrose infectada extensa. A alternativa D está incorreta pois a punção não é obrigatória quando há sinais inequívocos de infecção (gás + hemocultura positiva)."
+  },
+  {
+    n: 46,
+    enunciado: "Mulher, 50 anos, recém-diagnosticada com cirrose hepática por MASLD. Elastografia hepática: 16 kPa (liver stiffness measurement — LSM). Plaquetas: 165.000/mm3. De acordo com o consenso de Baveno VII e a \"regra dos cinco\" para estratificação, esta paciente necessita de endoscopia digestiva alta para rastreamento de varizes esofágicas?",
+    alternativas: {
+      "A": "Sim, toda paciente com cirrose deve realizar endoscopia independentemente de outros parâmetros",
+      "B": "Não, pois a elastografia < 20 kPa já exclui hipertensão portal clinicamente significativa",
+      "C": "Não, pois LSM < 20 kPa E plaquetas > 150.000/mm3 dispensam a endoscopia pelo critério de Baveno VII",
+      "D": "Sim, pois plaquetas < 200.000/mm3 indicam alto risco de varizes",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Dispensar EDA se LSM < 20 e plaquetas > 150k (Baveno VII). O consenso de Baveno VII estabelece a \"regra dos cinco\" com critérios para dispensar a endoscopia no rastreamento de varizes: se LSM (elastografia) < 20 kPa E plaquetas > 150.000/mm³, o risco de varizes que necessitem tratamento é muito baixo e a endoscopia pode ser dispensada. Esta paciente preenche ambos os critérios (LSM 16 kPa e plaquetas 165.000). A alternativa A está incorreta pois nem toda cirrose necessita de EDA. A alternativa B está incorreta pois LSM < 20 isoladamente não é suficiente — precisa também plaquetas > 150k. A alternativa D está incorreta pois o corte de plaquetas relevante é 150.000, não 200.000."
+  },
+  {
+    n: 47,
+    enunciado: "Mulher, 52 anos, portadora de cirrose por hepatite C tratada (RVS confirmada), Child-Pugh B, IMC 20 kg/m2, com perda ponderal de 5 kg nos últimos 3 meses. Refere sarcopenia e fraqueza muscular progressiva. A equipe de nutrição discute as recomendações nutricionais para pacientes cirróticos. Qual é a conduta nutricional mais adequada?",
+    alternativas: {
+      "A": "Restrição proteica para 0,6 g/kg/dia para prevenir encefalopatia hepática",
+      "B": "Aporte calórico de 25–35 kcal/kg/dia, proteico de 1,2–1,5 g/kg/dia e lanche noturno (late evening snack)",
+      "C": "Dieta hipercalórica sem restrição de sódio, priorizando carboidratos simples",
+      "D": "Suplementação isolada de aminoácidos de cadeia ramificada, sem necessidade de ajuste calórico",
+    },
+    correta: "B",
+    explicacao: "Alternativa B — 25–35 kcal/kg/dia, 1,2–1,5 g/kg/dia proteína + lanche noturno. As recomendações nutricionais para cirrose incluem: aporte calórico de 25–35 kcal/kg/dia; aporte proteico de 1,2–1,5 g/kg/dia (NÃO restringir proteína, mesmo com encefalopatia hepática); e lanche noturno (late evening snack) para reduzir o catabolismo proteico durante o jejum noturno, que é particularmente deletério no cirrótico. A alternativa A está incorreta pois restrição proteica é contraindicada (piora sarcopenia). A alternativa C está incorreta pois restrição de sódio é importante e carboidratos simples não são priorizados. A alternativa D está incorreta pois o ajuste calórico global é fundamental."
+  },
+  {
+    n: 48,
+    enunciado: "Gestante, 26 anos, 16 semanas, diagnosticada com tuberculose pulmonar (baciloscopia positiva). Sem comorbidades. Sobre o tratamento da tuberculose na gestação, assinale a alternativa CORRETA:",
+    alternativas: {
+      "A": "O tratamento deve ser adiado para o segundo trimestre por risco de teratogenicidade",
+      "B": "O esquema recomendado é rifampicina + isoniazida (sem pirazinamida nem etambutol)",
+      "C": "A estreptomicina pode ser utilizada como alternativa ao etambutol na gestação",
+      "D": "O esquema RHZE é utilizado normalmente, associado a piridoxina (vitamina B6) 50 mg/dia, sendo a estreptomicina CONTRAINDICADA",
+    },
+    correta: "D",
+    explicacao: "Alternativa D — RHZE normal + piridoxina, estreptomicina CONTRAINDICADA. Na gestação, o tratamento da TB utiliza o esquema RHZE nas mesmas doses que para adultos não gestantes, associado a piridoxina (vitamina B6) 50 mg/dia para prevenir neuropatia periférica pela isoniazida. A estreptomicina é CONTRAINDICADA na gestação por risco de ototoxicidade fetal (surdez neurossensorial no recém-nascido). A alternativa A está incorreta pois o tratamento não deve ser adiado (risco materno-fetal da TB ativa supera os riscos do tratamento). A alternativa B está incorreta (o esquema completo com Z e E é utilizado). A alternativa C está incorreta pois estreptomicina é contraindicada."
+  },
+  {
+    n: 49,
+    enunciado: "Homem, 55 anos, com TEP maciço, Categoria D2 (choque normotenso: lactato 4,2 mmol/L, débito urinário 0,3 mL/kg/h, PA mantida a 95/60 mmHg com vasopressor). FC 125 bpm, SatO2 88% com cateter nasal de O2. Ecocardiograma: VD gravemente dilatado, septo interventricular retificado. Sobre o suporte hemodinâmico farmacológico no TEP agudo com choque, qual é o vasopressor de primeira escolha?",
+    alternativas: {
+      "A": "Noradrenalina",
+      "B": "Dobutamina",
+      "C": "Adrenalina",
+      "D": "Vasopressina",
+    },
+    correta: "A",
+    explicacao: "Alternativa A — Noradrenalina. A diretriz AHA/ACC 2026 estabelece noradrenalina como vasopressor de primeira escolha no TEP agudo com choque (Classe 1, NE C-LD). A noradrenalina (agonista α1 predominante com efeito β1 modesto) aumenta a RVS e restaura a pressão de perfusão coronariana do VD. Quando a dose ultrapassa 15 µg/min, deve-se associar um segundo vasopressor (vasopressina ou fenilefrina) em vez de escalonar, pois doses altas elevam a RVP. Volume deve ser cauteloso (≤ 500 mL) pois pode agravar a dilatação do VD. A alternativa B está incorreta pois dobutamina é adjuvante (aumenta IC à custa de queda da RVS). A alternativa C está incorreta pois adrenalina não é a primeira escolha. A alternativa D está incorreta pois vasopressina é agente de segunda linha."
+  },
+  {
+    n: 50,
+    enunciado: "Homem, 35 anos, imigrante, descobriu ser portador de hepatite B crônica em exame admissional. Assintomático. Exames: HBsAg positivo, HBeAg positivo, anti-HBe negativo, HBV-DNA 180.000.000 UI/mL, ALT 28 U/L (limite superior: 35 U/L para homens segundo critério revisado). Plaquetas 230.000/mm3, elastografia hepática 5,2 kPa (normal). Qual é a fase da história natural da hepatite B crônica em que se encontra este paciente?",
+    alternativas: {
+      "A": "Hepatite B crônica HBeAg-positiva (fase de atividade imune)",
+      "B": "Infecção crônica HBeAg-negativa (portador inativo)",
+      "C": "Infecção crônica HBeAg-positiva (fase de imunotolerância)",
+      "D": "Hepatite B crônica HBeAg-negativa (fase de reativação)",
+    },
+    correta: "C",
+    explicacao: "Alternativa C — Infecção crônica HBeAg-positiva (imunotolerância). A fase de infecção crônica HBeAg-positiva (antiga \"imunotolerância\") se caracteriza por: HBsAg positivo, HBeAg positivo, HBV-DNA muito elevado (tipicamente > 10I UI/mL), ALT normal ou minimamente elevada, e ausência de fibrose hepática significativa. É a fase inicial da hepatite B crônica adquirida perinatalmente. A alternativa A está incorreta pois a fase de atividade imune teria ALT elevada e menor carga viral. A alternativa B está incorreta pois na infecção HBeAg-negativa o HBeAg seria negativo e o anti-HBe positivo. A alternativa D está incorreta pois a reativação é HBeAg-negativa."
+  }
+];
+
+const state = {
+  index: 0,
+  answers: {},   // { n: 'A'|'B'|'C'|'D' }  — respostas confirmadas
+  pending: {},   // { n: 'A'|'B'|'C'|'D' }  — selecao antes de confirmar
+  showGabarito: {},
+  finished: false
+};
+
+const $main = document.getElementById('quiz');
+const $grid = document.getElementById('qGrid');
+
+/* Persistencia */
+function saveState() {
+  try { localStorage.setItem('simuladoAC2', JSON.stringify(state)); } catch (e) {}
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem('simuladoAC2');
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    Object.assign(state, s);
+  } catch (e) {}
+}
+loadState();
+
+function toggleSidebar() {
+  const hidden = document.body.classList.toggle('sidebar-hidden');
+  try { localStorage.setItem('sidebarHidden', hidden ? '1' : '0'); } catch (e) {}
+}
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'b' || e.key === 'B') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    const t = e.target; const tag = (t && t.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || (t && t.isContentEditable)) return;
+    toggleSidebar();
+  }
+});
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+function renderGrid() {
+  $grid.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const cell = document.createElement('button');
+    cell.className = 'q-cell';
+    cell.textContent = String(q.n).padStart(2,'0');
+    if (i === state.index) cell.classList.add('current');
+    const a = state.answers[q.n];
+    if (a) {
+      if (a === q.correta) cell.classList.add('correct');
+      else cell.classList.add('wrong');
+    }
+    cell.onclick = () => { state.index = i; state.finished = false; saveState(); render(); };
+    $grid.appendChild(cell);
+  });
+}
+
+function selectAlt(n, key) {
+  if (state.answers[n]) return; // ja confirmada
+  state.pending[n] = key;
+  saveState();
+  render();
+}
+
+function confirmAnswer(n) {
+  const sel = state.pending[n];
+  if (!sel || state.answers[n]) return;
+  state.answers[n] = sel;
+  delete state.pending[n];
+  saveState();
+  render();
+}
+
+function toggleGab(n) {
+  state.showGabarito[n] = !state.showGabarito[n];
+  saveState();
+  render();
+}
+
+function next() {
+  if (state.index < QUESTIONS.length - 1) {
+    state.index++;
+    saveState();
+    render();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  } else {
+    state.finished = true;
+    saveState();
+    render();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+function prev() {
+  if (state.finished) {
+    state.finished = false;
+    saveState(); render();
+    return;
+  }
+  if (state.index > 0) {
+    state.index--;
+    saveState();
+    render();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function resetQuiz() {
+  if (!confirm('Reiniciar simulado? Suas respostas serão apagadas.')) return;
+  state.index = 0;
+  state.answers = {};
+  state.showGabarito = {};
+  state.finished = false;
+  saveState();
+  render();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function classify(pct) {
+  if (pct >= 90) return { key: 'excelente', label: 'Excelente' };
+  if (pct >= 75) return { key: 'otimo', label: 'Ótimo' };
+  if (pct >= 60) return { key: 'regular', label: 'Regular' };
+  return { key: 'melhorar', label: 'Precisa Melhorar' };
+}
+
+function render() {
+  renderGrid();
+  if (state.finished) { renderEnd(); return; }
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[state.index];
+  const answered = !!state.answers[q.n];
+  const userAns = state.answers[q.n];
+  const pending = state.pending[q.n];
+  const correct = userAns === q.correta;
+  const progress = ((state.index + 1) / QUESTIONS.length) * 100;
+  const gabOpen = !!state.showGabarito[q.n];
+
+  const alts = ['A','B','C','D'].map(k => {
+    let cls = 'alt';
+    let badge = '';
+    if (answered) {
+      if (k === q.correta) { cls += ' correct-alt'; badge = '<span class="alt-badge">Correta</span>'; }
+      else if (k === userAns) { cls += ' wrong-alt'; badge = '<span class="alt-badge">Sua resposta</span>'; }
+    } else if (pending === k) {
+      cls += ' selected';
+    }
+    const disabled = answered ? 'disabled' : '';
+    return '<button class="'+cls+'" '+disabled+' onclick="selectAlt('+q.n+', \''+k+'\')">' +
+      '<div class="alt-key">'+k+'</div>' +
+      '<div class="alt-text">'+esc(q.alternativas[k])+' '+badge+'</div>' +
+      '</button>';
+  }).join('');
+
+  // Botão de confirmar (só antes de responder)
+  let confirmBtn = '';
+  if (!answered) {
+    const disabled = pending ? '' : 'disabled';
+    confirmBtn = '<div class="confirm-wrap">' +
+      '<button class="btn-confirm" '+disabled+' onclick="confirmAnswer('+q.n+')">' +
+        (pending ? 'Confirmar resposta ('+pending+')' : 'Selecione uma alternativa para responder') +
+      '</button>' +
+    '</div>';
+  }
+
+  let feedback = '';
+  if (answered) {
+    const iconOk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><polyline points="20 6 9 17 4 12"/></svg>';
+    const iconErr = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    const headerCls = correct ? 'correct' : 'wrong';
+    const headerTxt = correct
+      ? 'Você acertou!'
+      : 'Você errou — a resposta correta é ' + q.correta;
+    const chevron = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>';
+    feedback = '<div class="feedback-panel">' +
+      '<div class="feedback-header '+headerCls+'">' +
+        (correct ? iconOk : iconErr) +
+        '<span>'+headerTxt+'</span>' +
+      '</div>' +
+      '<button class="gabarito-toggle '+(gabOpen?'open':'')+'" onclick="toggleGab('+q.n+')">' +
+        chevron +
+        '<span>'+(gabOpen ? 'Ocultar gabarito comentado' : 'Ver gabarito comentado')+'</span>' +
+      '</button>' +
+      (gabOpen ? (
+        '<div class="gabarito-body">' +
+          '<div class="gab-title">Gabarito Comentado</div>' +
+          '<div class="gab-answer">Resposta: '+q.correta+'</div>' +
+          '<div>'+esc(q.explicacao)+'</div>' +
+        '</div>'
+      ) : '') +
+      '</div>';
+  }
+
+  const answeredCount = Object.keys(state.answers).length;
+
+  $main.innerHTML =
+    '<div class="toolbar">' +
+      '<div class="crumb">Questão '+q.n+' de '+QUESTIONS.length+' · Respondidas: '+answeredCount+'</div>' +
+      '<div class="actions">' +
+        '<button class="btn" onclick="resetQuiz()">Reiniciar</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="progress-bar"><div class="fill" style="width:'+progress+'%"></div></div>' +
+    '<div class="question-card">' +
+      '<div class="q-number">Questão '+String(q.n).padStart(2,'0')+'</div>' +
+      '<div class="q-enun">'+esc(q.enunciado)+'</div>' +
+      '<div class="alts">'+alts+'</div>' +
+      confirmBtn +
+      feedback +
+    '</div>' +
+    '<div class="nav-buttons">' +
+      '<button class="nav-btn" onclick="prev()" '+(state.index===0?'disabled':'')+'>← Anterior</button>' +
+      '<button class="nav-btn primary" onclick="next()">'+(state.index===QUESTIONS.length-1?'Ver resultado':'Próxima →')+'</button>' +
+    '</div>';
+}
+
+function renderEnd() {
+  let correct = 0, wrong = 0;
+  QUESTIONS.forEach(q => {
+    const a = state.answers[q.n];
+    if (!a) return;
+    if (a === q.correta) correct++;
+    else wrong++;
+  });
+  const total = QUESTIONS.length;
+  const answered = correct + wrong;
+  const pct = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+  const cls = classify(pct);
+
+  const r = 100;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - pct/100);
+  const colorFor = {
+    excelente: 'var(--ok)',
+    otimo: 'var(--accent)',
+    regular: 'var(--warn)',
+    melhorar: 'var(--err)'
+  }[cls.key];
+
+  $main.innerHTML =
+    '<div class="end-screen">' +
+      '<h2>Simulado Concluído</h2>' +
+      '<div class="subtitle">50 questões · AC 2 · 7º Período</div>' +
+      '<div class="donut">' +
+        '<svg viewBox="0 0 240 240">' +
+          '<circle class="track" cx="120" cy="120" r="'+r+'"></circle>' +
+          '<circle class="fill-arc" cx="120" cy="120" r="'+r+'"' +
+            ' stroke="'+colorFor+'"' +
+            ' stroke-dasharray="'+circ+'"' +
+            ' stroke-dashoffset="'+circ+'"' +
+            ' id="arc"></circle>' +
+        '</svg>' +
+        '<div class="center">' +
+          '<div class="pct">'+pct+'%</div>' +
+          '<div class="pct-label">Acertos</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="badge '+cls.key+'">'+cls.label+'</div>' +
+      '<div class="end-stats">' +
+        '<div class="end-stat correct"><div class="val">'+correct+'</div><div class="lbl">Acertos</div></div>' +
+        '<div class="end-stat wrong"><div class="val">'+wrong+'</div><div class="lbl">Erros</div></div>' +
+        '<div class="end-stat"><div class="val">'+answered+'/'+total+'</div><div class="lbl">Respondidas</div></div>' +
+      '</div>' +
+      '<div class="nav-buttons">' +
+        '<button class="nav-btn" onclick="prev()">← Ver questões</button>' +
+        '<button class="nav-btn primary" onclick="resetQuiz()">Recomeçar simulado</button>' +
+      '</div>' +
+    '</div>';
+
+  requestAnimationFrame(() => {
+    const arc = document.getElementById('arc');
+    if (arc) arc.style.strokeDashoffset = offset;
+  });
+}
+
+render();
+</script>
+</body>
+</html>
