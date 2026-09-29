@@ -435,6 +435,7 @@
     .ecg-content .hero p { font-size: 14px; }
   }
 </style>
+<link rel="stylesheet" href="assets/efeitos.css">
 </head>
 <body>
 <script>
@@ -2009,7 +2010,7 @@
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  const sections = [
+  const legacySections = [
     'eletrofisiologia','conducao','potenciais','derivacoes','padronizacao',
     'ondas','analise','ritmo','ecg-normal','fc',
     'sad','sae','bia','pr-bav',
@@ -2018,7 +2019,7 @@
     'areas-inativas','segmento-st','onda-t','resumo-geral'
   ];
 
-  const observer = new IntersectionObserver(entries => {
+  const legacyObserver = new IntersectionObserver(entries => {
     for (const entry of entries) {
       if (entry.isIntersecting) {
         document.querySelectorAll('.nav-tab').forEach(btn => {
@@ -2029,9 +2030,9 @@
     }
   }, { rootMargin: '-20% 0px -70% 0px' });
 
-  sections.forEach(id => {
+  legacySections.forEach(id => {
     const el = document.getElementById(id);
-    if (el) observer.observe(el);
+    if (el) legacyObserver.observe(el);
   });
 </script>
 
@@ -2072,5 +2073,6 @@
     topBtn.classList.toggle('show', window.scrollY > 500);
   });
 </script>
+<script src="assets/efeitos.js"></script>
 </body>
 </html>
