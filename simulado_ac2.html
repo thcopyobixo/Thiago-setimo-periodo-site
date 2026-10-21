@@ -388,6 +388,11 @@
     font-weight: 700;
     margin-bottom: 8px;
   }
+  .gabarito-body .gab-text p { margin: 0 0 10px; }
+  .gabarito-body .gab-text ul { margin: 0 0 10px; padding-left: 20px; }
+  .gabarito-body .gab-text li { margin: 4px 0; }
+  .gabarito-body .gab-text > :last-child { margin-bottom: 0; }
+  .gabarito-body .gab-text strong { color: #fff; }
   .gabarito-body .gab-answer {
     font-family: 'Unbounded', sans-serif;
     font-size: 20px; font-weight: 700;
@@ -524,7 +529,7 @@
   .mode-switch {
     position: relative;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 4px;
     padding: 4px;
     margin: 0 0 22px;
@@ -668,8 +673,9 @@
     <div class="sub">AC 2 · 50 questões</div>
   </div>
   <nav class="mode-switch" aria-label="Tipo de simulado">
-    <a href="simulado_ac2.html" class="active">Simulado geral<small>50 questões</small></a>
-    <a href="provas_ac2.html">Provas por matéria<small>10 provas</small></a>
+    <a href="simulado_ac2.html" data-sim="1" class="active">Simulado 1<small>50 questões</small></a>
+    <a href="simulado_ac2.html?s=2" data-sim="2">Simulado 2<small>50 questões</small></a>
+    <a href="provas_ac2.html">Provas<small>10 matérias</small></a>
   </nav>
   <div class="q-list-label">Navegação</div>
   <div class="q-grid" id="qGrid"></div>
@@ -680,7 +686,7 @@
 </main>
 
 <script>
-const QUESTIONS = [
+const SIM1 = [
   {
     n: 1,
     enunciado: "Mulher, 48 anos, assintomática, procura atendimento de rotina. IMC 31 kg/m2, circunferência abdominal 98 cm. Mãe com diabetes mellitus tipo 2. Exames laboratoriais: glicemia de jejum 118 mg/dL e hemoglobina glicada (HbA1c) 6,2%. Após repetição dos exames em nova amostra, os valores se confirmam. Com base nos critérios diagnósticos da ADA 2026, qual é o diagnóstico correto dessa paciente?",
@@ -1283,6 +1289,620 @@ const QUESTIONS = [
   }
 ];
 
+const SIM2 = [
+ {
+  "n": 1,
+  "enunciado": "Mulher de 25 anos, estudante, procura atendimento por desmaios de longa data. Relata que os episódios ocorrem após longos períodos em pé, principalmente em dias quentes, e são precedidos por turvação visual, tontura e sudorese fria. Teve um episódio durante uma coleta de sangue de rotina. Recupera a consciência rapidamente e por completo, sem confusão depois. Nega comorbidades e uso de medicações. Exame físico: PA 120/80 mmHg deitada e 118/78 mmHg após 3 minutos em pé, FC 70 bpm, sem outras alterações. ECG normal.\n\nQual é o diagnóstico mais provável?",
+  "alternativas": {
+   "A": "Hipotensão ortostática por disautonomia primária",
+   "B": "Síncope reflexa (vasovagal)",
+   "C": "Hipersensibilidade do seio carotídeo",
+   "D": "Crise convulsiva tônico-clônica generalizada"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>O quadro é clássico de síncope reflexa (neuromediada): paciente jovem, gatilhos típicos (ortostase prolongada, calor, coleta de sangue), pródromos longos (tontura, turvação visual, sudorese fria), recuperação rápida e completa, e exame físico e ECG normais. Esse é o mecanismo mais comum de síncope entre os 10 e os 30 anos.</p><ul><li><strong>A — incorreta:</strong> não há queda pressórica ao ficar em pé, e a paciente não tem doença autonômica.</li><li><strong>C — incorreta:</strong> a hipersensibilidade do seio carotídeo ocorre em idosos, ligada à manipulação do pescoço, com pródromos curtos.</li><li><strong>D — incorreta:</strong> na convulsão há aura, movimentos tônico-clônicos, mordedura lateral de língua e confusão pós-ictal prolongada.</li></ul><p>O tratamento começa por educação e medidas comportamentais: reconhecer os pródromos, manobras de contrapressão, ingesta hídrica de 2–3 L/dia e de sal, e evitar os gatilhos.</p>"
+ },
+ {
+  "n": 2,
+  "enunciado": "Homem de 32 anos procura o pronto-socorro com dor torácica ventilatório-dependente à direita há 1 dia, que começou após uma partida de futebol. Não tem antecedentes. Exame: FC 84 bpm, SatO₂ 98% em ar ambiente, sem edema de membros inferiores. Nega hemoptise, cirurgia ou trauma recentes, TVP ou TEP prévios e uso de hormônios. O médico considera a probabilidade clínica de TEP menor que 15%.\n\nQual é a conduta mais adequada em relação à investigação de TEP?",
+  "alternativas": {
+   "A": "Solicitar D-dímero e, se elevado, angiotomografia de tórax",
+   "B": "Solicitar angiotomografia de tórax diretamente",
+   "C": "Não solicitar outros exames para TEP, pois todos os critérios PERC estão preenchidos",
+   "D": "Solicitar ecocardiograma transtorácico para avaliar o ventrículo direito"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>Os critérios PERC só se aplicam quando a probabilidade pré-teste (gestalt ou Wells &lt; 2) é menor que 15%. Com os 8 critérios preenchidos (idade &lt; 50 anos, FC &lt; 100 bpm, SatO₂ ≥ 95%, sem hemoptise, sem estrogênio, sem TVP/TEP prévio, sem edema unilateral, sem cirurgia ou trauma recentes), a probabilidade de TEP é tão baixa que nenhum outro teste é necessário.</p><ul><li><strong>A — incorreta:</strong> pedir D-dímero nesse cenário só gera falso-positivos e exames desnecessários.</li><li><strong>B — incorreta:</strong> imagem é indicada quando a probabilidade é alta (&gt; 50%) ou quando o D-dímero vem elevado.</li><li><strong>D — incorreta:</strong> a diretriz AHA/ACC 2026 classifica o ecocardiograma como \"sem benefício\" para confirmar ou excluir TEP. Ele serve para estratificar risco, não para diagnosticar.</li></ul>"
+ },
+ {
+  "n": 3,
+  "enunciado": "Homem de 30 anos apresenta há 10 dias náuseas, inapetência, colúria e icterícia. Teve relações sexuais desprotegidas com nova parceira há cerca de 4 meses. Exames: ALT 1.650 U/L, AST 1.120 U/L, bilirrubina total 6,2 mg/dL, INR 1,1. Sorologias: HBsAg não reagente; anti-HBs não reagente; anti-HBc IgM reagente; anti-HAV IgM não reagente; anti-HCV não reagente.\n\nQual é a interpretação correta?",
+  "alternativas": {
+   "A": "Hepatite B crônica na fase inativa",
+   "B": "Hepatite B aguda na fase de janela imunológica",
+   "C": "Imunidade adquirida por vacinação",
+   "D": "Infecção prévia pelo HBV, já resolvida"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>Na fase de janela, o HBsAg já ficou negativo e o anti-HBs ainda não apareceu. O único marcador positivo é o anti-HBc IgM, por isso ele deve fazer parte do painel inicial de toda hepatite aguda. Se fossem pedidos apenas HBsAg e anti-HBs, ambos negativos levariam a concluir, erroneamente, que não há hepatite B.</p><ul><li><strong>A — incorreta:</strong> a hepatite B crônica exige HBsAg positivo por mais de 6 meses.</li><li><strong>C — incorreta:</strong> a vacinação gera anti-HBs isolado, nunca anti-HBc.</li><li><strong>D — incorreta:</strong> a infecção resolvida tem anti-HBc total com anti-HBs positivos e IgM negativo.</li></ul>"
+ },
+ {
+  "n": 4,
+  "enunciado": "Mulher de 45 anos é internada com pancreatite aguda de provável origem biliar, iniciada há 8 horas. Exame: PA 110/70 mmHg, FC 112 bpm, mucosas secas. Exames: hematócrito 46%, ureia 58 mg/dL, cálcio sérico normal. Não tem cardiopatia nem nefropatia.\n\nQual é a melhor estratégia de hidratação inicial?",
+  "alternativas": {
+   "A": "Soro fisiológico 0,9%, bolus de 20 mL/kg seguido de 3 mL/kg/h por 48 horas, sem ajustes",
+   "B": "Albumina humana 20% como expansor de primeira escolha",
+   "C": "Ringer lactato em ressuscitação moderada (bolus de 10 mL/kg por haver hipovolemia, seguido de 1,5 mL/kg/h), ajustada por diurese, frequência cardíaca, hematócrito e ureia",
+   "D": "Ringer lactato agressivo (bolus de 20 mL/kg seguido de 3 mL/kg/h) mantido por 72 horas, independentemente da resposta clínica"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>O Ringer lactato é preferível ao soro fisiológico, que causa acidose hiperclorêmica (e o RL tem possível efeito anti-inflamatório). A ressuscitação agressiva não reduz a gravidade e aumenta a sobrecarga hídrica. Por isso, a ACG recomenda ressuscitação moderada e guiada por metas: diurese &gt; 0,5 mL/kg/h, queda do hematócrito e da ureia, FC &lt; 120 bpm e PAM &gt; 65 mmHg.</p><ul><li><strong>A e D — incorretas:</strong> propõem volumes fixos e agressivos, sem reavaliação.</li><li><strong>B — incorreta:</strong> coloide não é a primeira escolha.</li></ul><p>O RL só fica contraindicado na hipercalcemia, e o cálcio desta paciente é normal.</p>"
+ },
+ {
+  "n": 5,
+  "enunciado": "Homem de 24 anos, previamente hígido, com 78 kg, procura o pronto-socorro com dor torácica retroesternal em pontada há 18 horas. A dor piora ao respirar fundo e ao deitar e alivia quando ele se senta inclinado para frente. Teve infecção de vias aéreas superiores há uma semana. Exame: PA 118/72 mmHg, FC 96 bpm, temperatura 37,8 °C, atrito pericárdico. ECG: supradesnivelamento difuso do segmento ST com infradesnivelamento de PR. Troponina normal, PCR elevada. Ecocardiograma: sem derrame, função ventricular normal.\n\nQual é o tratamento mais adequado?",
+  "alternativas": {
+   "A": "Ibuprofeno 600 mg de 8/8 horas com inibidor de bomba de prótons, colchicina 0,5 mg de 12/12 horas e restrição de exercício até a remissão",
+   "B": "Prednisona 1 mg/kg/dia como primeira linha",
+   "C": "AAS 100 mg com clopidogrel e cateterismo de urgência",
+   "D": "Colchicina isolada, sem anti-inflamatório"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>O diagnóstico de pericardite aguda exige dor torácica característica mais um critério para ser possível, e mais dois ou mais para ser definitivo. Este paciente tem dor típica, atrito e ECG típico, com PCR elevada. O tratamento de primeira linha é um AINE em dose anti-inflamatória (ibuprofeno 600 mg de 8/8 h ou AAS 1 g de 8/8 h), com proteção gástrica, associado à colchicina, que reduz a recorrência (0,5 mg de 12/12 h em pacientes com 70 kg ou mais). Também se recomenda restringir a atividade física até a remissão.</p><ul><li><strong>B — incorreta:</strong> o corticoide aumenta o risco de recorrência. Fica reservado a refratariedade, doença autoimune, tuberculose ou contraindicação a AINE.</li><li><strong>C — incorreta:</strong> o supradesnivelamento difuso com infra de PR não é padrão de IAM.</li><li><strong>D — incorreta:</strong> a colchicina isolada é insuficiente para o controle da dor.</li></ul>"
+ },
+ {
+  "n": 6,
+  "enunciado": "Homem de 58 anos, com cirrose por álcool (Child-Pugh C) e ascite, é internado por febre baixa, dor abdominal difusa e leve confusão mental. Paracentese diagnóstica: 420 polimorfonucleares/mm³, proteína total 0,9 g/dL, glicose 90 mg/dL, LDH abaixo do limite sérico; cultura em frasco de hemocultura em andamento. Exames séricos: creatinina 1,4 mg/dL, bilirrubina total 4,5 mg/dL.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Aguardar o resultado da cultura do líquido ascítico antes de iniciar o antibiótico",
+   "B": "Tomografia de abdome e laparotomia por suspeita de peritonite secundária",
+   "C": "Cefalosporina de terceira geração isolada, sem albumina, pois a creatinina está abaixo de 2 mg/dL",
+   "D": "Cefotaxima (ou ceftriaxona) intravenosa e albumina 1,5 g/kg no dia 1 e 1 g/kg no dia 3"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>PBE se diagnostica com PMN ≥ 250/mm³ no líquido ascítico, independentemente da cultura. O tratamento é cefalosporina de terceira geração (cefotaxima 2 g de 8/8 h ou ceftriaxona 2 g/dia por 5 dias) associada à albumina (1,5 g/kg no dia 1 e 1 g/kg no dia 3). A albumina reduz lesão renal e mortalidade (Sort et al., 1999) e é especialmente indicada quando a bilirrubina passa de 4 mg/dL ou a creatinina passa de 1 mg/dL. Este paciente tem os dois.</p><ul><li><strong>A — incorreta:</strong> o tratamento não deve esperar a cultura.</li><li><strong>B — incorreta:</strong> os critérios de Runyon para peritonite secundária (proteína &gt; 1 g/dL, glicose &lt; 50 mg/dL, LDH elevada) não estão presentes.</li><li><strong>C — incorreta:</strong> a creatinina e a bilirrubina deste paciente indicam albumina.</li></ul>"
+ },
+ {
+  "n": 7,
+  "enunciado": "Homem de 58 anos, com diabetes tipo 2 e hipertensão, faz acompanhamento ambulatorial. Nos últimos 6 meses, a TFG estimada ficou estável entre 40 e 43 mL/min/1,73 m², e duas relações albumina/creatinina urinárias foram de 420 e 450 mg/g. Usa losartana 100 mg/dia e metformina. PA 128/78 mmHg, potássio 4,8 mEq/L.\n\nQual é a classificação KDIGO e a próxima intervenção farmacológica com maior benefício renal?",
+  "alternativas": {
+   "A": "G3b A3; iniciar um inibidor de SGLT2",
+   "B": "G3a A2; associar enalapril à losartana (duplo bloqueio)",
+   "C": "G3b A3; suspender a losartana, já que a TFG está abaixo de 45",
+   "D": "G3b A2; restrição proteica de 0,4 g/kg/dia"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>Com TFG de 30–44 e RAC acima de 300 mg/g persistentes por mais de 3 meses, a classificação é G3b A3. Pelo KDIGO 2024, o iSGLT2 está indicado na DRC com DM2 e TFG ≥ 20, e reduz a progressão renal em cerca de 37%. O paciente já usa BRA em dose máxima, e o próximo passo é acrescentar o iSGLT2. Abaixo de 45, o efeito glicêmico cai, mas a renoproteção se mantém.</p><ul><li><strong>B — incorreta:</strong> o duplo bloqueio do SRAA deve ser evitado.</li><li><strong>C — incorreta:</strong> o IECA ou BRA deve ser mantido mesmo com TFG abaixo de 30.</li><li><strong>D — incorreta:</strong> a classificação está errada (é A3), e restrição de 0,4 g/kg/dia é excessiva.</li></ul>"
+ },
+ {
+  "n": 8,
+  "enunciado": "Mulher de 40 anos está no primeiro dia de pós-operatório de tireoidectomia total por bócio multinodular. Apresenta parestesias periorais e nas extremidades, espasmo carpopedal e sinal de Trousseau positivo. Exames: cálcio total 6,8 mg/dL, albumina 4,0 g/dL, magnésio 2,0 mg/dL, potássio 4,2 mEq/L. ECG com QTc prolongado.\n\nQual é a conduta imediata?",
+  "alternativas": {
+   "A": "Carbonato de cálcio oral 1 g e colecalciferol 50.000 UI",
+   "B": "Gluconato de cálcio 10%, 1 a 2 g diluídos em 50–100 mL de SG 5% ou SF, em 10–20 minutos, seguido de infusão contínua e início de calcitriol com cálcio oral",
+   "C": "Cloreto de cálcio 10% em bolus intravenoso rápido, em 1 minuto, em veia periférica",
+   "D": "Sulfato de magnésio intravenoso, deixando o cálcio apenas para o caso de não haver resposta"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>A hipocalcemia é aguda e sintomática (espasmo carpopedal, QT longo) após tireoidectomia, o que indica cálcio intravenoso. Prefere-se o gluconato de cálcio 10%, que causa menos necrose se extravasar do que o cloreto, diluído e infundido em 10–20 minutos, com a seguinte sequência:</p><p>1. Bolus diluído de gluconato de cálcio. 2. Infusão contínua de 0,5–1,5 mg/kg/h de cálcio elementar, porque o bolus dura apenas 2–3 horas. 3. Início precoce de calcitriol, que age em horas, com cálcio oral para fazer a transição.</p><ul><li><strong>A — incorreta:</strong> a via oral é insuficiente com sintomas graves.</li><li><strong>C — incorreta:</strong> o bolus rápido pode causar arritmia e até assistolia, e o cloreto causa necrose se extravasar.</li><li><strong>D — incorreta:</strong> o magnésio é normal, então não é o problema aqui.</li></ul>"
+ },
+ {
+  "n": 9,
+  "enunciado": "Homem de 34 anos, com HIV diagnosticado há 2 anos e sem terapia antirretroviral, tem CD4 de 45 células/µL. Há 6 semanas apresenta febre diária, perda de 8 kg, hepatoesplenomegalia e pápulas eritematosas disseminadas na pele. Exames: pancitopenia, LDH e ferritina muito elevadas, fosfatase alcalina 3 vezes o normal. TC de tórax: infiltrado micronodular difuso. Teste rápido molecular para tuberculose no escarro: não detectado. Viveu a infância em zona rural, onde limpava galinheiros.\n\nQual exame inicial é o mais sensível para a principal hipótese fúngica?",
+  "alternativas": {
+   "A": "Sorologia por imunodifusão para Histoplasma",
+   "B": "Pesquisa de leveduras no esfregaço de sangue periférico",
+   "C": "Antígeno de Histoplasma na urina e no soro, colhido junto com hemoculturas para fungos por lise-centrifugação",
+   "D": "Antígeno criptocócico sérico"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>O quadro é de histoplasmose disseminada: HIV com CD4 ≤ 150, febre, perda de peso, hepatoesplenomegalia, pancitopenia, lesões de pele, LDH e ferritina muito altas, infiltrado micronodular e exposição a excretas de aves. O exame inicial mais sensível é o antígeno de Histoplasma na urina (cerca de 97% no HIV avançado) e no soro, colhido junto com hemoculturas por lise-centrifugação. O tratamento grave não deve esperar a confirmação.</p><ul><li><strong>A — incorreta:</strong> os anticorpos podem ser negativos no imunossuprimido e demoram até 2 semanas.</li><li><strong>B — incorreta:</strong> o esfregaço de sangue periférico tem sensibilidade isolada menor que 10%.</li><li><strong>D — incorreta:</strong> o antígeno criptocócico é útil para criptococose, mas não confirma histoplasmose.</li></ul><p>Lembre que a tuberculose é o principal diferencial e pode coexistir: as duas devem ser investigadas.</p>"
+ },
+ {
+  "n": 10,
+  "enunciado": "Homem de 40 anos, com 68 kg, tem tosse produtiva há 5 semanas, febre vespertina, sudorese noturna e perda de peso. Teste rápido molecular para tuberculose no escarro: *M. tuberculosis* detectado, sem resistência à rifampicina. Sorologia para HIV não reagente. Não tem comorbidades.\n\nQual é o esquema de tratamento indicado?",
+  "alternativas": {
+   "A": "2RHZ/4RH",
+   "B": "2RHZE/10RH",
+   "C": "2RHZE/4RH, em comprimidos de dose fixa combinada ajustados ao peso",
+   "D": "Aguardar cultura e teste de sensibilidade antes de iniciar o tratamento"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>Adultos e adolescentes (≥ 10 anos) com tuberculose sensível recebem o esquema básico 2RHZE/4RH, em comprimidos de dose fixa combinada ajustados por faixa de peso. A fase intensiva tem 2 meses de RHZE, e a de manutenção, 4 meses de RH.</p><ul><li><strong>A — incorreta:</strong> 2RHZ/4RH é o esquema de crianças menores de 10 anos, sem etambutol.</li><li><strong>B — incorreta:</strong> 2RHZE/10RH é reservado à forma meningoencefálica e à osteoarticular.</li><li><strong>D — incorreta:</strong> o TRM-TB já confirma o diagnóstico e a sensibilidade à rifampicina, então o tratamento não deve esperar.</li></ul>"
+ },
+ {
+  "n": 11,
+  "enunciado": "Mulher de 32 anos, natural do interior, teve febre reumática na infância. Há 1 ano tem dispneia progressiva, hoje aos médios esforços (classe funcional NYHA II–III), e palpitações. Exame: ritmo irregular, B1 hiperfonética, estalido de abertura e ruflar diastólico no foco mitral. ECG: fibrilação atrial. Ecocardiograma transesofágico: área valvar mitral de 1,1 cm², escore de Wilkins-Block 7, insuficiência mitral leve, sem trombo no átrio esquerdo.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Troca valvar mitral cirúrgica como primeira escolha",
+   "B": "Valvuloplastia contraindicada pela presença de fibrilação atrial; indicar comissurotomia cirúrgica",
+   "C": "Anticoagulação com rivaroxabana e tratamento clínico",
+   "D": "Valvuloplastia mitral percutânea por balão, com anticoagulação com varfarina"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>A estenose mitral reumática é importante (área ≤ 1,5 cm²) e sintomática, com anatomia favorável: Wilkins-Block ≤ 8, sem trombo no átrio esquerdo e com insuficiência mitral apenas leve. A valvuloplastia mitral percutânea por balão é o tratamento de escolha. A fibrilação atrial não contraindica o procedimento. Contraindicações são trombo no AE, insuficiência mitral moderada ou grave e embolia recente.</p><ul><li><strong>A — incorreta:</strong> a cirurgia fica reservada a quem não pode fazer a valvuloplastia.</li><li><strong>B — incorreta:</strong> a FA não contraindica a valvuloplastia.</li><li><strong>C — incorreta:</strong> na estenose mitral moderada ou grave com FA, a anticoagulação é feita com varfarina, porque os DOACs não estão indicados nesse cenário.</li></ul>"
+ },
+ {
+  "n": 12,
+  "enunciado": "Homem de 46 anos, assintomático, com IMC de 31 kg/m², faz exames de rastreio. Na mesma coleta: glicemia de jejum de 132 mg/dL e hemoglobina glicada de 6,8%. Não tem anemia nem hemoglobinopatia.\n\nQual é a interpretação correta, segundo a ADA?",
+  "alternativas": {
+   "A": "Pré-diabetes; repetir os exames em 1 ano",
+   "B": "Resultados inconclusivos; é obrigatório fazer TOTG com 75 g",
+   "C": "É preciso repetir os dois exames em outro dia antes de confirmar o diagnóstico",
+   "D": "Diagnóstico de diabetes mellitus confirmado"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>Pela ADA 2026, sem hiperglicemia inequívoca o diagnóstico exige dois resultados alterados. Esses resultados podem ser dois testes diferentes na mesma coleta. Aqui, a glicemia de jejum ≥ 126 mg/dL e a HbA1c ≥ 6,5% vieram alteradas na mesma amostra, o que confirma diabetes.</p><ul><li><strong>A — incorreta:</strong> os dois valores estão na faixa de diabetes, não de pré-diabetes.</li><li><strong>B — incorreta:</strong> o TOTG não é obrigatório.</li><li><strong>C — incorreta:</strong> só seria preciso repetir se os testes fossem discordantes.</li></ul>"
+ },
+ {
+  "n": 13,
+  "enunciado": "Rapaz de 19 anos, com 60 kg, recebe diagnóstico de diabetes tipo 1, sem cetoacidose e sem resistência à insulina. Você opta por insulinização plena com análogos, usando 0,5 UI/kg/dia, com 50% como insulina basal e 50% como bolus, dividido igualmente entre as três refeições principais.\n\nQual prescrição corresponde a esse planejamento?",
+  "alternativas": {
+   "A": "NPH 30 UI pela manhã, em dose única",
+   "B": "Glargina 30 UI uma vez ao dia + lispro conforme glicemia capilar",
+   "C": "Glargina 15 UI uma vez ao dia + lispro 5 UI antes do café, do almoço e do jantar",
+   "D": "NPH 10 UI pela manhã e 5 UI ao deitar + regular 15 UI antes do almoço"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>O cálculo é: 60 kg × 0,5 UI/kg = 30 UI/dia, sendo 15 UI de insulina basal e 15 UI de bolus. Com análogos, a glargina (ou degludeca) é aplicada uma vez ao dia, e a lispro (ou asparte/glulisina) é dividida entre as três refeições principais, 5 UI em cada.</p><ul><li><strong>A — incorreta:</strong> NPH em dose única não mimetiza a secreção fisiológica e causa hipoglicemia.</li><li><strong>B — incorreta:</strong> coloca toda a dose diária como basal.</li><li><strong>D — incorreta:</strong> o bolus está todo concentrado no almoço.</li></ul><p>Com NPH, a dose basal seria dividida em 2/3 pela manhã e 1/3 ao deitar.</p>"
+ },
+ {
+  "n": 14,
+  "enunciado": "Homem de 67 anos, previamente hígido, tem diarreia aquosa há 1 semana, com 7 a 8 evacuações por dia, e vômitos. Na admissão: sonolento, desidratado (3+/4+), PA 90 × 60 mmHg, FC 115 bpm, extremidades frias. Recebeu expansão volêmica. Exames: ureia 64 mg/dL, creatinina 2,3 mg/dL (basal desconhecida, sem doença renal prévia), Na 146 mEq/L, K 5,2 mEq/L, pH 7,30, HCO₃⁻ 16 mEq/L. Urina: cilindros granulosos, osmolaridade 302 mOsm/kg, sódio urinário 55 mEq/L, FeNa 5%.\n\nQual é o diagnóstico mais provável?",
+  "alternativas": {
+   "A": "Necrose tubular aguda de origem isquêmica",
+   "B": "Lesão renal aguda pré-renal pura, que deve reverter só com volume",
+   "C": "Nefrite intersticial aguda",
+   "D": "Glomerulonefrite rapidamente progressiva"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>Uma hipovolemia prolongada (diarreia por 1 semana, com choque) evoluiu para necrose tubular aguda isquêmica. A urina mostra que o túbulo perdeu a capacidade de concentrar e de reter sódio. O quadro abaixo compara os achados com os esperados em cada situação:</p><p>| Achado | Pré-renal | NTA | Este paciente | |---|---|---|---| | Sódio urinário | &lt; 20 mEq/L | &gt; 40 mEq/L | 55 mEq/L | | FeNa | &lt; 1% | &gt; 2% | 5% | | Osmolaridade urinária | &gt; 500 mOsm | &lt; 350 mOsm | 302 mOsm | | Cilindros | Hialinos | Granulosos (\"marrom-barrentos\") | Granulosos |</p><ul><li><strong>B — incorreta:</strong> os índices urinários não são de LRA pré-renal pura.</li><li><strong>C — incorreta:</strong> não há febre, rash, eosinofilia nem leucocitúria.</li><li><strong>D — incorreta:</strong> não há hematúria dismórfica nem proteinúria.</li></ul><p>O tratamento é de suporte: manter a euvolemia, evitar nefrotóxicos, corrigir os eletrólitos e tratar a causa.</p>"
+ },
+ {
+  "n": 15,
+  "enunciado": "Homem de 66 anos, com doença renal crônica G4, chega com fraqueza muscular. Potássio sérico de 7,1 mEq/L, confirmado em amostra sem hemólise. ECG: ondas T apiculadas e alargamento do QRS. PA 140/85 mmHg, glicemia 110 mg/dL.\n\nQual deve ser a primeira medida terapêutica?",
+  "alternativas": {
+   "A": "Gluconato de cálcio 10%, 30 mL intravenoso em 5–10 minutos, sob monitorização cardíaca",
+   "B": "Insulina regular 10 UI com glicose 25 g intravenosa",
+   "C": "Poliestireno sulfonato de cálcio por via oral",
+   "D": "Furosemida 80 mg intravenosa"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>Diante de hipercalemia com alteração no ECG, a primeira medida é estabilizar a membrana do miocárdio com gluconato de cálcio 10% (30 mL IV em 5–10 minutos, que pode ser repetido), sob monitorização. O cálcio não reduz o potássio, mas protege contra arritmias em minutos.</p><p>Em seguida, vêm as medidas de redistribuição:</p><ul><li><strong>B (insulina com glicose) — incorreta como primeira medida:</strong> só reduz o potássio após 15–30 minutos.</li><li><strong>Salbutamol:</strong> adjuvante da redistribuição.</li></ul><p>Por fim, as medidas de remoção:</p><ul><li><strong>C (quelante intestinal) — incorreta como primeira medida:</strong> age em horas.</li><li><strong>D (furosemida) — incorreta como primeira medida:</strong> de pouca valia na DRC G4 sem hipervolemia.</li><li><strong>Diálise:</strong> se o quadro for refratário.</li></ul>"
+ },
+ {
+  "n": 16,
+  "enunciado": "Homem de 27 anos chega ao pronto-socorro com dispneia intensa, dor torácica e síncope. Teve infecção viral há cerca de 1 semana. Exame: PA 75 × 45 mmHg, FC 125 bpm, extremidades frias, rebaixamento do nível de consciência e estertores pulmonares difusos. Troponina muito elevada, lactato elevado. Ecocardiograma: FEVE de 15%, com hipocinesia global importante, sem derrame pericárdico.\n\nQual é a prioridade terapêutica?",
+  "alternativas": {
+   "A": "Ibuprofeno e colchicina para controlar a inflamação miopericárdica",
+   "B": "Betabloqueador intravenoso para prevenir arritmias ventriculares",
+   "C": "Trombólise sistêmica por suspeita de síndrome coronariana aguda",
+   "D": "Suporte hemodinâmico com inotrópicos e vasopressores e transferência para centro com suporte circulatório mecânico (por exemplo, ECMO), considerando biópsia endomiocárdica"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>Choque cardiogênico com FEVE de 15%, logo após infecção viral, em um jovem, caracteriza miocardite fulminante: instalação aguda com instabilidade que exige inotrópico ou suporte circulatório mecânico. A prioridade é a estabilização hemodinâmica, com inotrópicos, vasopressores e, se necessário, ECMO, em centro com essa capacidade. A biópsia endomiocárdica é indicada em apresentação grave e IC de início recente, e a imunossupressão pode ser considerada na forma fulminante.</p><ul><li><strong>A — incorreta:</strong> AINE e colchicina só têm papel se houver pericardite associada.</li><li><strong>B — incorreta:</strong> o betabloqueador IV agrava o choque.</li><li><strong>C — incorreta:</strong> não há indicação de trombólise.</li></ul>"
+ },
+ {
+  "n": 17,
+  "enunciado": "Homem de 55 anos, com cirrose alcoólica compensada (Child-Pugh A), em abstinência há 1 ano, nunca teve sangramento digestivo. Endoscopia: varizes esofágicas de médio calibre, sem sinais vermelhos. PA 130/80 mmHg, FC 84 bpm. Sem asma ou outras contraindicações a betabloqueador.\n\nQual é a profilaxia primária preferencial?",
+  "alternativas": {
+   "A": "Mononitrato de isossorbida isolado",
+   "B": "Carvedilol, iniciando com 6,25 mg/dia e titulando até 12,5 mg/dia",
+   "C": "TIPS eletivo",
+   "D": "Escleroterapia endoscópica"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>Varizes de médio ou grande calibre sem sangramento prévio têm indicação de profilaxia primária, com betabloqueador não seletivo ou ligadura elástica. O carvedilol é o betabloqueador de escolha: o bloqueio β1, β2 e α1 reduz mais a pressão portal, e o PREDESCI mostrou redução de descompensação. A dose usual é 6,25 mg/dia, titulada até 12,5 mg/dia.</p><ul><li><strong>A — incorreta:</strong> o nitrato isolado é ineficaz e pode piorar a hemodinâmica sistêmica.</li><li><strong>C — incorreta:</strong> o TIPS não é profilaxia primária.</li><li><strong>D — incorreta:</strong> a escleroterapia foi substituída pela ligadura.</li></ul>"
+ },
+ {
+  "n": 18,
+  "enunciado": "Mulher de 60 anos, no 5º dia de pós-operatório de artroplastia de joelho, tem dispneia súbita. A angiotomografia mostra TEP bilateral nas artérias pulmonares principais. Apesar de 1.000 mL de cristaloide, a PA está em 78 × 50 mmHg, a FC em 128 bpm e o lactato em 5 mmol/L, com extremidades frias. Ecocardiograma à beira do leito: VD dilatado e hipocinético, com relação VD/VE de 1,4. Não há sangramento ativo e a cirurgia foi há mais de 3 dias, sem procedimento em órgão nobre.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Heparina não fracionada intravenosa, noradrenalina e reperfusão (trombólise sistêmica com alteplase ou terapia por cateter, conforme disponibilidade e risco hemorrágico, discutida pela equipe de TEP)",
+   "B": "Enoxaparina subcutânea e internação em enfermaria",
+   "C": "Iniciar apixabana e dar alta com seguimento ambulatorial precoce",
+   "D": "Intubação orotraqueal com sedação profunda imediata, antes de qualquer suporte hemodinâmico"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>Hipotensão persistente com sinais de choque (lactato elevado, extremidades frias) e disfunção de VD corresponde à categoria E1 da AHA/ACC 2026 (falência cardiopulmonar estabelecida), equivalente ao antigo \"TEP maciço\". Nessa categoria, terapias avançadas de reperfusão são razoáveis. A conduta combina:</p><ul><li>Anticoagulação com heparina não fracionada, preferível quando se planeja reperfusão.</li><li>Noradrenalina como vasopressor de escolha.</li><li>Reperfusão: trombólise sistêmica ou terapia por cateter. Como a cirurgia foi há 5 dias, o risco hemorrágico deve pesar na escolha, discutida pela PERT.</li></ul><ul><li><strong>B e C — incorretas:</strong> servem a categorias de menor risco.</li><li><strong>D — incorreta:</strong> sedação profunda e intubação sem suporte hemodinâmico pronto podem precipitar parada cardíaca.</li></ul>"
+ },
+ {
+  "n": 19,
+  "enunciado": "Mulher de 24 anos, professora de creche, tem há 5 dias febre, náuseas, dor em hipocôndrio direito e, há 2 dias, icterícia e colúria. Outros adultos da creche tiveram quadro semelhante. Exames: ALT 2.400 U/L, AST 1.700 U/L, bilirrubina total 5,8 mg/dL, INR 1,0.\n\nQual exame confirma a principal hipótese diagnóstica?",
+  "alternativas": {
+   "A": "IgG anti-HAV",
+   "B": "IgM anti-HAV",
+   "C": "Pesquisa de RNA do HAV nas fezes, obrigatória para o diagnóstico",
+   "D": "Ultrassonografia de abdome"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>O quadro de hepatite aguda em contexto de surto em creche (crianças pequenas costumam ser assintomáticas e transmitir o vírus) aponta para hepatite A. O diagnóstico é feito pelo IgM anti-HAV, positivo desde o início dos sintomas e por 3–6 meses. A ALT costuma passar de 1.000 U/L, com ALT maior que AST.</p><ul><li><strong>A — incorreta:</strong> o IgG anti-HAV isolado indica infecção passada ou vacinação.</li><li><strong>C — incorreta:</strong> o RNA do HAV nas fezes não é necessário para o diagnóstico.</li><li><strong>D — incorreta:</strong> a ultrassonografia serve apenas para excluir obstrução biliar.</li></ul><p>O tratamento é de suporte, e os contatos devem ser vacinados.</p>"
+ },
+ {
+  "n": 20,
+  "enunciado": "Homem de 78 anos, aposentado, perdeu a consciência hoje pela manhã enquanto assistia TV sentado, sem pródromos ou fatores desencadeantes, e caiu, com contusão na fronte. Antecedentes: hipertensão, diabetes, doença renal crônica não dialítica e doença isquêmica em tratamento clínico. Usa losartana, hidroclorotiazida, metformina, dapagliflozina, AAS e rosuvastatina. Exame: PA 70 × 50 mmHg, FC 32 bpm, confuso, Glasgow 13. ECG: dissociação atrioventricular completa, com escape de QRS largo.\n\nQual é o diagnóstico e a conduta?",
+  "alternativas": {
+   "A": "Síncope vasovagal; indicar tilt test ambulatorial",
+   "B": "Hipotensão ortostática por diurético; suspender a hidroclorotiazida e dar alta",
+   "C": "Crise convulsiva; solicitar eletroencefalograma",
+   "D": "Síncope cardíaca por bloqueio atrioventricular total; internação com monitorização, estimulação cardíaca temporária (transcutânea ou transvenosa) diante da instabilidade e implante de marca-passo definitivo"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>Síncope sem pródromos, em paciente sentado, idoso, cardiopata, com trauma, bradicardia de 32 bpm e BAVT com escape largo indica causa cardíaca arrítmica, de alto risco. A conduta é:</p><p>1. Internação com monitorização contínua. 2. Atropina, que pode ser tentada, mas costuma falhar no bloqueio infranodal. 3. Estimulação temporária (transcutânea ou transvenosa) diante da instabilidade. 4. Implante de marca-passo definitivo.</p><ul><li><strong>A — incorreta:</strong> os achados de alto risco afastam síncope vasovagal.</li><li><strong>B — incorreta:</strong> os diuréticos podem contribuir, mas não explicam o BAVT.</li><li><strong>C — incorreta:</strong> não há indício de convulsão.</li></ul>"
+ },
+ {
+  "n": 21,
+  "enunciado": "Homem de 50 anos está na 3ª semana de internação por pancreatite aguda necrosante. Após melhora inicial, volta a ter febre de 38,8 °C, taquicardia e leucocitose. A TC mostra coleção necrótica peripancreática heterogênea, parcialmente encapsulada, com bolhas de gás no interior. Está hemodinamicamente estável.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Necrosectomia cirúrgica aberta imediata",
+   "B": "Manter apenas suporte, já que antibióticos não têm papel na pancreatite aguda",
+   "C": "Fazer punção aspirativa por agulha fina obrigatoriamente antes de qualquer antibiótico",
+   "D": "Iniciar carbapenêmico e, se possível, adiar a intervenção até a necrose estar encapsulada (cerca de 4 semanas), seguindo a abordagem escalonada (drenagem percutânea ou endoscópica antes de necrosectomia)"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>Deterioração após melhora inicial e gás na coleção necrótica indicam necrose infectada. A conduta é iniciar antibiótico com boa penetração pancreática (carbapenêmico) e seguir a abordagem escalonada (*step-up*):</p><p>1. Adiar a intervenção até a necrose estar encapsulada (*walled-off necrosis*, cerca de 4 semanas), se o paciente estiver estável. 2. Drenar por via percutânea ou endoscópica. 3. Fazer necrosectomia minimamente invasiva apenas se necessário.</p><ul><li><strong>A — incorreta:</strong> a necrosectomia aberta precoce tem maior morbimortalidade.</li><li><strong>B — incorreta:</strong> a profilaxia antibiótica não é indicada, mas a necrose infectada deve ser tratada.</li><li><strong>C — incorreta:</strong> a punção aspirativa não é obrigatória; clínica e imagem bastam.</li></ul>"
+ },
+ {
+  "n": 22,
+  "enunciado": "Mulher de 63 anos, com diagnóstico recente de neoplasia de pulmão, tem dispneia intensa que piorou nas últimas horas. Exame: PA 82 × 58 mmHg, FC 124 bpm, FR 28 irpm, turgência jugular importante, bulhas hipofonéticas, pulso paradoxal e extremidades frias. ECG com alternância elétrica. Ecocardiograma: grande derrame pericárdico, colapso diastólico do átrio e do ventrículo direitos e variação respiratória importante dos fluxos transvalvares.\n\nQual é a conduta imediata?",
+  "alternativas": {
+   "A": "Furosemida intravenosa para reduzir a congestão venosa",
+   "B": "Pericardiocentese de urgência guiada por ultrassom, com expansão volêmica cautelosa e sem usar diuréticos ou vasodilatadores",
+   "C": "Nitroglicerina intravenosa para reduzir a pré-carga",
+   "D": "Ibuprofeno e colchicina, com reavaliação em 24 horas"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>O quadro é de tamponamento cardíaco: tríade de Beck (hipotensão, turgência jugular e bulhas abafadas), pulso paradoxal, alternância elétrica e colapso das câmaras direitas, em contexto de neoplasia. A conduta é pericardiocentese de urgência guiada por ultrassom. O ventrículo direito comprimido depende da pré-carga, por isso:</p><ul><li><strong>A (diurético) e C (vasodilatador) — incorretas:</strong> reduzem a pré-carga e podem precipitar colapso hemodinâmico.</li><li><strong>Expansão volêmica cautelosa:</strong> pode ajudar até a drenagem.</li></ul><ul><li><strong>D — incorreta:</strong> o tratamento anti-inflamatório não resolve a emergência.</li></ul><p>O líquido deve ser enviado para análise (citologia, ADA, culturas).</p>"
+ },
+ {
+  "n": 23,
+  "enunciado": "Homem de 52 anos, com cirrose por vírus C e ascite, teve aumento da creatinina de 1,0 para 2,4 mg/dL em 5 dias. Os diuréticos foram suspensos e ele recebeu albumina 1 g/kg/dia por 2 dias, sem melhora. PA 105 × 65 mmHg, sem choque. Não usou AINE, contraste nem aminoglicosídeo. Urina: proteinúria de 150 mg/dia, sem hematúria. Ultrassonografia renal normal.\n\nQual é o tratamento indicado?",
+  "alternativas": {
+   "A": "Hemodiálise imediata",
+   "B": "Expansão com 2 litros de soro fisiológico",
+   "C": "TIPS de urgência como primeira linha",
+   "D": "Terlipressina associada à albumina"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>O paciente preenche os critérios de síndrome hepatorrenal com lesão renal aguda (SHR-AKI):</p><ul><li>cirrose com ascite;</li><li>AKI pelo critério do ICA;</li><li>ausência de resposta após 2 dias sem diurético e com albumina 1 g/kg;</li><li>ausência de choque;</li><li>ausência de nefrotóxicos;</li><li>ausência de doença parenquimatosa (proteinúria &lt; 500 mg/dia, sem hematúria, ultrassonografia normal).</li></ul><p>O tratamento de primeira linha é terlipressina associada à albumina (20–40 g/dia). Se não houver terlipressina, usa-se noradrenalina em UTI. O tratamento definitivo é o transplante hepático.</p><ul><li><strong>A — incorreta:</strong> a diálise fica restrita a ponte para transplante.</li><li><strong>B — incorreta:</strong> o soro fisiológico não reverte a vasodilatação esplâncnica e piora a ascite.</li><li><strong>C — incorreta:</strong> o TIPS não é primeira linha na SHR.</li></ul>"
+ },
+ {
+  "n": 24,
+  "enunciado": "Mulher de 50 anos, transplantada renal há 2 anos e em uso de tacrolimo e micofenolato, chega com febre alta, hipotensão que exige vasopressor, insuficiência respiratória, hepatoesplenomegalia e pancitopenia. Antígeno de Histoplasma na urina positivo. Não tem cefaleia nem alterações neurológicas, e o líquor é normal.\n\nQual é o tratamento inicial mais adequado?",
+  "alternativas": {
+   "A": "Anfotericina B lipossomal 3 mg/kg/dia por 1 a 2 semanas, seguida de itraconazol (ataque de 200 mg três vezes ao dia por 3 dias, depois 200 mg duas vezes ao dia), por pelo menos 12 meses no total, com redução da imunossupressão",
+   "B": "Itraconazol oral 200 mg duas vezes ao dia, desde o início",
+   "C": "Fluconazol 400 mg/dia por via oral",
+   "D": "Anfotericina B lipossomal 5 mg/kg/dia por 4 a 6 semanas, por tratar-se de doença no SNC"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>A doença é grave (choque, insuficiência respiratória, pancitopenia, imunossupressão) e sem acometimento do SNC. A indução é feita com anfotericina B lipossomal 3 mg/kg/dia por 1–2 semanas. Quando o paciente estiver afebril, sem vasopressor e tolerando via oral, faz-se a transição para itraconazol (ataque de 200 mg 3 vezes ao dia por 3 dias, depois 200 mg 2 vezes ao dia). O tratamento total é de pelo menos 12 meses, e a imunossupressão deve ser reduzida ao mínimo.</p><ul><li><strong>B — incorreta:</strong> o itraconazol é fungistático e lento, adequado apenas para doença leve a moderada.</li><li><strong>C — incorreta:</strong> o fluconazol é o azol menos eficaz e seleciona resistência.</li><li><strong>D — incorreta:</strong> a dose de 5 mg/kg por 4–6 semanas é a do acometimento do SNC, que esta paciente não tem.</li></ul>"
+ },
+ {
+  "n": 25,
+  "enunciado": "Homem de 28 anos tem febre baixa vespertina, dor torácica ventilatório-dependente à esquerda e perda de 5 kg em 1 mês. A radiografia mostra derrame pleural moderado à esquerda. Toracocentese: líquido amarelo-citrino, exsudato, 2.800 células com 85% de linfócitos, glicose 75 mg/dL, adenosina deaminase (ADA) de 78 U/L, pH 7,35, bacterioscopia e pesquisa de BAAR negativas. HIV não reagente.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Drenagem torácica fechada por empiema",
+   "B": "Aguardar o resultado da cultura para micobactéria (6 a 8 semanas) antes de tratar",
+   "C": "Antibioticoterapia com ceftriaxona e azitromicina por pneumonia com derrame parapneumônico",
+   "D": "Iniciar tratamento para tuberculose pleural com 2RHZE/4RH"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>Derrame pleural exsudativo com predomínio de linfócitos e ADA &gt; 40 U/L em adulto jovem, com sintomas constitucionais, tem alta acurácia para tuberculose pleural (sensibilidade de cerca de 93% e especificidade de cerca de 97%). Em área endêmica, isso permite iniciar o esquema básico 2RHZE/4RH. A baciloscopia do líquido costuma ser negativa, porque a forma é paucibacilar.</p><ul><li><strong>A — incorreta:</strong> não se trata de empiema (pH normal, glicose normal, predomínio linfocitário).</li><li><strong>B — incorreta:</strong> esperar a cultura atrasa o tratamento sem necessidade.</li><li><strong>C — incorreta:</strong> o derrame parapneumônico tem predomínio de neutrófilos.</li></ul>"
+ },
+ {
+  "n": 26,
+  "enunciado": "Mulher de 22 anos procura atendimento por cãibras e parestesias recorrentes. Exame: baixa estatura, face arredondada, obesidade e encurtamento do 4º e do 5º metacarpos. Exames: cálcio corrigido 7,6 mg/dL, fósforo 6,2 mg/dL, PTH 310 pg/mL (VR 15–65), magnésio 2,1 mg/dL, 25(OH)D 38 ng/mL, creatinina 0,7 mg/dL. TSH discretamente elevado.\n\nQual é o diagnóstico mais provável?",
+  "alternativas": {
+   "A": "Hipoparatireoidismo autoimune isolado",
+   "B": "Pseudo-hipoparatireoidismo tipo 1A",
+   "C": "Deficiência de vitamina D com hiperparatireoidismo secundário",
+   "D": "Hipocalcemia autossômica dominante por mutação ativadora do CaSR"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>O padrão laboratorial é hipocalcemia com hiperfosfatemia e PTH elevado, com função renal e vitamina D normais. Isso indica resistência ao PTH, ou seja, pseudo-hipoparatireoidismo. O fenótipo de osteodistrofia hereditária de Albright (baixa estatura, face arredondada, obesidade e braquidactilia do 4º e 5º dedos), somado à resistência a outros hormônios (TSH elevado), caracteriza o tipo 1A, por mutação inativadora do GNAS herdada da mãe.</p><ul><li><strong>A — incorreta:</strong> no hipoparatireoidismo o PTH é baixo.</li><li><strong>C — incorreta:</strong> na deficiência de vitamina D o fósforo é baixo.</li><li><strong>D — incorreta:</strong> na hipocalcemia autossômica dominante o PTH é normal ou baixo.</li></ul>"
+ },
+ {
+  "n": 27,
+  "enunciado": "Homem de 81 anos, frágil e com doença pulmonar obstrutiva crônica moderada, tem angina aos esforços e um episódio de síncope ao subir escadas. Exame: sopro sistólico ejetivo rude em foco aórtico, irradiado para as carótidas, B2 hipofonética e pulso *parvus et tardus*. Ecocardiograma: velocidade máxima transvalvar de 4,6 m/s, gradiente médio de 48 mmHg, área valvar de 0,7 cm², FEVE de 60%. O risco cirúrgico estimado é alto.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Vasodilatador arterial (hidralazina) para reduzir a pós-carga",
+   "B": "Valvuloplastia aórtica por balão como tratamento definitivo",
+   "C": "Implante transcateter de válvula aórtica (TAVI) por via transfemoral, após avaliação pelo Heart Team",
+   "D": "Observação clínica, já que a FEVE está preservada"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>A estenose aórtica é importante (velocidade máxima ≥ 4 m/s, gradiente médio ≥ 40 mmHg, área ≤ 1 cm²) e sintomática (angina e síncope), o que é indicação de intervenção, independentemente da FEVE. Como o paciente tem mais de 75 anos, é frágil e tem alto risco cirúrgico, o TAVI transfemoral é preferível, com decisão obrigatória do Heart Team.</p><ul><li><strong>A — incorreta:</strong> vasodilatadores são perigosos na estenose aórtica, porque o débito é fixo.</li><li><strong>B — incorreta:</strong> a valvuloplastia por balão serve apenas como ponte ou paliação.</li><li><strong>D — incorreta:</strong> após o início dos sintomas, a sobrevida sem intervenção é muito reduzida.</li></ul>"
+ },
+ {
+  "n": 28,
+  "enunciado": "Homem de 62 anos, com diabetes tipo 2 há 8 anos e insuficiência cardíaca com FEVE de 30% (NYHA II), usa metformina 2 g/dia, sacubitril-valsartana, bisoprolol e espironolactona. HbA1c de 7,2%, TFG estimada de 68 mL/min/1,73 m².\n\nQual é a melhor conduta para o diabetes, segundo a ADA 2026?",
+  "alternativas": {
+   "A": "Associar um inibidor de SGLT2 com benefício comprovado em insuficiência cardíaca, independentemente da HbA1c",
+   "B": "Manter o esquema atual, pois a HbA1c está próxima da meta",
+   "C": "Associar pioglitazona",
+   "D": "Associar saxagliptina"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>Pela ADA 2026, em pacientes com DM2 e insuficiência cardíaca (com FE reduzida ou preservada), o iSGLT2 com benefício comprovado em IC está indicado com nível A, independentemente da HbA1c atual, da meta e do uso de metformina. O benefício cardiorrenal não depende da queda da glicemia.</p><ul><li><strong>B — incorreta:</strong> manter o esquema deixa de oferecer um benefício comprovado.</li><li><strong>C — incorreta:</strong> a pioglitazona causa retenção hídrica e é contraindicada na IC.</li><li><strong>D — incorreta:</strong> a saxagliptina se associou a aumento de hospitalização por IC.</li></ul>"
+ },
+ {
+  "n": 29,
+  "enunciado": "Mulher de 64 anos, com doença renal crônica G4 não dialítica, queixa-se de cansaço. Exames: Hb 9,0 g/dL, normocítica, ferritina 60 ng/mL, saturação de transferrina 14%, B12 e folato normais. Pesquisa de sangue oculto e endoscopias recentes sem sangramento.\n\nQual é a conduta inicial mais adequada para a anemia?",
+  "alternativas": {
+   "A": "Iniciar alfaepoetina com alvo de Hb acima de 13 g/dL",
+   "B": "Transfundir concentrado de hemácias",
+   "C": "Iniciar alfaepoetina imediatamente, sem repor ferro",
+   "D": "Repor ferro (oral ou intravenoso) antes de considerar um agente estimulador da eritropoese"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>A anemia na DRC tem dois componentes: a deficiência de eritropoetina e a deficiência de ferro, absoluta ou funcional. Ferritina abaixo de 100 ng/mL com saturação de transferrina abaixo de 20% indica ferropenia. O ferro deve ser reposto primeiro e as causas reversíveis corrigidas, antes de pensar em agente estimulador da eritropoese. Quando o AEE for indicado, o alvo é Hb de cerca de 10–11,5 g/dL, e não acima de 13, faixa que aumenta AVC e eventos cardiovasculares.</p><ul><li><strong>A — incorreta:</strong> o alvo de Hb acima de 13 g/dL é perigoso.</li><li><strong>B — incorreta:</strong> a transfusão fica reservada a anemia aguda grave ou falha das outras terapias.</li><li><strong>C — incorreta:</strong> o AEE sem estoque de ferro não funciona.</li></ul>"
+ },
+ {
+  "n": 30,
+  "enunciado": "Homem de 50 anos está há 10 dias em uso de amoxicilina por sinusite e passa a ter febre baixa, exantema maculopapular e artralgia. A creatinina subiu de 0,9 para 2,8 mg/dL. Urina: leucocitúria estéril, cilindros leucocitários, hematúria discreta e eosinofilúria. Proteinúria de 0,6 g/24 h. PA 126/80 mmHg. Eosinofilia no hemograma.\n\nQual é o diagnóstico e a conduta?",
+  "alternativas": {
+   "A": "Necrose tubular aguda; hidratação vigorosa",
+   "B": "Nefrite intersticial aguda induzida por fármaco; suspender a amoxicilina e considerar prednisona (cerca de 1 mg/kg/dia, com redução progressiva em 2 a 4 semanas) se não houver melhora rápida",
+   "C": "Glomerulonefrite pós-estreptocócica; restrição de sal e diurético",
+   "D": "Lesão renal aguda pré-renal; expansão com soro fisiológico"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>O quadro é de nefrite intersticial aguda induzida por fármaco:</p><ul><li>antibiótico betalactâmico como causa (os antibióticos, os IBPs e os AINEs respondem por 75–90% dos casos);</li><li>febre, rash, artralgia e eosinofilia (a tríade completa aparece em menos de 10% dos casos);</li><li>leucocitúria estéril, cilindros leucocitários e eosinofilúria;</li><li>proteinúria abaixo de 1 g/dia.</li></ul><p>O tratamento é suspender o medicamento. A prednisona (1 mg/kg/dia por 2 a 4 semanas, com redução progressiva) é considerada se não houver melhora rápida. A biópsia é o padrão-ouro diagnóstico.</p><ul><li><strong>A — incorreta:</strong> o sedimento da NTA tem cilindros granulosos, sem leucócitos.</li><li><strong>C — incorreta:</strong> a glomerulonefrite pós-estreptocócica cursa com hematúria dismórfica, edema e hipertensão.</li><li><strong>D — incorreta:</strong> os achados não correspondem a essa causa.</li></ul>"
+ },
+ {
+  "n": 31,
+  "enunciado": "Homem de 60 anos, com cirrose Child-Pugh B, é trazido pela família por desorientação temporal, sonolência e comportamento inadequado há 2 dias. Exame: *flapping* presente, sem sinais focais. Está há 5 dias sem evacuar. Sem febre, sem sangramento digestivo, eletrólitos normais. Paracentese sem sinais de PBE.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Restrição proteica rigorosa (menos de 0,5 g/kg/dia)",
+   "B": "Rifaximina isolada como primeira linha",
+   "C": "Tratar o fator precipitante e iniciar lactulose titulada para 2 a 3 evacuações pastosas por dia",
+   "D": "Exigir dosagem de amônia sérica elevada antes de tratar"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>Desorientação temporal com *flapping* corresponde a encefalopatia hepática overt grau 2 de West Haven. O manejo tem dois pilares:</p><ul><li><strong>Identificar e tratar o precipitante:</strong> aqui, a constipação. Também devem ser investigados infecção, sangramento, distúrbios eletrolíticos e sedativos.</li><li><strong>Lactulose:</strong> primeira linha, titulada para 2–3 evacuações pastosas por dia.</li></ul><p>A rifaximina é associada à lactulose quando não há resposta ou como prevenção de recorrência.</p><ul><li><strong>A — incorreta:</strong> a restrição proteica é danosa e não deve ser feita (alvo de 1,2–1,5 g/kg/dia).</li><li><strong>B — incorreta:</strong> a rifaximina não é primeira linha isolada.</li><li><strong>D — incorreta:</strong> a amônia não é necessária para o diagnóstico, que é clínico.</li></ul>"
+ },
+ {
+  "n": 32,
+  "enunciado": "Homem de 29 anos, com testagem regular para ISTs, tinha anti-HCV não reagente há 3 meses. Agora apresenta fadiga e ALT de 900 U/L. Anti-HCV reagente e HCV-RNA detectável. HBsAg e anti-HIV não reagentes. Sem cirrose.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Aguardar 6 meses para observar o clareamento espontâneo e só tratar se o vírus persistir",
+   "B": "Tratar já com sofosbuvir-velpatasvir por 12 semanas ou glecaprevir-pibrentasvir por 8 semanas",
+   "C": "Interferon peguilado com ribavirina por 24 semanas",
+   "D": "Tenofovir por 48 semanas"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>A hepatite C aguda está documentada (soroconversão em até 6 meses, com HCV-RNA detectável). A conduta atual é tratar durante a fase aguda, com os mesmos esquemas da infecção crônica: sofosbuvir-velpatasvir por 12 semanas ou glecaprevir-pibrentasvir por 8 semanas. O tratamento precoce interrompe a transmissão, sobretudo em populações de risco, e evita perder o seguimento do paciente.</p><ul><li><strong>A — incorreta:</strong> esperar o clareamento espontâneo era a conduta antiga.</li><li><strong>C — incorreta:</strong> o interferon está obsoleto.</li><li><strong>D — incorreta:</strong> o tenofovir trata o HBV, não o HCV.</li></ul>"
+ },
+ {
+  "n": 33,
+  "enunciado": "Homem de 48 anos tem há cerca de 1 ano dispneia progressiva, edema de membros inferiores e aumento do volume abdominal. Teve pericardite tuberculosa tratada há alguns anos. Exame: turgência jugular, sinal de Kussmaul, ascite, hepatomegalia e edema bilateral; ausculta pulmonar limpa. Ecocardiograma: pericárdio espessado, sinais de interdependência ventricular e FEVE preservada.\n\nQual é o diagnóstico e o tratamento definitivo?",
+  "alternativas": {
+   "A": "Insuficiência cardíaca com fração de ejeção reduzida; betabloqueador e IECA",
+   "B": "Tamponamento cardíaco; pericardiocentese",
+   "C": "Cirrose hepática descompensada; paracenteses de alívio",
+   "D": "Pericardite constritiva crônica; pericardiectomia"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>O quadro é de insuficiência cardíaca direita predominante (turgência, Kussmaul, ascite, hepatomegalia) com pulmões limpos, FE preservada, pericárdio espessado e interdependência ventricular, após pericardite tuberculosa. Isso caracteriza pericardite constritiva crônica. A tuberculose é causa clássica de constrição, e o tratamento antituberculoso adequado reduz esse risco. Nos pacientes sintomáticos com doença estabelecida, o tratamento definitivo é a pericardiectomia.</p><ul><li><strong>A — incorreta:</strong> a FE é preservada.</li><li><strong>B — incorreta:</strong> não há grande derrame com colapso de câmaras.</li><li><strong>C — incorreta:</strong> a turgência jugular e o sinal de Kussmaul indicam causa cardíaca, não hepática.</li></ul>"
+ },
+ {
+  "n": 34,
+  "enunciado": "Mulher de 45 anos, previamente hígida, tem dor pleurítica à direita há 2 dias. Angiotomografia: TEP segmentar em lobo inferior direito, com relação VD/VE normal. Exame: PA 128/80 mmHg, FC 92 bpm, SatO₂ 96% em ar ambiente. sPESI = 0, critérios de Hestia todos negativos, sem risco hemorrágico, função renal normal. Tem boa rede de apoio e acesso a seguimento rápido.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Internação em UTI e trombólise sistêmica",
+   "B": "Internação com heparina não fracionada intravenosa por 7 dias",
+   "C": "Tratamento ambulatorial com anticoagulante oral direto (por exemplo, rivaroxabana 15 mg de 12/12 horas por 21 dias e depois 20 mg/dia)",
+   "D": "Varfarina isolada, sem heparina, em regime ambulatorial"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>TEP sintomático com escore de gravidade baixo (sPESI 0, Hestia negativo) e VD normal corresponde à categoria B (B2, segmentar) da AHA/ACC 2026. A alta precoce e o tratamento ambulatorial são opções razoáveis quando há acesso ao anticoagulante e seguimento confiável. O DOAC é recomendado sobre a varfarina (classe 1), por menos sangramento maior e intracraniano. Rivaroxabana e apixabana dispensam heparina inicial, pois têm dose de ataque própria.</p><ul><li><strong>A — incorreta:</strong> trombólise está indicada só em instabilidade.</li><li><strong>B — incorreta:</strong> a HNF é inferior à HBPM e ao DOAC nesse cenário.</li><li><strong>D — incorreta:</strong> a varfarina exige ponte com heparina.</li></ul>"
+ },
+ {
+  "n": 35,
+  "enunciado": "João, 64 anos, 70 kg, tem diabetes tipo 2 e usa dapagliflozina/metformina 5/1.000 mg de 12/12 horas, glimepirida 6 mg pela manhã e pioglitazona 45 mg à noite. HbA1c de 7,9%. Glicemias capilares: antes do café 390 mg/dL, antes do almoço 160 mg/dL, após o almoço 192 mg/dL, antes do jantar 146 mg/dL.\n\nQual é a melhor estratégia?",
+  "alternativas": {
+   "A": "Insulinização plena basal-bolus com 0,5 UI/kg/dia, suspendendo todos os orais",
+   "B": "Insulina regular 6 UI antes do café da manhã",
+   "C": "Insulinização parcial com NPH 7 UI (0,1 UI/kg) ao deitar, mantendo os orais",
+   "D": "Aumentar a glimepirida para 8 mg/dia"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>O paciente tem hiperglicemia predominantemente de jejum, com as demais glicemias quase na meta, apesar dos orais em dose plena. A estratégia é a insulinização parcial: insulina basal ao deitar (bedtime), com dose inicial de 0,1 UI/kg (70 × 0,1 = 7 UI de NPH), mantendo os orais. A insulina noturna controla a produção hepática de glicose e \"abaixa\" a glicemia de jejum.</p><ul><li><strong>A — incorreta:</strong> a insulinização plena não é necessária neste momento.</li><li><strong>B — incorreta:</strong> a insulina regular pela manhã não atua no jejum.</li><li><strong>D — incorreta:</strong> a glimepirida já está em dose alta e aumenta o risco de hipoglicemia.</li></ul><p>Ao associar insulina, vale rever a sulfonilureia, pelo risco de hipoglicemia.</p>"
+ },
+ {
+  "n": 36,
+  "enunciado": "Homem de 72 anos, hipertenso em uso de hidroclorotiazida e anlodipino, começou tansulosina há 2 semanas por hiperplasia prostática. Desde então tem tontura e escurecimento visual ao levantar da cama e, ontem, perdeu a consciência por poucos segundos logo após se levantar, com recuperação rápida. PA deitado após 5 minutos de repouso: 140/80 mmHg; após 3 minutos em pé: 112/70 mmHg, com reprodução dos sintomas. ECG normal.\n\nQual é o diagnóstico e a conduta inicial?",
+  "alternativas": {
+   "A": "Hipotensão ortostática induzida por fármacos; revisar e suspender ou reduzir os medicamentos hipotensores, com hidratação e medidas comportamentais",
+   "B": "Síncope vasovagal; tilt test",
+   "C": "Hipersensibilidade do seio carotídeo; marca-passo bicameral",
+   "D": "Síncope arrítmica; Holter e estudo eletrofisiológico"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>A hipotensão ortostática se define por queda de 20 mmHg ou mais na PAS ou de 10 mmHg ou mais na PAD em até 3 minutos de pé. Este paciente teve queda de 28/10 mmHg, com sintomas e relação temporal clara com o início da tansulosina, em idoso que já usa diurético e vasodilatador. A conduta é:</p><ul><li>revisar e suspender ou reduzir os fármacos vasoativos;</li><li>hidratação adequada e sal;</li><li>levantar-se lentamente;</li><li>manobras de contrapressão;</li><li>meias compressivas;</li><li>cabeceira elevada.</li></ul><ul><li><strong>B — incorreta:</strong> tilt test e fludrocortisona/midodrina ficam para os casos persistentes.</li><li><strong>C e D — incorretas:</strong> não há elementos que sustentem essas causas.</li></ul>"
+ },
+ {
+  "n": 37,
+  "enunciado": "Homem de 40 anos, etilista, tem dor epigástrica intensa em faixa, irradiada para o dorso, com início há 12 horas, e vômitos. Exame: dor à palpação epigástrica, sem peritonite. Exames: lipase 5 vezes o limite superior, amilase normal. Hemodinamicamente estável.\n\nEm relação ao diagnóstico, é correto afirmar:",
+  "alternativas": {
+   "A": "O diagnóstico de pancreatite aguda está estabelecido; a TC não é necessária na admissão, e deve-se solicitar ultrassonografia de abdome para pesquisar litíase biliar",
+   "B": "A amilase normal afasta pancreatite aguda",
+   "C": "É necessária TC de abdome com contraste imediatamente para confirmar o diagnóstico",
+   "D": "O nível da lipase indica pancreatite grave"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>O diagnóstico de pancreatite aguda exige 2 de 3 critérios: dor típica, lipase ou amilase ≥ 3 vezes o limite superior e imagem compatível. Este paciente já tem os dois primeiros. A TC com contraste não é necessária na admissão quando o diagnóstico clínico-laboratorial é claro: ela fica para casos de dúvida diagnóstica, ausência de melhora em 48–72 horas ou suspeita de complicação, e, feita antes de 72 horas, subestima a necrose. A ultrassonografia de abdome deve ser feita em todos os pacientes para pesquisar litíase biliar.</p><ul><li><strong>B — incorreta:</strong> a amilase pode ser normal na pancreatite alcoólica. A lipase é o exame preferido.</li><li><strong>C — incorreta:</strong> a TC não é necessária para confirmar o diagnóstico neste caso.</li><li><strong>D — incorreta:</strong> o nível enzimático não se correlaciona com a gravidade, definida pela falência orgânica.</li></ul>"
+ },
+ {
+  "n": 38,
+  "enunciado": "Homem de 35 anos recebe diagnóstico de tuberculose pulmonar (teste rápido molecular positivo, sensível à rifampicina) e, na mesma investigação, de infecção pelo HIV, com CD4 de 38 células/mm³. Sem sinais de acometimento do sistema nervoso central.\n\nQual é a conduta em relação ao início da terapia antirretroviral (TARV)?",
+  "alternativas": {
+   "A": "Iniciar a TARV somente após terminar os 6 meses de tratamento da tuberculose",
+   "B": "Iniciar o esquema RHZE e começar a TARV em até 2 semanas após o início do tratamento da tuberculose",
+   "C": "Iniciar a TARV na 8ª semana, ao começar a fase de manutenção",
+   "D": "Começar pela TARV e adiar o tratamento da tuberculose por 2 meses"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>Na coinfecção TB-HIV, o esquema de tuberculose é o mesmo, com a mesma duração. O momento de iniciar a TARV depende do CD4:</p><p>| Situação | Início da TARV | |---|---| | CD4 &lt; 50 células/mm³ ou imunodepressão avançada | Em até 2 semanas após o início do tratamento da TB | | CD4 ≥ 50 células/mm³ | Na 8ª semana | | Forma meningoencefálica | Somente após 2 meses, pelo risco de SIR grave |</p><p>No CD4 abaixo de 50, o início precoce reduz a mortalidade, apesar do maior risco de síndrome inflamatória de reconstituição imune.</p><ul><li><strong>A — incorreta:</strong> esperar o fim do tratamento da TB aumenta a mortalidade.</li><li><strong>C — incorreta:</strong> a 8ª semana vale para CD4 ≥ 50.</li><li><strong>D — incorreta:</strong> nunca se adia o tratamento da TB para iniciar a TARV.</li></ul>"
+ },
+ {
+  "n": 39,
+  "enunciado": "Homem de 54 anos, com cirrose Child-Pugh B, chega com hematêmese volumosa há 2 horas. Exame: PA 90 × 60 mmHg, FC 118 bpm. Hb 7,4 g/dL, INR 1,8, plaquetas 78.000/mm³.\n\nQual é o conjunto de condutas iniciais mais adequado?",
+  "alternativas": {
+   "A": "Transfundir até Hb acima de 10 g/dL e corrigir o INR com plasma fresco antes da endoscopia",
+   "B": "Passar o balão de Sengstaken-Blakemore como primeira medida em todos os casos",
+   "C": "Reposição volêmica restritiva (transfusão com alvo de Hb de 7–8 g/dL), vasoativo esplâncnico (terlipressina ou octreotida), ceftriaxona 1 g/dia e endoscopia digestiva alta em até 12 horas com ligadura elástica",
+   "D": "Endoscopia em 72 horas, sem vasoativo nem antibiótico"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>Hemorragia varicosa aguda no cirrótico tem quatro pilares:</p><p>1. <strong>Transfusão restritiva</strong>, com alvo de Hb de 7–8 g/dL. Hiperexpandir aumenta a pressão portal e o ressangramento. 2. <strong>Vasoativo esplâncnico</strong> desde a suspeita: terlipressina 2 mg em bolus e depois 1–2 mg de 4/4 h, ou octreotida, por 2–5 dias. 3. <strong>Profilaxia antibiótica:</strong> ceftriaxona 1 g/dia por até 7 dias, que reduz infecção, ressangramento e mortalidade. 4. <strong>Endoscopia em até 12 horas</strong>, com ligadura elástica.</p><ul><li><strong>A — incorreta:</strong> o INR não reflete o risco de sangramento na cirrose, e o plasma não está indicado de rotina.</li><li><strong>B — incorreta:</strong> o balão é ponte apenas no sangramento refratário.</li><li><strong>D — incorreta:</strong> atrasa a endoscopia e omite vasoativo e antibiótico.</li></ul>"
+ },
+ {
+  "n": 40,
+  "enunciado": "Homem de 45 anos tem dispneia aos médios esforços há 6 meses. Exame: PA 160 × 50 mmHg, pulso em martelo d'água, pulsação da cabeça síncrona com o pulso e sopro diastólico aspirativo no foco aórtico acessório. Ecocardiograma: insuficiência aórtica importante, FEVE de 48%, valva trivalvular e aorta ascendente de 40 mm.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Vasodilatador (nifedipino) e reavaliação, sem intervenção",
+   "B": "TAVI como primeira escolha",
+   "C": "Betabloqueador para prolongar a diástole",
+   "D": "Troca valvar aórtica cirúrgica"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>Insuficiência aórtica crônica importante, com sinais periféricos clássicos (pressão de pulso alargada, pulso em martelo d'água, sinal de Musset) e sintomática, tem indicação de intervenção. A FEVE abaixo de 50% é outra indicação de intervenção. O tratamento de escolha é a troca valvar aórtica cirúrgica.</p><ul><li><strong>A — incorreta:</strong> vasodilatadores não substituem a cirurgia indicada.</li><li><strong>B — incorreta:</strong> o TAVI na IAo é IIb, apenas em inoperáveis.</li><li><strong>C — incorreta:</strong> o betabloqueador prolonga a diástole e aumenta o volume regurgitante.</li></ul>"
+ },
+ {
+  "n": 41,
+  "enunciado": "Homem de 46 anos, com histoplasmose disseminada em tratamento antifúngico, tem tontura ao ficar em pé, fraqueza e náuseas. PA 100/60 mmHg deitado e 78/50 mmHg em pé. Exames: Na 128 mEq/L, K 5,8 mEq/L, glicemia 58 mg/dL, creatinina 1,1 mg/dL. TC de abdome: adrenais aumentadas bilateralmente, com necrose central.\n\nQual é o diagnóstico e a conduta?",
+  "alternativas": {
+   "A": "Síndrome da secreção inapropriada de ADH; restrição hídrica",
+   "B": "Nefrotoxicidade por anfotericina B; suspender o antifúngico",
+   "C": "Insuficiência adrenal por acometimento das adrenais pelo Histoplasma; reposição de hidrocortisona, provavelmente por toda a vida",
+   "D": "Sepse bacteriana; ampliar a antibioticoterapia, sem outras medidas"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>Hiponatremia com hipercalemia, hipoglicemia e hipotensão ortostática, em paciente com histoplasmose disseminada e adrenais aumentadas com necrose central, indica insuficiência adrenal por acometimento das adrenais pelo fungo. O mecanismo é perivasculite, trombose e infarto da glândula. A conduta é a reposição de glicocorticoide (hidrocortisona). Em geral, o dano é irreversível e a reposição é por toda a vida, com orientação sobre o risco de interrompê-la.</p><ul><li><strong>A — incorreta:</strong> a SIADH não cursa com hipercalemia nem hipotensão.</li><li><strong>B — incorreta:</strong> a nefrotoxicidade da anfotericina costuma causar hipocalemia e não explica a hipoglicemia.</li><li><strong>D — incorreta:</strong> a sepse não explica o quadro adrenal.</li></ul>"
+ },
+ {
+  "n": 42,
+  "enunciado": "Mulher de 38 anos, com síndrome de Sjögren, tem fraqueza muscular progressiva. Exames: Na 140 mEq/L, K 2,8 mEq/L, Cl 115 mEq/L, HCO₃⁻ 15 mEq/L, pH 7,30, creatinina 0,8 mg/dL. pH urinário de 6,8. Ultrassonografia: nefrocalcinose.\n\nQual é o diagnóstico mais provável?",
+  "alternativas": {
+   "A": "Acidose tubular renal tipo 2 (proximal)",
+   "B": "Acidose tubular renal tipo 1 (distal)",
+   "C": "Síndrome de Bartter",
+   "D": "Síndrome de Gitelman"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>O ânion gap é normal: AG = 140 − (115 + 15) = 10. Trata-se, portanto, de acidose metabólica hiperclorêmica com hipocalemia. O pH urinário inapropriadamente alcalino (&gt; 5,5), apesar da acidose sistêmica, e a nefrocalcinose indicam defeito na secreção distal de H⁺, ou seja, ATR tipo 1 (distal). A síndrome de Sjögren é causa clássica.</p><ul><li><strong>A — incorreta:</strong> na ATR tipo 2 (proximal), o pH urinário fica ácido quando o bicarbonato sérico está baixo, e pode haver Fanconi (glicosúria, aminoacidúria, fosfatúria). As causas típicas são mieloma e tenofovir.</li><li><strong>C e D — incorretas:</strong> Bartter e Gitelman cursam com alcalose metabólica.</li></ul>"
+ },
+ {
+  "n": 43,
+  "enunciado": "Homem de 70 anos, com doença renal crônica G4 por nefropatia hipertensiva, está assintomático. Exames: pH 7,32, HCO₃⁻ 16 mEq/L, K 5,0 mEq/L, Na 139 mEq/L, PA 132/80 mmHg, sem edema.\n\nQual é a conduta mais adequada para o distúrbio ácido-base?",
+  "alternativas": {
+   "A": "Bicarbonato de sódio oral e redução da carga ácida da dieta (menos proteína animal, mais frutas e vegetais)",
+   "B": "Hemodiálise de urgência",
+   "C": "Bicarbonato de sódio intravenoso em bolus",
+   "D": "Não tratar, pois só há indicação com HCO₃⁻ abaixo de 12 mEq/L"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>A acidose metabólica da DRC piora a doença óssea, o catabolismo muscular e, possivelmente, a progressão renal. Com HCO₃⁻ abaixo de 18 mEq/L, indica-se bicarbonato de sódio oral, junto com redução da carga ácida da dieta: menos proteína animal e mais frutas e vegetais. Se houver hipercalemia, a dieta precisa ser equilibrada com esse risco.</p><ul><li><strong>B — incorreta:</strong> não há indicação de diálise de urgência (sem uremia grave, refratariedade, hipervolemia ou hipercalemia refratária).</li><li><strong>C — incorreta:</strong> o bicarbonato IV em bolus não se aplica à acidose crônica estável.</li><li><strong>D — incorreta:</strong> o limiar de 12 mEq/L é arbitrário e errado.</li></ul>"
+ },
+ {
+  "n": 44,
+  "enunciado": "Homem de 36 anos tem hepatite aguda há 4 semanas. HBsAg reagente, anti-HBc IgM reagente, anti-HCV e anti-HAV IgM não reagentes. Exames: ALT 1.300 U/L, bilirrubina total 12 mg/dL, INR 1,9. Está consciente, sem *flapping*.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Apenas suporte ambulatorial, pois mais de 95% dos adultos curam espontaneamente",
+   "B": "Interferon peguilado",
+   "C": "Internação e análogo de nucleos(t)ídeo (entecavir ou tenofovir), com contato precoce com um centro de transplante hepático",
+   "D": "Prednisona 40 mg/dia"
+  },
+  "correta": "C",
+  "explicacaoHtml": "<p>A maioria das hepatites B agudas é tratada apenas com suporte, porque mais de 95% dos adultos imunocompetentes curam espontaneamente. O antiviral é indicado nas formas graves (INR &gt; 1,5), protraídas (bilirrubina acima de 10 mg/dL por mais de 4 semanas) ou fulminantes, e em imunossuprimidos, coinfectados, hepatopatas e idosos. Este paciente tem INR 1,9 e bilirrubina de 12 mg/dL há 4 semanas: deve ser internado e tratado com entecavir ou tenofovir, que servem tanto para a forma aguda quanto para uma possível reagudização de hepatite crônica. O contato com centro de transplante deve ser precoce.</p><ul><li><strong>A — incorreta:</strong> o critério de gravidade está presente.</li><li><strong>B — incorreta:</strong> o interferon é imunoestimulante e pode piorar a necroinflamação.</li><li><strong>D — incorreta:</strong> o corticoide não tem papel.</li></ul>"
+ },
+ {
+  "n": 45,
+  "enunciado": "Homem de 52 anos, etilista crônico e desnutrido, é internado com tremores e espasmo carpopedal. Exames: cálcio total 7,2 mg/dL (albumina 4,0 g/dL), magnésio 0,7 mg/dL, fósforo 3,2 mg/dL, PTH 18 pg/mL, creatinina 0,9 mg/dL. Já recebeu duas ampolas de gluconato de cálcio, com melhora apenas transitória.\n\nQual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Sulfato de magnésio intravenoso (2 g em 10–20 minutos, seguido de infusão contínua), corrigindo o magnésio para permitir a correção do cálcio",
+   "B": "Aumentar a infusão de gluconato de cálcio, sem repor magnésio",
+   "C": "Calcitriol 0,5 µg de 12/12 horas como medida isolada",
+   "D": "Cloreto de cálcio em bolus rápido"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>Com magnésio abaixo de 1 mg/dL, a secreção e a ação do PTH ficam comprometidas, o que explica o PTH inapropriadamente baixo e a hipocalcemia refratária ao cálcio. O magnésio deve ser corrigido primeiro: sulfato de magnésio 2 g IV em 10–20 minutos, seguido de 1 g/h enquanto o Mg sérico estiver abaixo de 1 mg/dL, com redução da dose se houver insuficiência renal. Após a correção, o cálcio tende a normalizar em minutos a horas.</p><ul><li><strong>B e D — incorretas:</strong> mais cálcio sem magnésio continua falhando.</li><li><strong>C — incorreta:</strong> não corrige a causa.</li></ul>"
+ },
+ {
+  "n": 46,
+  "enunciado": "Mulher de 58 anos, com diabetes tipo 2 em uso de empagliflozina e metformina, está há 3 dias com gastroenterite, comendo pouco, e mantém as medicações. Chega com náuseas, vômitos, dor abdominal e taquipneia. Exames: glicemia 190 mg/dL, pH 7,15, HCO₃⁻ 9 mEq/L, ânion gap de 24, β-hidroxibutirato de 5,5 mmol/L, lactato 1,6 mmol/L, osmolalidade sérica efetiva normal.\n\nQual é o diagnóstico?",
+  "alternativas": {
+   "A": "Cetoacidose diabética euglicêmica associada ao inibidor de SGLT2",
+   "B": "Acidose lática associada à metformina",
+   "C": "Estado hiperglicêmico hiperosmolar",
+   "D": "Acidose metabólica hiperclorêmica por perda intestinal de bicarbonato"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>Acidose metabólica com ânion gap elevado (pH 7,15, HCO₃⁻ 9) e cetonemia importante, com glicemia de apenas 190 mg/dL, em paciente em uso de iSGLT2 e com ingesta reduzida, caracteriza cetoacidose diabética euglicêmica. O iSGLT2 causa glicosúria, o que reduz a insulina e aumenta o glucagon, ativando a lipólise e a cetogênese com glicemia normal ou pouco elevada. A conduta é suspender o iSGLT2 e tratar como CAD: hidratação, insulina intravenosa com glicose para permitir manter a insulina, e reposição de potássio.</p><ul><li><strong>B — incorreta:</strong> o lactato é normal.</li><li><strong>C — incorreta:</strong> no EHH a osmolalidade está muito alta e não há cetose importante.</li><li><strong>D — incorreta:</strong> o ânion gap está elevado.</li></ul>"
+ },
+ {
+  "n": 47,
+  "enunciado": "Mulher de 50 anos, hipertensa, tem TFG estimada de 75 mL/min/1,73 m² em dois exames com 4 meses de intervalo. A relação albumina/creatinina urinária foi de 120 mg/g e 140 mg/g nas mesmas datas. Sedimento urinário e ultrassonografia renal normais.\n\nQual é a interpretação correta?",
+  "alternativas": {
+   "A": "Não é doença renal crônica, pois a TFG está acima de 60 mL/min/1,73 m²",
+   "B": "Lesão renal aguda em resolução",
+   "C": "Doença renal crônica G3a A2",
+   "D": "Doença renal crônica G2 A2"
+  },
+  "correta": "D",
+  "explicacaoHtml": "<p>DRC se define por alteração de estrutura ou de função renal por mais de 3 meses. Albuminúria ≥ 30 mg/g persistente é marcador de lesão e define DRC mesmo com TFG acima de 60. A paciente tem TFG de 75 (G2) e RAC de 30–300 mg/g (A2), confirmadas com mais de 3 meses de intervalo: DRC G2 A2.</p><ul><li><strong>A — incorreta:</strong> TFG acima de 60 não exclui DRC quando há marcador de lesão. Só G1 e G2 sem marcador de lesão não são DRC.</li><li><strong>B — incorreta:</strong> não há LRA.</li><li><strong>C — incorreta:</strong> a TFG está acima de 60, o que não é G3a.</li></ul>"
+ },
+ {
+  "n": 48,
+  "enunciado": "Homem de 55 anos, sem diabetes, tem doença renal crônica G3a A3 (relação albumina/creatinina de 800 mg/g) por glomerulopatia crônica, sem atividade imunológica. PA de consultório (medida padronizada) de 148/92 mmHg. Potássio 4,6 mEq/L. Não usa medicações.\n\nQual é a melhor estratégia terapêutica, segundo o KDIGO 2024?",
+  "alternativas": {
+   "A": "Anlodipino isolado, com alvo de PA abaixo de 140/90 mmHg",
+   "B": "IECA ou BRA titulado até a dose máxima tolerada, associado a inibidor de SGLT2, com alvo de PA sistólica abaixo de 120 mmHg, se tolerado",
+   "C": "Associar IECA e BRA para potencializar a antiproteinúria",
+   "D": "Iniciar IECA e suspender se a creatinina subir 15% após 2 semanas"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>Pelo KDIGO 2024:</p><ul><li><strong>IECA ou BRA:</strong> indicado na DRC sem diabetes com albuminúria A3, titulado até a dose máxima tolerada. O aumento de creatinina de até 30% deve ser aceito, pois é o \"dip\" hemodinâmico.</li><li><strong>iSGLT2:</strong> indicado na DRC com TFG ≥ 20 e RAC ≥ 200 mg/g, com ou sem diabetes.</li><li><strong>Meta de PA:</strong> PAS abaixo de 120 mmHg, se tolerada, com medida padronizada.</li></ul><ul><li><strong>A — incorreta:</strong> com albuminúria, o bloqueio do SRAA é a primeira linha, e o alvo de 140/90 é frouxo.</li><li><strong>C — incorreta:</strong> o duplo bloqueio deve ser evitado.</li><li><strong>D — incorreta:</strong> um aumento de 15% não justifica suspender.</li></ul>"
+ },
+ {
+  "n": 49,
+  "enunciado": "Homem de 50 anos, privado de liberdade, tem tosse há 3 semanas, com expectoração e febre baixa. Não tem diagnóstico prévio de tuberculose.\n\nQual é a investigação inicial mais adequada?",
+  "alternativas": {
+   "A": "Teste rápido molecular (TRM-TB) no escarro, com cultura e teste de sensibilidade",
+   "B": "Prova tuberculínica",
+   "C": "IGRA (*interferon-gamma release assay*)",
+   "D": "Radiografia de tórax isolada, tratando empiricamente se houver cavitação"
+  },
+  "correta": "A",
+  "explicacaoHtml": "<p>Para tosse de 3 semanas ou mais em sintomático respiratório, o teste rápido molecular (TRM-TB) é o exame inicial preferencial: dá o resultado em cerca de 2 horas e detecta resistência à rifampicina. Em populações vulneráveis, como pessoas privadas de liberdade (risco cerca de 28 vezes maior), também devem ser solicitados cultura e teste de sensibilidade, pelo maior risco de resistência.</p><ul><li><strong>B e C — incorretas:</strong> PT e IGRA diagnosticam infecção latente, não doença ativa.</li><li><strong>D — incorreta:</strong> a radiografia isolada não confirma o diagnóstico e não detecta resistência.</li></ul>"
+ },
+ {
+  "n": 50,
+  "enunciado": "Mulher de 38 anos é internada com pancreatite aguda leve de origem biliar (colelitíase na ultrassonografia), sem colangite, sem coledocolitíase residual e sem falência orgânica. Após 48 horas, está sem dor e tolerando dieta oral.\n\nQual é a conduta mais adequada em relação à colelitíase?",
+  "alternativas": {
+   "A": "CPRE de urgência com papilotomia",
+   "B": "Colecistectomia videolaparoscópica na mesma internação, antes da alta",
+   "C": "Alta e colecistectomia eletiva após 6 a 8 semanas",
+   "D": "Alta sem cirurgia, já que o cálculo provavelmente migrou"
+  },
+  "correta": "B",
+  "explicacaoHtml": "<p>Na pancreatite biliar leve, recomenda-se colecistectomia na mesma internação, antes da alta. Adiar a cirurgia aumenta significativamente o risco de recorrência da pancreatite, de colecistite e de coledocolitíase.</p><ul><li><strong>A — incorreta:</strong> a CPRE urgente está indicada apenas se houver colangite associada.</li><li><strong>C — incorreta:</strong> o adiamento de 6 semanas é reservado à pancreatite necrosante ou com coleções, para aguardar a resolução da inflamação.</li><li><strong>D — incorreta:</strong> a alta sem cirurgia expõe a paciente à recorrência.</li></ul>"
+ }
+];
+
+const SIMS = {
+  1: { q: SIM1, key: 'simuladoAC2', nome: 'Simulado 1' },
+  2: { q: SIM2, key: 'simuladoAC2_s2', nome: 'Simulado 2' }
+};
+const SIM_ID = new URLSearchParams(location.search).get('s') === '2' ? 2 : 1;
+const QUESTIONS = SIMS[SIM_ID].q;
+const STORE_KEY = SIMS[SIM_ID].key;
+document.querySelectorAll('.mode-switch a[data-sim]').forEach(a => a.classList.toggle('active', a.dataset.sim === String(SIM_ID)));
+document.querySelector('.brand .sub').textContent = 'AC 2 · ' + SIMS[SIM_ID].nome;
+document.title = SIMS[SIM_ID].nome + ' AC2 · Sétimo Período';
+
 const state = {
   index: 0,
   answers: {},   // { n: 'A'|'B'|'C'|'D' }  — respostas confirmadas
@@ -1296,11 +1916,11 @@ const $grid = document.getElementById('qGrid');
 
 /* Persistencia */
 function saveState() {
-  try { localStorage.setItem('simuladoAC2', JSON.stringify(state)); } catch (e) {}
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
 }
 function loadState() {
   try {
-    const raw = localStorage.getItem('simuladoAC2');
+    const raw = localStorage.getItem(STORE_KEY);
     if (!raw) return;
     const s = JSON.parse(raw);
     Object.assign(state, s);
@@ -1472,7 +2092,7 @@ function renderQuestion() {
         '<div class="gabarito-body">' +
           '<div class="gab-title">Gabarito Comentado</div>' +
           '<div class="gab-answer">Resposta: '+q.correta+'</div>' +
-          '<div>'+esc(q.explicacao)+'</div>' +
+          '<div class="gab-text">'+(q.explicacaoHtml || esc(q.explicacao))+'</div>' +
         '</div>'
       ) : '') +
       '</div>';
@@ -1527,7 +2147,7 @@ function renderEnd() {
   $main.innerHTML =
     '<div class="end-screen">' +
       '<h2>Simulado Concluído</h2>' +
-      '<div class="subtitle">50 questões · AC 2 · 7º Período</div>' +
+      '<div class="subtitle">'+SIMS[SIM_ID].nome+' · '+QUESTIONS.length+' questões · AC 2 · 7º Período</div>' +
       '<div class="donut">' +
         '<svg viewBox="0 0 240 240">' +
           '<circle class="track" cx="120" cy="120" r="'+r+'"></circle>' +
