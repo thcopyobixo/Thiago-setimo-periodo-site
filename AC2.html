@@ -9,6 +9,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Albert+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+  @property --accent { syntax: '<color>'; inherits: true; initial-value: #3b82f6; }
+  @property --accent-2 { syntax: '<color>'; inherits: true; initial-value: #60a5fa; }
+  @property --accent-3 { syntax: '<color>'; inherits: true; initial-value: #1d4ed8; }
+  @property --accent-deep { syntax: '<color>'; inherits: true; initial-value: #1e40af; }
+  @property --accent-deeper { syntax: '<color>'; inherits: true; initial-value: #172554; }
+  @property --accent-glow { syntax: '<color>'; inherits: true; initial-value: rgba(59,130,246,.35); }
+  @property --panel { syntax: '<color>'; inherits: true; initial-value: #0f1420; }
+  @property --panel-2 { syntax: '<color>'; inherits: true; initial-value: #1a2333; }
+  @property --border { syntax: '<color>'; inherits: true; initial-value: #1e2a44; }
+  @property --border-hover { syntax: '<color>'; inherits: true; initial-value: #2d4166; }
+  @property --muted { syntax: '<color>'; inherits: true; initial-value: #64748b; }
+  @property --muted-2 { syntax: '<color>'; inherits: true; initial-value: #94a3b8; }
+  @property --side-top { syntax: '<color>'; inherits: true; initial-value: rgba(15,20,32,.6); }
+  @property --side-btn { syntax: '<color>'; inherits: true; initial-value: rgba(15,20,32,.85); }
+  @property --front-1 { syntax: '<color>'; inherits: true; initial-value: #0f1420; }
+  @property --front-2 { syntax: '<color>'; inherits: true; initial-value: #0a0e18; }
   :root {
     --bg: #000000;
     --bg-2: #0a0a0f;
@@ -20,6 +36,12 @@
     --accent-2: #60a5fa;
     --accent-3: #1d4ed8;
     --accent-glow: rgba(59,130,246,.35);
+    --accent-deep: #1e40af;
+    --accent-deeper: #172554;
+    --side-top: rgba(15,20,32,.6);
+    --side-btn: rgba(15,20,32,.85);
+    --front-1: #0f1420;
+    --front-2: #0a0e18;
     --text: #f8fafc;
     --muted: #64748b;
     --muted-2: #94a3b8;
@@ -30,7 +52,30 @@
     --warn: #f59e0b;
     --shadow: 0 20px 50px rgba(0,0,0,.6);
     --sidebar-w: 280px;
+    transition: --accent .9s cubic-bezier(.4,0,.2,1), --accent-2 .9s cubic-bezier(.4,0,.2,1), --accent-3 .9s cubic-bezier(.4,0,.2,1),
+      --accent-deep .9s cubic-bezier(.4,0,.2,1), --accent-deeper .9s cubic-bezier(.4,0,.2,1), --accent-glow .9s cubic-bezier(.4,0,.2,1),
+      --panel .9s cubic-bezier(.4,0,.2,1), --panel-2 .9s cubic-bezier(.4,0,.2,1), --border .9s cubic-bezier(.4,0,.2,1), --border-hover .9s cubic-bezier(.4,0,.2,1), --muted .9s cubic-bezier(.4,0,.2,1), --muted-2 .9s cubic-bezier(.4,0,.2,1), --side-top .9s cubic-bezier(.4,0,.2,1), --side-btn .9s cubic-bezier(.4,0,.2,1), --front-1 .9s cubic-bezier(.4,0,.2,1), --front-2 .9s cubic-bezier(.4,0,.2,1);
   }
+  /* Revisão final: tema vermelho (as cores acima fazem a transição) */
+  :root.theme-red {
+    --accent: #ef4444;
+    --accent-2: #f87171;
+    --accent-3: #b91c1c;
+    --accent-deep: #991b1b;
+    --accent-deeper: #450a0a;
+    --accent-glow: rgba(239,68,68,.38);
+    --panel: #1f0b0e;
+    --panel-2: #2e1115;
+    --border: #4a1a20;
+    --border-hover: #73232c;
+    --muted: #9b6a6f;
+    --muted-2: #d4a5aa;
+    --side-top: rgba(60,12,16,.7);
+    --side-btn: rgba(40,10,13,.88);
+    --front-1: #24090d;
+    --front-2: #120406;
+  }
+  @media (prefers-reduced-motion: reduce) { :root { transition: none; } }
   * { box-sizing: border-box; }
   html, body {
     margin: 0; padding: 0; min-height: 100%;
@@ -42,8 +87,8 @@
   }
   body {
     background:
-      radial-gradient(circle at 15% 20%, rgba(59,130,246,.08) 0%, transparent 50%),
-      radial-gradient(circle at 85% 80%, rgba(29,78,216,.06) 0%, transparent 50%),
+      radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--accent) 8%, transparent) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, color-mix(in srgb, var(--accent-3) 6%, transparent) 0%, transparent 50%),
       var(--bg);
     min-height: 100vh;
     display: flex;
@@ -53,7 +98,7 @@
   aside.sidebar {
     width: var(--sidebar-w);
     min-height: 100vh;
-    background: linear-gradient(180deg, rgba(15,20,32,.6), rgba(0,0,0,.9));
+    background: linear-gradient(180deg, var(--side-top), rgba(0,0,0,.9));
     border-right: 1px solid var(--border);
     padding: 60px 20px 24px;
     display: flex; flex-direction: column;
@@ -73,7 +118,7 @@
     z-index: 100;
     width: 36px; height: 36px;
     padding: 0;
-    background: rgba(15,20,32,.85);
+    background: var(--side-btn);
     border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--muted-2);
@@ -86,7 +131,7 @@
   .sidebar-toggle:hover {
     color: var(--accent-2);
     border-color: var(--accent);
-    background: rgba(59,130,246,.15);
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
   }
   .sidebar-toggle svg { transition: transform .35s cubic-bezier(.4,.2,.2,1); }
   body.sidebar-hidden .sidebar-toggle svg { transform: rotate(180deg); }
@@ -120,7 +165,7 @@
     font-size: 52px;
     letter-spacing: 4px;
     font-weight: 700;
-    background: linear-gradient(135deg,#60a5fa 0%,#3b82f6 50%,#1d4ed8 100%);
+    background: linear-gradient(135deg,var(--accent-2) 0%,var(--accent) 50%,var(--accent-3) 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
     line-height: 1;
   }
@@ -337,7 +382,7 @@
   }
 
   .card:not(.blinking):hover { transform: translateY(-3px); }
-  .card:not(.blinking):not(.flipped):hover .face.front { box-shadow: 0 24px 60px rgba(0,0,0,.7), 0 0 30px rgba(59,130,246,.25); }
+  .card:not(.blinking):not(.flipped):hover .face.front { box-shadow: 0 24px 60px rgba(0,0,0,.7), 0 0 30px color-mix(in srgb, var(--accent) 25%, transparent); }
   .card:not(.blinking).flipped:hover .face.back { box-shadow: 0 24px 60px rgba(0,0,0,.7), 0 0 40px var(--accent-glow); }
   .card .face {
     position: absolute; inset: 0;
@@ -350,10 +395,10 @@
     border: 1px solid var(--border);
   }
   .card .front {
-    background: linear-gradient(145deg, #0f1420 0%, #0a0e18 100%);
+    background: linear-gradient(145deg, var(--front-1) 0%, var(--front-2) 100%);
   }
   .card .back {
-    background: linear-gradient(145deg, #1d4ed8 0%, #1e40af 60%, #172554 100%);
+    background: linear-gradient(145deg, var(--accent-3) 0%, var(--accent-deep) 60%, var(--accent-deeper) 100%);
     border-color: var(--accent);
     box-shadow: 0 20px 50px rgba(0,0,0,.6), 0 0 40px var(--accent-glow);
   }
@@ -364,6 +409,33 @@
     font-weight: 700;
   }
   .card .back .label { color: rgba(255,255,255,.7); }
+  :root .fx-pill {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    box-shadow: 0 8px 24px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,.18);
+  }
+  :root .fx-aurora span { background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 13%, transparent), transparent 70%); }
+  :root .fx-aurora span:nth-child(2) { background: radial-gradient(closest-side, color-mix(in srgb, var(--accent-3) 14%, transparent), transparent 70%); }
+  :root .fx-aurora span:nth-child(3) { background: radial-gradient(closest-side, color-mix(in srgb, var(--accent-2) 7%, transparent), transparent 70%); }
+  .tabs .tabs-label.rev-label {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: #f87171;
+  }
+  .tabs .tabs-label.rev-label::before {
+    content: ''; width: 7px; height: 7px; border-radius: 50%;
+    background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,.8);
+  }
+  .tab.rev .count { background: rgba(239,68,68,.18); color: #fecaca; }
+  .tab.rev.active .count { background: rgba(255,255,255,.2); color: #fff; }
+  .card .content.rich { text-align: left; font-size: clamp(15px, 1.6vw, 17.5px); line-height: 1.55; width: 100%; }
+  .card .content.rich p { margin: 0 0 10px; }
+  .card .content.rich ul, .card .content.rich ol { margin: 0 0 10px; padding-left: 22px; }
+  .card .content.rich li { margin: 5px 0; }
+  .card .content.rich > :last-child { margin-bottom: 0; }
+  .card .content.rich table { width: 100%; border-collapse: collapse; margin: 4px 0 12px; font-size: .9em; }
+  .card .content.rich th, .card .content.rich td { border: 1px solid rgba(255,255,255,.22); padding: 6px 9px; vertical-align: top; }
+  .card .content.rich th { background: rgba(0,0,0,.22); font-weight: 700; }
   .card .content {
     font-size: clamp(17px, 2.1vw, 21px);
     line-height: 1.6;
@@ -503,7 +575,7 @@
     margin-bottom: 32px;
   }
   .badge.excelente { background: rgba(16,185,129,.15); color: var(--ok); border: 1px solid var(--ok); }
-  .badge.otimo { background: rgba(59,130,246,.15); color: var(--accent-2); border: 1px solid var(--accent); }
+  .badge.otimo { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent-2); border: 1px solid var(--accent); }
   .badge.regular { background: rgba(245,158,11,.15); color: var(--warn); border: 1px solid var(--warn); }
   .badge.melhorar { background: rgba(239,68,68,.15); color: var(--err); border: 1px solid var(--err); }
 
@@ -1573,6 +1645,140 @@ const DECKS = [
       { q: "Monitorização com antipsicótico de 2ª geração", a: "Peso, glicemia e lipídios a cada 12–16 semanas" },
       { q: "O que é obrigatório em todo homem com DE de início recente", a: "Avaliação glicêmica, perfil lipídico e testosterona total e livre matinais" }
     ]
+  },
+  {
+    id: "rf-tratamento",
+    name: "Tratamento e condutas",
+    rev: 1,
+    cards: [
+      { q: "Qual é o tratamento da síncope reflexa (vasovagal)?", a: "<ul><li><b>Base:</b> educação e medidas comportamentais. Reconhecer os pródromos, evitar gatilhos, suspender medicamentos hipotensores.</li><li><b>Medidas gerais:</b> ingesta hídrica de 2–3 L/dia, aumento do sal e manobras de contrapressão (cruzar as pernas, tensionar os braços, apertar as mãos).</li><li><b>Formas graves:</b> fludrocortisona ou midodrina em jovens com PA baixa. Marca-passo bicameral se houver predomínio cardioinibitório (assistolia) em pacientes &gt; 40 anos com síncopes recorrentes e imprevisíveis.</li></ul>", h: 1 },
+      { q: "Qual é a conduta na hipotensão ortostática?", a: "<ul><li><b>Primeiro passo:</b> educação, hidratação adequada e sal. Suspender ou reduzir fármacos vasoativos: diuréticos, alfabloqueadores, nitratos, antidepressivos.</li><li><b>Medidas adicionais:</b> levantar-se devagar, manobras de contrapressão, meias de média compressão e dormir com a cabeceira elevada (reduz a natriurese noturna).</li><li><b>Se persistir:</b> midodrina ou fludrocortisona.</li></ul>", h: 1 },
+      { q: "Qual é a conduta na síncope cardíaca por BAV total?", a: "<p>Internar com monitorização contínua. Atropina pode ser tentada (pouco eficaz no bloqueio infranodal). Se houver instabilidade, estimulação temporária transcutânea ou transvenosa. O tratamento definitivo é o implante de marca-passo. Revisar fármacos que causam bradicardia.</p>", h: 1 },
+      { q: "Qual é o anticoagulante preferido no TEP, segundo a AHA/ACC 2026?", a: "<ul><li><b>Início:</b> anticoagular assim que não houver contraindicação absoluta.</li><li><b>Parenteral:</b> HBPM em vez de HNF (menos recorrência e sangramento, sem monitorização, menos plaquetopenia induzida por heparina).</li><li><b>Oral:</b> DOAC em vez de varfarina (menos sangramento maior e intracraniano).</li><li><b>Exceção:</b> HNF quando se planeja reperfusão ou há instabilidade.</li><li><b>Suspeita C2 ou mais com imagem atrasada:</b> pode-se anticoagular antes da imagem.</li></ul>", h: 1 },
+      { q: "Como tratar TEP categoria A ou B (baixo risco)?", a: "<p>Usar Hestia, PESI ou sPESI para identificar baixo risco. Se não houver critérios de Hestia ou o sPESI for 0, fazer tratamento ambulatorial ou alta precoce com DOAC, desde que haja acesso ao fármaco e seguimento rápido. Exemplos: rivaroxabana 15 mg de 12/12 h por 21 dias e depois 20 mg/dia; apixabana 10 mg de 12/12 h por 7 dias e depois 5 mg de 12/12 h.</p>", h: 1 },
+      { q: "Qual é a conduta no TEP categoria E1 (choque)?", a: "<ul><li><b>Anticoagulação:</b> HNF.</li><li><b>Vasopressor:</b> noradrenalina; dobutamina como adjuvante.</li><li><b>Volume:</b> pouco (≤ 500 mL). O VD sofre com sobrecarga de volume.</li><li><b>Reperfusão:</b> trombólise sistêmica (alteplase 100 mg em 2 h) ou terapia por cateter, decidida pela equipe de TEP.</li><li><b>Choque refratário (E2):</b> considerar ECMO venoarterial.</li><li><b>Não transferir antes de estabilizar.</b></li></ul>", h: 1 },
+      { q: "Quais são os cuidados com intubação e oxigenação no TEP com disfunção de VD?", a: "<ul><li><b>Preferir:</b> cateter nasal de alto fluxo ou VNI.</li><li><b>Evitar:</b> sedação profunda e ventilação mecânica sem indicação: causam dano. Elas reduzem o tônus adrenérgico e a pré-carga e aumentam a pós-carga do VD, podendo causar parada cardíaca.</li><li><b>Se precisar intubar:</b> deixar vasopressor, inotrópico ou ECMO prontos.</li></ul>", h: 1 },
+      { q: "Quando indicar filtro de veia cava no TEP?", a: "<ul><li><b>Indicação:</b> contraindicação absoluta à anticoagulação (preferir filtro recuperável) ou recorrência apesar de anticoagulação ótima.</li><li><b>Retirada:</b> assim que a anticoagulação for possível (idealmente em 29–54 dias).</li><li><b>Não indicar:</b> de rotina em paciente já anticoagulado (causa dano).</li></ul>", h: 1 },
+      { q: "Qual é a conduta na hepatite A?", a: "<ul><li><b>Tratamento:</b> suporte. Sem antiviral e sem corticoide, mesmo na forma colestática.</li><li><b>Na colestase:</b> USG para excluir obstrução; colestiramina se houver prurido.</li><li><b>Internar:</b> se INR alterado ou encefalopatia.</li><li><b>Contatos:</b> vacinar (a intervenção que interrompe o surto).</li><li><b>Recidiva:</b> o paciente volta a ser transmissor.</li></ul>", h: 1 },
+      { q: "Quando tratar a hepatite B aguda e com quê?", a: "<ul><li><b>Regra:</b> a maioria só precisa de suporte (cura espontânea em &gt; 95% dos adultos).</li><li><b>Tratar se:</b> forma grave (INR &gt; 1,5), protraída (bilirrubina &gt; 10 mg/dL por &gt; 4 semanas), fulminante, imunossupressão, coinfecção HCV/HDV, hepatopatia prévia ou idoso.</li><li><b>Droga:</b> entecavir ou tenofovir. Evitar interferon.</li><li><b>Suspender:</b> após 2 HBsAg negativos com 4 semanas de intervalo.</li></ul>", h: 1 },
+      { q: "Qual é o tratamento da hepatite C aguda?", a: "<p>Tratar já na fase aguda, sem esperar o clareamento espontâneo. Sofosbuvir-velpatasvir por 12 semanas ou glecaprevir-pibrentasvir por 8 semanas (mesmos esquemas da forma crônica).</p>", h: 1 },
+      { q: "Qual a profilaxia após exposição ao HBV e ao HAV?", a: "<ul><li><b>HAV:</b> vacina para os contatos (imunoglobulina em grupos selecionados).</li><li><b>HBV em não vacinado ou não respondedor:</b> vacina + imunoglobulina anti-hepatite B.</li><li><b>Recém-nascido de mãe HBsAg+:</b> vacina + imunoglobulina nas primeiras 12 h.</li></ul>", h: 1 },
+      { q: "Como fazer a hidratação na pancreatite aguda?", a: "<ul><li><b>Fluido:</b> Ringer lactato (evitar na hipercalcemia).</li><li><b>Volume:</b> ressuscitação moderada, com bolus de 10 mL/kg se houver hipovolemia e depois 1,5 mL/kg/h.</li><li><b>Metas:</b> diurese &gt; 0,5 mL/kg/h, queda de hematócrito e ureia, FC &lt; 120 bpm, PAM &gt; 65 mmHg.</li><li><b>Evitar:</b> volumes fixos agressivos.</li></ul>", h: 1 },
+      { q: "Como deve ser a nutrição na pancreatite aguda?", a: "<ul><li><b>Forma leve:</b> dieta oral precoce (&lt; 24 h), sólida e hipolipídica, sem esperar normalizar enzimas.</li><li><b>Forma grave:</b> nutrição enteral (sonda nasogástrica ou nasojejunal) em vez de parenteral, porque reduz mortalidade e falência orgânica.</li><li><b>Contraindicado:</b> probióticos (aumentam a mortalidade).</li><li><b>Analgesia:</b> opioides.</li></ul>", h: 1 },
+      { q: "Quando usar antibiótico na pancreatite aguda?", a: "<ul><li><b>Profilaxia:</b> <b>não</b> usar, mesmo na forma necrosante.</li><li><b>Necrose infectada:</b> tratar quando houver piora após melhora inicial ou gás na coleção. Primeira escolha: carbapenêmico (meropenem 1 g de 8/8 h).</li><li><b>Alternativas:</b> piperacilina-tazobactam, cefepime + metronidazol, quinolona + metronidazol.</li><li><b>Punção aspirativa:</b> não é obrigatória.</li></ul>", h: 1 },
+      { q: "Qual é a abordagem da necrose pancreática infectada?", a: "<p>Abordagem escalonada (<i>step-up</i>):</p><ol><li>Antibiótico.</li><li>Adiar a intervenção até a necrose estar encapsulada (≥ 4 semanas), se o paciente estiver estável.</li><li>Drenagem percutânea ou endoscópica.</li><li>Necrosectomia minimamente invasiva só se necessário.</li></ol><p>Necrosectomia aberta precoce aumenta a mortalidade.</p>", h: 1 },
+      { q: "Quando indicar CPRE e colecistectomia na pancreatite biliar?", a: "<ul><li><b>CPRE urgente (&lt; 24 h):</b> só se houver colangite.</li><li><b>Obstrução persistente sem colangite:</b> confirmar com colangiorressonância ou ecoendoscopia antes de fazer CPRE.</li><li><b>Forma leve:</b> colecistectomia na mesma internação.</li><li><b>Forma necrosante ou com coleções:</b> adiar a colecistectomia até a resolução.</li></ul>", h: 1 },
+      { q: "Qual é o tratamento da pericardite aguda?", a: "<ul><li><b>Anti-inflamatório:</b> ibuprofeno 600 mg de 8/8 h ou AAS 1 g de 8/8 h, com IBP.</li><li><b>Colchicina:</b> 0,5 mg 1×/dia (&lt; 70 kg) ou de 12/12 h (≥ 70 kg). Ajustar se ClCr &lt; 30.</li><li><b>Atividade física:</b> restringir até a remissão (sem sintomas e com PCR normal).</li><li><b>Corticoide (0,2–0,5 mg/kg):</b> só se refratária, autoimune, tuberculosa ou pós-pericardiotomia, porque aumenta a recorrência.</li></ul>", h: 1 },
+      { q: "Qual é a conduta na pericardite recorrente e na constritiva?", a: "<ul><li><b>Recorrente:</b> reiniciar AINE + colchicina por tempo prolongado (a suspensão precoce da colchicina é causa comum de recorrência). Se refratária, anti-IL-1 (anakinra, rilonacept). Pericardiectomia se refratária a tudo.</li><li><b>Constritiva crônica sintomática:</b> pericardiectomia.</li></ul>", h: 1 },
+      { q: "Qual é a conduta no tamponamento cardíaco?", a: "<p>Pericardiocentese de urgência guiada por ultrassom (ou drenagem cirúrgica). Volume com cautela até a drenagem. <b>Evitar</b> diuréticos e vasodilatadores, que derrubam a pré-carga. Enviar o líquido para citologia, ADA e culturas.</p>", h: 1 },
+      { q: "Qual é o tratamento da miocardite?", a: "<ul><li><b>IC:</b> tratamento padrão de IC (mantido por cerca de 1 ano).</li><li><b>Arritmias:</b> betabloqueador por pelo menos 6 meses.</li><li><b>AINE e colchicina:</b> só se houver pericardite associada.</li><li><b>Atividade física:</b> repouso até a remissão, com teste ergométrico e Holter antes de liberar.</li><li><b>Fulminante:</b> inotrópico ou vasopressor e suporte mecânico.</li><li><b>Imunossupressão:</b> na fulminante e nas formas não infecciosas (eosinofílica, células gigantes, autoimune).</li></ul>", h: 1 },
+      { q: "Como calcular a insulinização plena no DM1 recém-diagnosticado?", a: "<ul><li><b>Dose total:</b> 0,5–1,0 UI/kg/dia, sendo 50% basal e 50% bolus.</li><li><b>Exemplo com 40 kg:</b> 20 UI, sendo 10 UI basal e 10 UI bolus.</li><li><b>Com análogos:</b> glargina ou degludeca 1×/dia + lispro, asparte ou glulisina divididas antes das refeições (3–4–3 UI).</li></ul>", h: 1 },
+      { q: "Como prescrever insulinização plena com NPH e regular?", a: "<ul><li><b>NPH (basal):</b> 2/3 pela manhã e 1/3 ao deitar.</li><li><b>Regular (bolus):</b> dividida em 3 doses, 30 minutos antes das refeições.</li><li><b>Exemplo com 10 UI basal e 10 UI bolus:</b> NPH 7 UI pela manhã e 3 UI ao deitar; regular 3–4–3 UI.</li></ul>", h: 1 },
+      { q: "Como ajustar a insulina por glicemia pós-prandial?", a: "<ul><li><b>Regra:</b> 1 UI reduz cerca de 50 mg/dL; 15 g de carboidrato elevam cerca de 50 mg/dL.</li><li><b>Exemplo:</b> pós-almoço de 340 mg/dL. 340 − 180 = 160 → acrescentar 3 UI de regular antes do almoço, ou reduzir o carboidrato da refeição.</li></ul>", h: 1 },
+      { q: "Como fazer a insulinização parcial no DM2?", a: "<p>Hiperglicemia de jejum apesar dos orais: insulina basal ao deitar (<i>bedtime</i>), 0,1 UI/kg. Exemplo com 70 kg: NPH 7 UI ao deitar, mantendo os orais. Ao associar insulina, reavaliar a sulfonilureia pelo risco de hipoglicemia.</p>", h: 1 },
+      { q: "Qual droga escolher no DM2 com DCV, IC ou DRC, independentemente da HbA1c (ADA 2026)?", a: "<table><tr><th>Condição</th><th>Escolha</th></tr><tr><td>Doença cardiovascular aterosclerótica ou alto risco</td><td>AR GLP-1 e/ou iSGLT2 com benefício comprovado</td></tr><tr><td>IC (FE reduzida ou preservada)</td><td>iSGLT2</td></tr><tr><td>DRC com TFG 20–60 e/ou RAC ≥ 30</td><td>iSGLT2 (iniciar se TFG ≥ 20) ou AR GLP-1</td></tr><tr><td>TFG &lt; 30 ou diálise</td><td>AR GLP-1 preferido</td></tr></table><p>Evitar pioglitazona na IC.</p>", h: 1 },
+      { q: "Como tratar a hipoglicemia?", a: "<ul><li><b>Glicemia ≤ 70 mg/dL:</b> 15 g de carboidrato rápido, rechecar em 15 minutos e repetir se necessário (regra dos 15). Depois, fazer um lanche.</li><li><b>Em uso de acarbose:</b> usar glicose pura.</li><li><b>Inconsciente:</b> glucagon (nasal ou injetável) ou glicose IV. Nada por via oral.</li><li><b>Após hipoglicemia nível 2 ou 3:</b> reavaliar e desintensificar o esquema.</li></ul>", h: 1 },
+      { q: "O que suspender no \"dia de doença\" no paciente diabético?", a: "<table><tr><th>Fármaco</th><th>Quando suspender</th><th>Risco</th></tr><tr><td>iSGLT2</td><td>Jejum, desidratação</td><td>Cetoacidose euglicêmica</td></tr><tr><td>Metformina</td><td>Risco de LRA</td><td>Acidose lática</td></tr><tr><td>AR GLP-1</td><td>Sintomas gastrointestinais</td><td>—</td></tr><tr><td>IECA, BRA, diurético, AINE</td><td>Hipovolemia</td><td>LRA</td></tr></table><p><b>Nunca</b> suspender a insulina basal. Medir cetonas se a glicemia passar de 200 mg/dL.</p>", h: 1 },
+      { q: "Qual é a profilaxia primária de sangramento varicoso?", a: "<ul><li><b>Indicação:</b> varizes de médio ou grande calibre, ou pequenas com sinais vermelhos ou Child C.</li><li><b>Opções:</b> betabloqueador não seletivo ou ligadura elástica.</li><li><b>Betabloqueador de escolha:</b> carvedilol 6,25 → 12,5 mg/dia (previne descompensação).</li><li><b>CSPH sem varizes:</b> o betabloqueador também pode ser considerado.</li></ul>", h: 1 },
+      { q: "Qual é o tratamento etiológico e geral da cirrose?", a: "<ul><li><b>Etiologia:</b> tratar a causa (abstinência alcoólica, antivirais para HBV/HCV, perda de peso na esteatose).</li><li><b>Nutrição:</b> proteína 1,2–1,5 g/kg/dia, sem restrição, e lanche noturno.</li><li><b>Vacinas:</b> hepatites A e B, pneumococo, influenza.</li><li><b>Evitar:</b> AINE.</li><li><b>Encaminhar para transplante:</b> MELD ≥ 15 ou descompensação.</li></ul>", h: 1 },
+      { q: "Qual é o tratamento da ascite no cirrótico?", a: "<ul><li><b>Sal:</b> 2 g de sódio/dia.</li><li><b>Diuréticos:</b> espironolactona 100 mg (até 400 mg) ± furosemida 40 mg (até 160 mg), na proporção 100:40.</li><li><b>Meta de perda de peso:</b> 0,5 kg/dia, ou 1 kg/dia se houver edema.</li><li><b>Restrição hídrica:</b> só com Na &lt; 125 mEq/L.</li><li><b>Suspender:</b> AINE e IECA/BRA.</li><li><b>Ascite tensa:</b> paracentese de grande volume com albumina 6–8 g por litro retirado (se &gt; 5 L).</li><li><b>Ascite refratária:</b> paracenteses seriadas ou TIPS.</li></ul>", h: 1 },
+      { q: "Qual é o tratamento e a profilaxia da PBE?", a: "<ul><li><b>Tratamento:</b> cefotaxima 2 g de 8/8 h ou ceftriaxona 2 g/dia por 5 dias, com albumina 1,5 g/kg no dia 1 e 1 g/kg no dia 3.</li><li><b>Profilaxia secundária:</b> norfloxacino 400 mg/dia contínuo.</li><li><b>Profilaxia primária:</b> proteína do líquido &lt; 1,5 g/dL com disfunção hepática ou renal.</li><li><b>Hemorragia digestiva:</b> ceftriaxona 1 g/dia por 7 dias.</li></ul>", h: 1 },
+      { q: "Qual é o tratamento da síndrome hepatorrenal (SHR-AKI)?", a: "<ul><li><b>Primeiro:</b> suspender diuréticos e nefrotóxicos, tratar o precipitante e dar albumina 1 g/kg/dia por 2 dias.</li><li><b>Sem resposta:</b> terlipressina (1 mg de 4/4–6/6 h, até 12 mg/dia) com albumina 20–40 g/dia.</li><li><b>Alternativas:</b> noradrenalina em UTI; midodrina + octreotida.</li><li><b>Definitivo:</b> transplante hepático.</li></ul>", h: 1 },
+      { q: "Qual é a conduta na hemorragia digestiva varicosa aguda?", a: "<ul><li><b>Transfusão restritiva:</b> alvo de Hb 7–8 g/dL.</li><li><b>Vasoativo:</b> terlipressina 2 mg e depois 1–2 mg de 4/4 h, ou octreotida 50 µg + 50 µg/h, por 2–5 dias.</li><li><b>Antibiótico:</b> ceftriaxona 1 g/dia por 7 dias.</li><li><b>Endoscopia:</b> em até 12 h com ligadura elástica.</li><li><b>Alto risco (Child C 10–13 ou Child B com sangramento ativo):</b> TIPS precoce.</li><li><b>Sangramento refratário:</b> balão como ponte.</li></ul>", h: 1 },
+      { q: "Qual é o tratamento da encefalopatia hepática?", a: "<ol><li>Tratar o precipitante.</li><li>Lactulose como primeira linha (oral ou enema), titulada para 2–3 evacuações pastosas por dia.</li><li>Associar rifaximina 550 mg de 12/12 h se recorrente ou sem resposta.</li></ol><p><b>Não</b> restringir proteína.</p>", h: 1 },
+      { q: "Como é o tratamento em camadas da DRC (KDIGO 2024)?", a: "<ul><li><b>Base:</b> estilo de vida, estatina e meta de PAS &lt; 120 mmHg (se tolerada).</li><li><b>Albuminúria:</b> IECA ou BRA em dose máxima tolerada.</li><li><b>iSGLT2:</b> DM2 com TFG ≥ 20, DRC com RAC ≥ 200 com ou sem diabetes, ou IC. Manter mesmo com TFG &lt; 20.</li><li><b>DM2 com albuminúria:</b> acrescentar finerenona.</li><li><b>Nunca:</b> associar IECA + BRA.</li></ul>", h: 1 },
+      { q: "Quando manter ou suspender IECA/BRA na DRC?", a: "<ul><li><b>Manter:</b> se a creatinina subir até 30% (é o \"dip\" hemodinâmico). Também manter com TFG &lt; 30.</li><li><b>Investigar (sem suspender automaticamente):</b> aumento &gt; 30%. Procurar hipovolemia, AINE ou estenose de artéria renal.</li><li><b>Hipercalemia:</b> tratar o K antes de reduzir a dose.</li><li><b>Suspender:</b> só com hipotensão sintomática, K incontrolável ou uremia em G5.</li></ul>", h: 1 },
+      { q: "Quais são os ajustes de dieta e de dose de medicamentos na DRC?", a: "<ul><li><b>Proteína:</b> 0,8 g/kg/dia em G3–G5 (evitar &gt; 1,3 g/kg/dia).</li><li><b>Sódio:</b> &lt; 2 g/dia.</li><li><b>Metformina:</b> reduzir a dose com TFG &lt; 45 e suspender com TFG &lt; 30.</li><li><b>Contraste:</b> hidratar e evitar nefrotóxicos.</li></ul>", h: 1 },
+      { q: "Qual é o tratamento emergencial da hipercalemia?", a: "<ol><li>Monitorizar e fazer ECG.</li><li><b>Se houver alteração no ECG:</b> gluconato de cálcio 10%, 30 mL IV em 5–10 minutos.</li><li><b>Redistribuir o K:</b> insulina regular 10 UI + glicose 25 g; salbutamol 10–20 mg nebulizado.</li><li><b>Remover o K:</b> ciclossilicato de zircônio sódico 10 g de 8/8 h; furosemida se houver hipervolemia; diálise se refratária.</li><li>Tratar a causa.</li></ol>", h: 1 },
+      { q: "Como tratar a acidose metabólica da DRC?", a: "<p>HCO₃⁻ &lt; 18 mmol/L: bicarbonato de sódio oral, com dieta de menor carga ácida (menos proteína animal, mais frutas e vegetais). Ter cautela com a sobrecarga de sódio e com o potássio quando aumentar os vegetais.</p>", h: 1 },
+      { q: "Como tratar a anemia da DRC?", a: "<ol><li><b>Ferro primeiro:</b> no paciente não dialítico, se ferritina &lt; 100 e TSAT &lt; 40%. Oral ou IV.</li><li><b>Agente estimulador da eritropoese (AEE):</b> após repor ferro e corrigir causas reversíveis.</li><li><b>Alvo de Hb:</b> ≤ 11,5 g/dL (cerca de 10–11,5). Não buscar ≥ 13 (mais AVC e eventos).</li><li><b>Transfusão:</b> só em anemia aguda grave ou falha das outras terapias.</li></ol>", h: 1 },
+      { q: "Qual é o tratamento do distúrbio mineral e ósseo na DRC?", a: "<ul><li><b>Fósforo:</b> reduzir o fósforo elevado em direção ao normal com dieta e quelantes. Limitar quelantes à base de cálcio.</li><li><b>Cálcio:</b> evitar hipercalcemia. Hipocalcemia leve assintomática não precisa ser corrigida.</li><li><b>PTH progressivamente elevado:</b> corrigir fósforo e vitamina D antes de usar calcitriol ou análogos.</li></ul>", h: 1 },
+      { q: "Como tratar a hipocalcemia aguda sintomática?", a: "<ol><li><b>Bolus:</b> gluconato de cálcio 10%, 1–2 g em 50–100 mL de SG 5% ou SF, em 10–20 minutos.</li><li><b>Infusão contínua:</b> cerca de 1 mg/mL, de 0,5–1,5 mg/kg/h de cálcio elementar.</li><li><b>Repor magnésio</b> e monitorizar.</li><li><b>Iniciar já:</b> calcitriol 0,25–0,5 µg 2×/dia + carbonato de cálcio.</li></ol><p>Não infundir na mesma via que bicarbonato ou fosfato. Cálcio sérico a cada 4–6 h.</p>", h: 1 },
+      { q: "Quando dar cálcio IV na hipocalcemia?", a: "<ul><li><b>Indicações:</b> sintomas graves (tetania, laringoespasmo, broncoespasmo, convulsão, QT longo, IC); queda aguda para ≤ 7,5 mg/dL mesmo sem sintomas; impossibilidade de usar a via oral.</li><li><b>Não dar de rotina:</b> na DRC assintomática ou na hiperfosfatemia por lise sem sintomas, porque precipita fosfato de cálcio.</li></ul>", h: 1 },
+      { q: "Como tratar hipocalcemia associada a hipomagnesemia?", a: "<p>Corrigir o magnésio primeiro, porque sem ele o PTH não é secretado nem age. Sulfato de magnésio 2 g IV em 10–20 minutos e depois 1 g/h enquanto o Mg estiver &lt; 1 mg/dL. Reduzir a dose à metade na insuficiência renal.</p>", h: 1 },
+      { q: "Qual é o tratamento crônico do hipoparatireoidismo?", a: "<ul><li><b>Medicamentos:</b> carbonato de cálcio 1–2 g/dia de cálcio elementar com as refeições + calcitriol 0,25–2 µg/dia. Colecalciferol para manter 25(OH)D &gt; 30 ng/mL.</li><li><b>Dieta:</b> pobre em fósforo e em sódio.</li><li><b>Alvo:</b> Ca no limite inferior do normal (cerca de 8,0–8,5 mg/dL), produto Ca × P &lt; 55 e calciúria &lt; 300 mg/24 h.</li><li><b>Hipercalciúria:</b> tiazídico.</li></ul>", h: 1 },
+      { q: "Qual é o tratamento da histoplasmose disseminada grave (sem SNC)?", a: "<ol><li><b>Indução:</b> anfotericina B lipossomal 3 mg/kg/dia por 1–2 semanas.</li><li><b>Transição:</b> quando o paciente estiver afebril, estável e tolerando via oral, iniciar itraconazol 200 mg de 8/8 h por 3 dias e depois 200 mg de 12/12 h.</li><li><b>Duração total:</b> ≥ 12 meses.</li></ol><p>Junto com isso: TARV precoce no HIV e reduzir ou suspender a imunossupressão.</p>", h: 1 },
+      { q: "Qual é o tratamento da histoplasmose leve a moderada e da forma no SNC?", a: "<ul><li><b>Leve a moderada:</b> itraconazol isolado (ataque de 200 mg de 8/8 h por 3 dias, depois 200 mg de 12/12 h) por ≥ 12 meses.</li><li><b>SNC:</b> anfotericina B lipossomal 5 mg/kg/dia por 4–6 semanas, depois itraconazol 200 mg 2–3×/dia por ≥ 1 ano e até normalizar o LCR.</li></ul>", h: 1 },
+      { q: "Quais drogas evitar e quais cuidados ter com o itraconazol na histoplasmose?", a: "<ul><li><b>Não usar:</b> equinocandinas (inativas contra o Histoplasma). Fluconazol só em último caso (menos eficaz e seleciona resistência).</li><li><b>Itraconazol cápsula:</b> tomar com refeição e evitar IBP e antiácidos. A solução oral é tomada em jejum.</li><li><b>Nível sérico:</b> dosar após cerca de 2 semanas.</li><li><b>Alternativa preferida fora do SNC:</b> posaconazol.</li></ul>", h: 1 },
+      { q: "Qual é a conduta na insuficiência adrenal por histoplasmose?", a: "<p>Reposição de hidrocortisona, geralmente por toda a vida, porque o infarto adrenal é irreversível. Orientar sobre o risco de interromper. Pensar nesse quadro se houver Na baixo, K alto, hipotensão ortostática ou hipoglicemia.</p>", h: 1 },
+      { q: "Qual é o esquema de tratamento da tuberculose sensível?", a: "<ul><li><b>Adultos e ≥ 10 anos:</b> 2RHZE/4RH em dose fixa combinada por peso. Fase intensiva com ≥ 60 doses, manutenção com ≥ 120 doses.</li><li><b>&lt; 10 anos:</b> 2RHZ/4RH.</li><li><b>Forma meningoencefálica e osteoarticular:</b> 2RHZE/10RH, com corticoide na forma meníngea.</li><li><b>Gestante:</b> mesmo esquema + piridoxina 50 mg/dia.</li></ul>", h: 1 },
+      { q: "Quando iniciar a TARV na coinfecção TB-HIV?", a: "<table><tr><th>Situação</th><th>Início da TARV</th></tr><tr><td>CD4 &lt; 50 ou imunodepressão grave</td><td>Em até 2 semanas após o RHZE</td></tr><tr><td>CD4 ≥ 50</td><td>Na 8ª semana</td></tr><tr><td>TB meningoencefálica</td><td>Somente após 2 meses</td></tr></table><p>O esquema de TB é o mesmo e tem a mesma duração.</p>", h: 1 },
+      { q: "Qual é a conduta na hepatotoxicidade pelo esquema RHZE?", a: "<ul><li><b>TGO/TGP &lt; 3× sem sintomas:</b> manter e monitorizar.</li><li><b>≥ 3× com sintomas ou ≥ 5× sem sintomas:</b> suspender <b>tudo</b>.</li><li><b>Reintrodução após normalizar:</b> RE → depois H (3–7 dias) → depois Z (3–7 dias).</li><li><b>Intolerância à Z:</b> REH por 9 meses.</li><li><b>Intolerância à H:</b> trocar por levofloxacino.</li></ul>", h: 1 },
+      { q: "Quais são os esquemas de tratamento da tuberculose latente (ILTB)?", a: "<table><tr><th>Esquema</th><th>Duração</th></tr><tr><td>6H ou 9H (isoniazida 5–10 mg/kg, máx. 300 mg)</td><td>6–9 meses</td></tr><tr><td>4R (rifampicina 10 mg/kg, máx. 600 mg)</td><td>4 meses</td></tr><tr><td>3HP (rifapentina + isoniazida semanal)</td><td>12 doses</td></tr></table><p>Antes de tratar, excluir TB ativa. A rifampicina interage com inibidores de protease e dolutegravir.</p>", h: 1 },
+      { q: "Qual é a conduta na estenose mitral reumática importante sintomática?", a: "<ul><li><b>Escolha:</b> valvuloplastia mitral percutânea por balão se Wilkins ≤ 8, sem trombo no AE e com insuficiência mitral no máximo leve. A FA não contraindica.</li><li><b>Se houver contraindicação:</b> comissurotomia ou troca cirúrgica.</li><li><b>EM moderada ou grave com FA:</b> anticoagular com varfarina (DOAC não indicado).</li><li><b>Controle de FC:</b> betabloqueador.</li></ul>", h: 1 },
+      { q: "Quando intervir na estenose aórtica e quando escolher TAVI ou cirurgia?", a: "<ul><li><b>Indicações:</b> EAo grave sintomática ou FE &lt; 50%.</li><li><b>Cirurgia:</b> &lt; 70 anos com risco baixo.</li><li><b>TAVI transfemoral:</b> inoperável, frágil ou alto risco; risco intermediário; baixo risco com &gt; 70 anos.</li><li><b>Decisão:</b> sempre pelo Heart Team.</li><li><b>Valvuloplastia por balão:</b> apenas como ponte.</li></ul>", h: 1 },
+      { q: "Qual é a indicação de cirurgia na insuficiência aórtica e na mitral primária crônicas?", a: "<ul><li><b>IAo:</b> troca valvar se sintomática, FE &lt; 50% ou VE dilatado (diâmetro sistólico &gt; 50 mm; &gt; 55 mm em reumáticos). O TAVI é exceção.</li><li><b>IM primária:</b> intervenção se sintomática, FE ≤ 60% ou diâmetro sistólico ≥ 40 mm. Plastia é preferível à troca.</li></ul>", h: 1 },
+      { q: "Qual é o tratamento da necrose tubular aguda e a prevenção da nefropatia por contraste?", a: "<ul><li><b>NTA:</b> suporte. Manter euvolemia, evitar novos insultos, ajustar a dose de nefrotóxicos e corrigir distúrbios eletrolíticos. Na rabdomiólise, hidratação vigorosa.</li><li><b>Contraste:</b> SF 0,9% 1 mL/kg/h por 12 h antes e depois, menor dose possível, evitar exposições repetidas e suspender nefrotóxicos.</li></ul>", h: 1 },
+      { q: "Qual é o tratamento da nefrite intersticial aguda?", a: "<p>Suspender o fármaco causador (antibiótico, IBP ou AINE). Se não houver melhora rápida, prednisona 1 mg/kg/dia por 2–4 semanas com redução progressiva. A recuperação da função renal pode levar cerca de 1,5 mês.</p>", h: 1 },
+      { q: "Qual é a conduta na cetoacidose diabética euglicêmica por iSGLT2?", a: "<p>Suspender o iSGLT2 e tratar como CAD: hidratação, insulina IV com glicose (para manter a insulina, já que a glicemia está baixa) e reposição de potássio. A cetoacidose leve pode ser ambulatorial se o paciente estiver estável. O estado hiperglicêmico hiperosmolar sempre exige internação.</p>", h: 1 }
+    ]
+  },
+  {
+    id: "rf-diagnostico",
+    name: "Diagnóstico, risco e investigação",
+    rev: 1,
+    cards: [
+      { q: "Como se define síncope?", a: "<p>Perda transitória da consciência e do tônus postural, de início súbito, autolimitada e de curta duração, causada por hipofluxo cerebral transitório. A recuperação é espontânea e completa.</p>", h: 1 },
+      { q: "Quais achados da anamnese sugerem síncope reflexa (vasovagal)?", a: "<p>Gatilhos típicos (dor, medo, ortostase prolongada, calor, micção, tosse, pós-exercício), pródromos longos (tontura, turvação visual, sudorese fria), ausência de trauma grave e recuperação rápida. Exame físico e ECG são normais.</p>", h: 1 },
+      { q: "Quais são os critérios de hipotensão ortostática e como medir?", a: "<p>Medir a PA após repouso adequado em decúbito dorsal e depois com 1 e 3 minutos em pé. Queda de PAS ≥ 20 mmHg ou de PAD ≥ 10 mmHg define hipotensão ortostática.</p>", h: 1 },
+      { q: "Quais alterações do ECG são critérios maiores de alto risco na síncope?", a: "<ul><li>Isquemia aguda.</li><li>BAV Mobitz II ou BAV de 3º grau.</li><li>Bradicardia &lt; 40 bpm ou pausas &gt; 3 s.</li><li>FA com resposta ventricular &lt; 40 bpm.</li><li>Bloqueio de ramo ou distúrbio de condução intraventricular.</li><li>Ondas Q.</li><li>TV sustentada ou não sustentada.</li><li>Disfunção de marca-passo ou CDI.</li><li>Padrão Brugada tipo 1.</li><li>QT longo (&gt; 460 ms) ou curto (&lt; 340 ms).</li></ul>", h: 1 },
+      { q: "Quais são os três estratos de probabilidade pré-teste no TEP e quais ferramentas os definem?", a: "<ul><li>Estratos: &lt; 15% (baixa), 15–50% (intermediária) e &gt; 50% (alta).</li><li>Ferramentas: Wells, Genebra revisado ou gestalt clínico.</li><li>Wells padrão: baixo &lt; 2, moderado 2–6, alto &gt; 6.</li><li>Wells modificado: TEP provável &gt; 4.</li></ul>", h: 1 },
+      { q: "Quais são os 8 critérios PERC e quando podem ser aplicados?", a: "<ul><li>Critérios: idade &lt; 50 anos; FC &lt; 100 bpm; SatO₂ ≥ 95%; sem hemoptise; sem estrogênio; sem TVP/TEP prévio; sem edema unilateral de perna; sem cirurgia ou trauma com internação nas últimas 4 semanas.</li><li>Aplicação: só quando a probabilidade pré-teste for &lt; 15%. Com os 8 preenchidos, nenhum outro teste é necessário.</li></ul>", h: 1 },
+      { q: "Quando o D-dímero ajustado e o algoritmo YEARS podem ser usados para excluir TEP?", a: "<ul><li><b>Ajuste por idade:</b> idade × 10 µg/L em pacientes &gt; 50 anos.</li><li><b>YEARS:</b> usa três itens (sinais de TVP, hemoptise, TEP como diagnóstico mais provável). Com 0 itens, o limiar é 1.000 µg/L; com ≥ 1 item, é 500 µg/L.</li><li><b>Condições para excluir:</b> D-dímero abaixo do limiar, probabilidade &lt; 50% e paciente não anticoagulado.</li></ul>", h: 1 },
+      { q: "Quais são as categorias clínicas de TEP da AHA/ACC 2026?", a: "<ul><li><b>A:</b> subclínico (incidental, assintomático).</li><li><b>B:</b> sintomático com escore baixo (PESI ≤ 85, sPESI 0 ou Bova ≤ 4).</li><li><b>C:</b> sintomático com escore elevado. C1 tem VD e biomarcador normais; C2 tem VD <b>ou</b> biomarcador alterado; C3 tem VD <b>e</b> biomarcador alterados.</li><li><b>D:</b> falência cardiopulmonar incipiente. D1 é hipotensão transitória; D2 é choque normotenso.</li><li><b>E:</b> falência estabelecida. E1 é choque cardiogênico; E2 é choque refratário ou parada.</li><li><b>Modificador \"R\":</b> acrescentado quando há componente respiratório.</li></ul>", h: 1 },
+      { q: "Qual o papel do ecocardiograma e da razão VD/VE na angio-TC no TEP?", a: "<ul><li>O eco <b>não</b> confirma nem exclui TEP, porque a sensibilidade é baixa. Ele serve para estratificar risco.</li><li>Na angio-TC, deve-se relatar a razão VD/VE numérica. VD/VE ≥ 1,0 tem sensibilidade de 85% e especificidade de 72% para disfunção de VD.</li><li>Achados de disfunção de VD no eco: VD/VE &gt; 0,9, TAPSE &lt; 1,7 cm e sinal de McConnell.</li></ul>", h: 1 },
+      { q: "Como interpretar o painel da hepatite B: HBsAg, anti-HBc IgM, anti-HBc total e anti-HBs?", a: "<ul><li><b>HBsAg:</b> infecção atual. Se persiste por mais de 6 meses, define cronicidade.</li><li><b>Anti-HBc IgM:</b> infecção recente (também pode subir na reagudização).</li><li><b>Anti-HBc total:</b> contato prévio. Nunca aparece após vacinação.</li><li><b>Anti-HBs isolado:</b> vacinação.</li><li><b>Anti-HBs + anti-HBc:</b> infecção resolvida.</li><li><b>Janela imunológica:</b> apenas o anti-HBc IgM é positivo.</li></ul>", h: 1 },
+      { q: "Quais são as fases da hepatite B crônica?", a: "<ul><li><b>Imunotolerante:</b> HBeAg+, DNA muito alto, ALT normal.</li><li><b>Imunoativa HBeAg+:</b> DNA ≥ 20.000 UI/mL, ALT elevada.</li><li><b>Imunoativa HBeAg−:</b> variante pré-core, DNA ≥ 2.000 UI/mL, ALT elevada.</li><li><b>Inativa:</b> HBeAg−, anti-HBe+, DNA &lt; 2.000 UI/mL, ALT normal.</li><li><b>Oculta:</b> HBsAg−, DNA presente no fígado.</li></ul>", h: 1 },
+      { q: "Como se diagnostica hepatite C ativa e hepatite C aguda?", a: "<ul><li><b>Infecção ativa:</b> o anti-HCV indica apenas contato; quem confirma infecção ativa é o HCV-RNA.</li><li><b>Hepatite C aguda:</b> HCV-RNA detectável com anti-HCV que soroconverte em até 12 semanas, ou testes negativos documentados nos 6 meses anteriores.</li><li><b>Pista clínica:</b> ALT e RNA flutuam muito na fase aguda.</li></ul>", h: 1 },
+      { q: "Qual exame confirma hepatite A e qual o padrão laboratorial típico?", a: "<ul><li><b>Confirmação:</b> IgM anti-HAV, positivo desde os sintomas e por 3–6 meses. O IgG isolado indica infecção passada ou vacinação.</li><li><b>Laboratório:</b> ALT frequentemente &gt; 1.000 U/L, maior que a AST; bilirrubina geralmente ≤ 10 mg/dL.</li><li><b>Transmissão:</b> o paciente é transmissor 2 semanas antes até 1 semana após a icterícia.</li></ul>", h: 1 },
+      { q: "Qual é o melhor marcador de gravidade na hepatite aguda viral?", a: "<p>O tempo de protrombina (INR). INR &gt; 1,5, encefalopatia, icterícia profunda ou bilirrubina &gt; 10 mg/dL por mais de 4 semanas indicam forma grave, protraída ou risco de falência hepática.</p>", h: 1 },
+      { q: "Quais são os critérios diagnósticos de pancreatite aguda?", a: "<p>São necessários 2 de 3:</p><ol><li>Dor abdominal característica (epigástrica, em faixa, irradiada para o dorso).</li><li>Lipase ou amilase ≥ 3× o limite superior (a lipase é preferida).</li><li>Imagem compatível.</li></ol><p>A TC <b>não</b> é rotina na admissão.</p>", h: 1 },
+      { q: "Como a Classificação de Atlanta revisada define a gravidade da pancreatite?", a: "<ul><li><b>Leve:</b> sem falência orgânica e sem complicação local ou sistêmica.</li><li><b>Moderadamente grave:</b> falência orgânica transitória (&lt; 48 h) e/ou complicação local.</li><li><b>Grave:</b> falência orgânica persistente (&gt; 48 h).</li><li><b>Falência orgânica:</b> Marshall modificado ≥ 2 em qualquer sistema (respiratório, renal ou cardiovascular).</li></ul>", h: 1 },
+      { q: "Quais são os componentes do BISAP e o que significa um escore ≥ 3?", a: "<ul><li><b>B:</b> BUN &gt; 25 mg/dL.</li><li><b>I:</b> alteração do nível de consciência (<i>impaired mental status</i>).</li><li><b>S:</b> SIRS (≥ 2 critérios).</li><li><b>A:</b> idade &gt; 60 anos.</li><li><b>P:</b> derrame pleural.</li></ul><p>Um ponto cada. BISAP ≥ 3 indica mortalidade &gt; 5% e necessidade de UTI. Para triagem inicial, a SIRS na admissão (e se persistir após 48 h) é a ferramenta mais simples.</p>", h: 1 },
+      { q: "Quais são as indicações de TC na pancreatite aguda e quando fazê-la?", a: "<ul><li><b>Indicações:</b> diagnóstico incerto, ausência de melhora em 48–72 h, piora clínica ou suspeita de complicação.</li><li><b>Momento ideal para avaliar necrose:</b> 72–96 h. Antes disso, a TC subestima a necrose.</li><li><b>USG de abdome:</b> deve ser feita em <b>todos</b> os pacientes na admissão, para pesquisar litíase.</li></ul>", h: 1 },
+      { q: "Quais são as coleções da pancreatite segundo Atlanta?", a: "<ul><li><b>Antes de 4 semanas:</b> coleção líquida peripancreática aguda (APFC) na forma edematosa; coleção necrótica aguda (ANC) na forma necrosante.</li><li><b>Após 4 semanas:</b> pseudocisto (encapsulado, sem sólido) ou necrose encapsulada (WON, encapsulada, com necrose sólida).</li><li><b>Gás na coleção:</b> sugere necrose infectada.</li></ul>", h: 1 },
+      { q: "Como se faz o diagnóstico de pericardite aguda?", a: "<ul><li><b>Critérios:</b> dor torácica característica (pleurítica, melhora ao inclinar para frente), atrito pericárdico, ECG típico e derrame pericárdico. PCR/VHS e RM/TC apoiam.</li><li><b>Diagnóstico:</b> dor + 1 critério = possível; dor + ≥ 2 = definitivo.</li></ul>", h: 1 },
+      { q: "Qual o ECG típico da pericardite e o que o diferencia do IAM?", a: "<p>Supra de ST difuso e côncavo, com infradesnivelamento de PR. Diferente do IAM, o supra não respeita um território coronariano e não há imagem em espelho (exceto aVR). Podem ocorrer arritmias supraventriculares.</p>", h: 1 },
+      { q: "Quais são os achados de tamponamento cardíaco?", a: "<ul><li><b>Clínicos:</b> tríade de Beck (hipotensão, turgência jugular e bulhas abafadas), taquicardia e pulso paradoxal.</li><li><b>ECG:</b> alternância elétrica.</li><li><b>Radiografia:</b> silhueta cardíaca alargada.</li><li><b>Eco:</b> derrame com colapso diastólico de AD/VD e variação respiratória dos fluxos.</li><li><b>Gravidade do derrame ao eco:</b> &lt; 10 mm leve, 10–20 mm moderado, &gt; 20 mm grave.</li></ul>", h: 1 },
+      { q: "Como diferenciar pericardite constritiva de IC direita convencional?", a: "<p>Na constrição há turgência jugular com sinal de Kussmaul, ascite, hepatomegalia e edema, mas FE preservada e pulmões limpos. O eco ou a RM mostra pericárdio espessado e interdependência ventricular. Pistas na história: pericardite prévia (tuberculose), cirurgia cardíaca ou radioterapia.</p>", h: 1 },
+      { q: "Como se diagnostica e classifica a miocardite?", a: "<ul><li><b>Diagnóstico definido:</b> clínica + RM cardíaca (edema em T2 e realce tardio mesoepicárdico, multifocal e não isquêmico) ou biópsia endomiocárdica. Achados de apoio: troponina, ECG alterado, alteração segmentar e strain.</li><li><b>Fulminante:</b> instalação aguda com instabilidade que exige inotrópico ou suporte mecânico.</li><li><b>Complicada:</b> FE &lt; 50%, arritmia ventricular sustentada, BAV avançado, IC ou choque.</li></ul>", h: 1 },
+      { q: "Quando indicar biópsia endomiocárdica na miocardite?", a: "<p>IC de início recente (&lt; 2 semanas) com apresentação grave (instabilidade, arritmia ventricular, BAV avançado) e casos refratários ao tratamento sem etiologia definida. Também na suspeita de formas que mudam a conduta (eosinofílica, células gigantes, autoimune).</p>", h: 1 },
+      { q: "Quais são os componentes do Child-Pugh e o que ele classifica?", a: "<ul><li><b>Componentes:</b> bilirrubina, albumina, INR, ascite e encefalopatia.</li><li><b>Classes:</b> A (5–6 pontos), B (7–9) e C (10–15).</li><li><b>Uso:</b> classifica reserva hepática e prognóstico. Child ≥ 12 ou MELD ≥ 21 indicam sobrevida ≤ 6 meses. MELD orienta a prioridade de transplante.</li></ul>", h: 1 },
+      { q: "Como a elastografia e as plaquetas ajudam a estimar fibrose e hipertensão portal (Baveno VII)?", a: "<ul><li><b>&lt; 10 kPa:</b> torna cirrose improvável.</li><li><b>&gt; 20–25 kPa:</b> sugere hipertensão portal clinicamente significativa (CSPH).</li><li><b>&lt; 20 kPa com plaquetas &gt; 150.000:</b> varizes de alto risco improváveis, dispensa a EDA de rastreio.</li><li><b>Rastreio não invasivo:</b> FIB-4 e APRI (APRI &gt; 2 é específico para cirrose).</li></ul>", h: 1 },
+      { q: "Qual é o rastreamento obrigatório no cirrótico?", a: "<ul><li><b>Carcinoma hepatocelular:</b> USG hepática a cada 6 meses, com ou sem alfafetoproteína. A alfafetoproteína isolada não serve.</li><li><b>Varizes:</b> EDA ao diagnóstico, salvo critérios de Baveno VII favoráveis.</li></ul>", h: 1 },
+      { q: "Como interpretar o GASA e a proteína do líquido ascítico?", a: "<ul><li><b>GASA = albumina sérica − albumina do líquido.</b></li><li><b>GASA ≥ 1,1 g/dL:</b> hipertensão portal (cirrose, IC, Budd-Chiari).</li><li><b>GASA &lt; 1,1 g/dL:</b> sem hipertensão portal (carcinomatose, TB peritoneal, nefrótica, pancreatite).</li><li><b>Proteína &lt; 1,5 g/dL:</b> alto risco de PBE.</li><li><b>Proteína ≥ 2,5 g/dL com GASA alto:</b> sugere ascite cardíaca.</li></ul>", h: 1 },
+      { q: "Qual o critério de PBE e como diferenciar de peritonite secundária?", a: "<ul><li><b>PBE:</b> PMN ≥ 250/mm³ no líquido ascítico, independentemente da cultura. Em ascite hemorrágica, subtrair 1 PMN a cada 250 hemácias.</li><li><b>Peritonite secundária:</b> suspeitar se houver ≥ 2 de: proteína &gt; 1 g/dL, glicose &lt; 50 mg/dL, LDH acima do limite sérico; ou cultura polimicrobiana.</li><li><b>Bacterascite:</b> cultura + com PMN &lt; 250.</li></ul>", h: 1 },
+      { q: "Quais são os critérios de síndrome hepatorrenal (SHR-AKI)?", a: "<ol><li>Cirrose com ascite.</li><li>Lesão renal aguda pelos critérios do ICA.</li><li>Sem resposta após 2 dias sem diurético e com albumina 1 g/kg.</li><li>Sem choque.</li><li>Sem nefrotóxicos.</li><li>Sem doença parenquimatosa: proteinúria &lt; 500 mg/dia, hematúria &lt; 50 hemácias/campo e USG normal.</li></ol>", h: 1 },
+      { q: "Como se classifica a encefalopatia hepática (West Haven)?", a: "<ul><li><b>Grau 1 (encoberta):</b> déficit de atenção e alteração do sono.</li><li><b>Grau 2 (manifesta):</b> letargia, desorientação temporal e asterixis.</li><li><b>Grau 3:</b> sonolência ou estupor e desorientação importante.</li><li><b>Grau 4:</b> coma.</li></ul><p>O diagnóstico é clínico, sem necessidade de amônia. Sempre buscar o precipitante: infecção, sangramento, constipação, distúrbio eletrolítico ou sedativos.</p>", h: 1 },
+      { q: "Como se define doença renal crônica (KDIGO 2024)?", a: "<ul><li><b>Definição:</b> alteração de estrutura ou função renal por <b>mais de 3 meses</b>, com implicação para a saúde.</li><li><b>Critérios:</b> TFG &lt; 60 <b>ou</b> marcador de lesão (RAC ≥ 30 mg/g, sedimento alterado, distúrbio tubular, alteração histológica ou de imagem, transplante).</li><li><b>Atenção:</b> G1–G2 sem marcador de lesão <b>não</b> é DRC.</li></ul>", h: 1 },
+      { q: "Como se faz a classificação CGA da DRC?", a: "<ul><li><b>C:</b> causa.</li><li><b>G:</b> TFG. G1 ≥ 90; G2 60–89; G3a 45–59; G3b 30–44; G4 15–29; G5 &lt; 15.</li><li><b>A:</b> albuminúria (RAC). A1 &lt; 30; A2 30–300; A3 &gt; 300 mg/g.</li></ul>", h: 1 },
+      { q: "Como estimar o risco de falência renal na DRC e quando encaminhar?", a: "<ul><li><b>Ferramenta:</b> KFRE (idade, sexo, TFG e RAC) em G3–G5.</li><li><b>Encaminhar ao nefrologista:</b> risco ≥ 3–5% em 5 anos, TFG &lt; 30, queda sustentada &gt; 20%, RAC &gt; 700 mg/g ou ≥ 300 com hematúria, cilindros hemáticos, HAS refratária ou K persistentemente alterado.</li><li><b>Planejar terapia renal substitutiva:</b> risco &gt; 40% em 2 anos.</li></ul>", h: 1 },
+      { q: "Qual a vantagem da cistatina C e quando usá-la?", a: "<p>Estima a TFG sem depender da massa muscular. É útil quando a creatinina é pouco confiável (sarcopenia, amputação, obesidade, dieta, fármacos) e para confirmar G3a. A equação combinada creatinina + cistatina C é a mais acurada. Quando disponível, define a categoria G.</p>", h: 1 },
+      { q: "Como classificar a gravidade da hipercalemia e excluir pseudo-hipercalemia?", a: "<ul><li><b>Gravidade:</b> moderada se K 6,0–6,4; grave se K ≥ 6,5 (ação imediata, com ECG e monitorização).</li><li><b>Pseudo-hipercalemia:</b> garrote apertado, abrir e fechar a mão, hemólise, plaquetose ou leucocitose. Repetir em plasma com heparina.</li><li><b>Revisar fármacos:</b> IECA, BRA, antagonista mineralocorticoide, trimetoprima, AINE.</li></ul>", h: 1 },
+      { q: "Como se define e investiga a anemia na DRC?", a: "<ul><li><b>Definição:</b> Hb &lt; 13 g/dL (homens) ou &lt; 12 g/dL (mulheres).</li><li><b>Investigação inicial:</b> hemograma, reticulócitos, ferritina e saturação de transferrina.</li><li><b>Deficiência de ferro:</b> TSAT &lt; 20% com ferritina &lt; 100 (não dialítico) ou &lt; 200 (hemodiálise).</li><li><b>Ferritina &lt; 45 ou VCM &lt; 80:</b> investigar sangramento.</li><li><b>Anemia da DRC:</b> é diagnóstico de exclusão (normocítica e hipoproliferativa).</li></ul>", h: 1 },
+      { q: "Qual é o padrão laboratorial do DMO-DRC (distúrbio mineral e ósseo) e por que o PTH sobe?", a: "<p>A queda de néfrons reduz a excreção de fosfato, o que aumenta o FGF23. O FGF23 reduz o calcitriol, o que reduz a absorção de cálcio e eleva o PTH (hiperparatireoidismo secundário). Laboratório: fósforo e PTH altos, cálcio baixo ou normal, calcitriol baixo.</p>", h: 1 },
+      { q: "Quais são os critérios diagnósticos de hipoparatireoidismo?", a: "<ul><li><b>Critério:</b> hipocalcemia (corrigida pela albumina) com PTH baixo ou inapropriadamente normal (&lt; 20 pg/mL), em ≥ 2 ocasiões com ≥ 2 semanas de intervalo, com função renal normal.</li><li><b>Antes de interpretar:</b> corrigir o magnésio. Fósforo alto corrobora.</li><li><b>Pós-cirúrgico permanente:</b> hipocalcemia &gt; 6–12 meses após a cirurgia.</li></ul>", h: 1 },
+      { q: "Qual é o passo a passo da investigação da hipocalcemia?", a: "<ol><li>Confirmar se é real: repetir; usar cálcio iônico ou corrigir (Ca + 0,8 × [4 − albumina]).</li><li>Dosar PTH na mesma amostra.</li><li>Dosar Mg, fósforo, 25(OH)D e creatinina.</li></ol><table><tr><th>Padrão</th><th>Interpretação</th></tr><tr><td>PTH baixo + P alto</td><td>Hipoparatireoidismo</td></tr><tr><td>PTH alto + P alto</td><td>Pseudo-hipoparatireoidismo ou DRC</td></tr><tr><td>PTH alto + P baixo</td><td>Deficiência de vitamina D</td></tr></table>", h: 1 },
+      { q: "Quais são os sinais de Chvostek e Trousseau e qual o valor de cada um?", a: "<ul><li><b>Chvostek:</b> percussão do nervo facial causa contração perilabial. É pouco específico (positivo em 10–25% dos normocalcêmicos).</li><li><b>Trousseau:</b> manguito 20 mmHg acima da PAS por 3 minutos causa \"mão de parteiro\". É mais específico (1–4% em normais).</li></ul>", h: 1 },
+      { q: "Como reconhecer o pseudo-hipoparatireoidismo tipo 1A?", a: "<ul><li><b>Laboratório:</b> hipocalcemia e hiperfosfatemia com PTH <b>alto</b> (resistência ao PTH), função renal normal.</li><li><b>Fenótipo (osteodistrofia hereditária de Albright):</b> face arredondada, baixa estatura, braquidactilia do 4º e 5º dedos, obesidade e ossificações subcutâneas.</li><li><b>Outras resistências:</b> TSH e gonadotrofinas.</li><li><b>Genética:</b> mutação inativadora do GNAS herdada da mãe.</li></ul>", h: 1 },
+      { q: "Quando suspeitar de histoplasmose disseminada no paciente com HIV?", a: "<p>CD4 ≤ 150 com residência atual ou prévia em área endêmica (ou exposição a excretas de aves e morcegos), com:</p><ul><li>febre e perda de peso;</li><li>hepatoesplenomegalia e linfadenopatia;</li><li>pancitopenia;</li><li>lesões de pele ou mucosa;</li><li>infiltrado micronodular difuso;</li><li>LDH e ferritina muito altas.</li></ul>", h: 1 },
+      { q: "Quais exames diagnosticam histoplasmose disseminada e qual o mais sensível?", a: "<ul><li><b>Mais sensível:</b> antígeno de Histoplasma na urina (cerca de 97% no HIV avançado) e no soro.</li><li><b>Junto com ele:</b> hemoculturas por lise-centrifugação.</li><li><b>Confirmação:</b> cultura (até 6 semanas) ou histopatologia (GMS/PAS) de medula, pele, linfonodo ou fígado.</li><li><b>Limitações:</b> anticorpos podem ser negativos no imunossuprimido. Antígeno negativo não exclui.</li></ul>", h: 1 },
+      { q: "Quais são os critérios de gravidade da histoplasmose disseminada que definem a droga inicial?", a: "<ul><li><b>Grave:</b> necessidade de internação, sepse, febre alta, instabilidade, insuficiência orgânica, pancitopenia, fungemia ou imunossupressão grave. Começa com anfotericina.</li><li><b>Leve a moderada:</b> foco único, sem SNC e sem fungemia. Pode começar com itraconazol.</li><li><b>Preditores de falha do itraconazol:</b> febre &gt; 39,5 °C, Karnofsky &lt; 60, fosfatase alcalina &gt; 5× e albumina &lt; 3.</li></ul>", h: 1 },
+      { q: "Qual é a investigação inicial do sintomático respiratório para tuberculose?", a: "<p>Tosse ≥ 3 semanas: teste rápido molecular (TRM-TB) no escarro, que dá resultado em cerca de 2 h, tem sensibilidade de cerca de 90% e detecta resistência à rifampicina. Pedir cultura com teste de sensibilidade em todos os casos (padrão-ouro). A baciloscopia exige 2 amostras. O TRM não serve para controle de tratamento.</p>", h: 1 },
+      { q: "Como diagnosticar tuberculose pleural?", a: "<p>Exsudato com predomínio de linfócitos e ADA &gt; 40 U/L (sensibilidade de cerca de 93% e especificidade de cerca de 97%). A baciloscopia do líquido costuma ser negativa (forma paucibacilar). A biópsia pleural mostra granuloma caseoso em 70–80%.</p>", h: 1 },
+      { q: "Quais são os pontos de corte da prova tuberculínica para tratar infecção latente (ILTB)?", a: "<ul><li><b>≥ 5 mm (ou IGRA +):</b> PVHIV, contatos de TB bacilífera, imunossuprimidos (anti-TNF, prednisona ≥ 15 mg/dia por &gt; 1 mês, pré-transplante), radiografia com sequela não tratada.</li><li><b>≥ 10 mm (ou IGRA +):</b> silicose, conversão recente, profissionais de saúde, populações vulneráveis, diálise, diabetes insulinodependente, neoplasias.</li><li><b>Antes de tratar:</b> sempre excluir TB ativa.</li></ul>", h: 1 },
+      { q: "Qual o LCR típico da TB meningoencefálica e como ela se apresenta?", a: "<ul><li><b>LCR:</b> proteínas altas (100–500 mg/dL), glicose baixa (&lt; 40 mg/dL ou &lt; 50% da sérica) e celularidade moderada com predomínio de linfócitos.</li><li><b>Fases:</b> prodrômica, meníngea (sinais meníngeos e pares cranianos, sobretudo o VI) e paralítica.</li></ul>", h: 1 },
+      { q: "Quais são os critérios ecocardiográficos de estenose mitral grave e o que é o escore de Wilkins-Block?", a: "<ul><li><b>EM grave:</b> área valvar &lt; 1,5 cm², gradiente médio ≥ 10 mmHg e PSAP ≥ 50 mmHg.</li><li><b>Wilkins-Block:</b> pontua mobilidade, espessamento subvalvar, espessura dos folhetos e calcificação (1–4 cada).</li><li><b>Interpretação:</b> ≤ 8 (com calcificação ≤ 2) é anatomia favorável à valvuloplastia por balão; &gt; 10 é desfavorável.</li></ul>", h: 1 },
+      { q: "Quais são os critérios de estenose aórtica grave?", a: "<ul><li><b>Eco:</b> área valvar ≤ 1,0 cm² (indexada ≤ 0,6 cm²/m²), gradiente médio ≥ 40 mmHg e velocidade máxima ≥ 4,0 m/s.</li><li><b>Exame físico:</b> pulso <i>parvus et tardus</i>, B2 hipofonética e sopro com pico telessistólico.</li><li><b>Baixo fluxo/baixo gradiente com FE baixa:</b> eco com dobutamina.</li><li><b>Escore de cálcio:</b> &gt; 1.300 AU em mulheres e &gt; 2.000 AU em homens.</li></ul>", h: 1 },
+      { q: "Quais são os critérios de insuficiência mitral primária grave?", a: "<p>Eco com vena contracta ≥ 0,7 cm, área efetiva do orifício regurgitante ≥ 0,40 cm², volume regurgitante ≥ 60 mL, fração regurgitante ≥ 50% e jato ≥ 40% do AE. Exame físico: sopro sistólico regurgitativo ≥ 3+/6+ e ictus desviado.</p>", h: 1 },
+      { q: "Quais são os critérios de insuficiência aórtica grave?", a: "<ul><li><b>Eco:</b> vena contracta &gt; 0,6 cm, área efetiva do orifício regurgitante ≥ 0,30 cm², volume regurgitante ≥ 60 mL e fração regurgitante ≥ 50%.</li><li><b>Exame físico:</b> sopro diastólico aspirativo, Austin-Flint, pulso de Corrigan, divergência pressórica e sinais periféricos (Musset, Quincke, Traube, Duroziez).</li></ul>", h: 1 },
+      { q: "Quais são os critérios diagnósticos de diabetes (ADA 2026)?", a: "<table><tr><th>Exame</th><th>Diabetes</th><th>Pré-diabetes</th></tr><tr><td>HbA1c</td><td>≥ 6,5%</td><td>5,7–6,4%</td></tr><tr><td>Glicemia de jejum</td><td>≥ 126 mg/dL</td><td>100–125 mg/dL</td></tr><tr><td>TOTG 75 g (2 h)</td><td>≥ 200 mg/dL</td><td>140–199 mg/dL</td></tr><tr><td>Glicemia aleatória</td><td>≥ 200 mg/dL com sintomas</td><td>—</td></tr></table><p>Sem hiperglicemia inequívoca, são necessários 2 resultados alterados (podem ser 2 testes diferentes na mesma amostra).</p>", h: 1 },
+      { q: "Quando a HbA1c não serve para diagnosticar diabetes?", a: "<p>Hemoglobinopatias (anemia falciforme), gestação, hemodiálise, perda sanguínea ou transfusão recente, eritropoetina, alguns antirretrovirais, deficiência de G6PD, hemólise, ferropenia e cirrose. Nessas situações, usar a glicemia plasmática.</p>", h: 1 },
+      { q: "Quais são os critérios de diabetes gestacional (estratégia de uma etapa, preferida pela ADA)?", a: "<ul><li><b>Teste:</b> TOTG 75 g entre 24 e 28 semanas.</li><li><b>Diagnóstico:</b> <b>um</b> valor alterado basta. Jejum ≥ 92, 1 h ≥ 180 ou 2 h ≥ 153 mg/dL.</li><li><b>Diabetes franco no início da gestação:</b> é \"diabetes complicando a gestação\", não diabetes gestacional.</li></ul>", h: 1 },
+      { q: "Quais pistas sugerem diabetes tipo 1 no adulto e como confirmar?", a: "<ul><li><b>Pistas:</b> idade &lt; 35 anos, IMC &lt; 25, perda de peso, cetoacidose e glicemia &gt; 360 mg/dL à apresentação.</li><li><b>Confirmação:</b> autoanticorpos, começando pelo anti-GAD (depois IA-2 e ZnT8).</li><li><b>Se negativos:</b> considerar MODY ou dosar peptídeo C (medir antes de suspender a insulina).</li></ul>", h: 1 },
+      { q: "Como diferenciar LRA pré-renal de necrose tubular aguda pelos índices urinários?", a: "<table><tr><th>Índice</th><th>Pré-renal</th><th>NTA</th></tr><tr><td>Sódio urinário</td><td>&lt; 20 mEq/L</td><td>&gt; 40 mEq/L</td></tr><tr><td>FeNa</td><td>&lt; 1%</td><td>&gt; 2%</td></tr><tr><td>Osmolaridade urinária</td><td>&gt; 500 mOsm</td><td>&lt; 350 mOsm</td></tr><tr><td>Densidade</td><td>&gt; 1.020</td><td>&lt; 1.015</td></tr><tr><td>Cilindros</td><td>Hialinos</td><td>Granulosos</td></tr><tr><td>Ureia/creatinina</td><td>&gt; 40</td><td>&lt; 20</td></tr></table>", h: 1 },
+      { q: "Como classificar as acidoses tubulares renais e as tubulopatias com hipocalemia?", a: "<table><tr><th>Tubulopatia</th><th>Achado característico</th></tr><tr><td>ATR 1 (distal)</td><td>Hipocalemia, pH urinário &gt; 5,5, nefrocalcinose (Sjögren, LES, anfotericina)</td></tr><tr><td>ATR 2 (proximal)</td><td>Perda de bicarbonato, hipocalemia, Fanconi (mieloma, tenofovir)</td></tr><tr><td>ATR 4</td><td><b>Hipercalemia</b> (hipoaldosteronismo, nefropatia diabética, IECA/BRA, espironolactona)</td></tr><tr><td>Liddle, Bartter, Gitelman</td><td>Hipocalemia com <b>alcalose</b></td></tr></table><p>As ATRs têm ânion gap normal. Na alcalose, a hipertensão aponta para Liddle; Bartter imita a furosemida; Gitelman imita o tiazídico e tem hipomagnesemia.</p>", h: 1 }
+    ]
   }
 ];
 
@@ -1764,9 +1970,15 @@ function loadProgress(deckId) {
 
 function renderTabs() {
   $tabs.innerHTML = "";
-  DECKS.forEach(deck => {
+  DECKS.forEach((deck, i) => {
+    if (deck.rev && !(DECKS[i - 1] && DECKS[i - 1].rev)) {
+      const lbl = document.createElement("div");
+      lbl.className = "tabs-label rev-label";
+      lbl.textContent = "Revisão final";
+      $tabs.appendChild(lbl);
+    }
     const btn = document.createElement("button");
-    btn.className = "tab" + (state.currentDeck && state.currentDeck.id === deck.id ? " active" : "");
+    btn.className = "tab" + (deck.rev ? " rev" : "") + (state.currentDeck && state.currentDeck.id === deck.id ? " active" : "");
     btn.innerHTML = '<span>' + escapeHtml(deck.name) + '</span><span class="count">' + deck.cards.length + '</span>';
     btn.onclick = () => selectDeck(deck);
     $tabs.appendChild(btn);
@@ -1775,6 +1987,7 @@ function renderTabs() {
 
 function selectDeck(deck) {
   state.currentDeck = deck;
+  document.documentElement.classList.toggle('theme-red', !!deck.rev);
   state.flipped = false;
   state.enterDir = 'up';
   const saved = loadProgress(deck.id);
@@ -1983,7 +2196,7 @@ function renderDeck() {
           </div>
           <div class="face back">
             <div class="label">Resposta</div>
-            <div class="content">${escapeHtml(card.a)}</div>
+            <div class="content${card.h ? ' rich' : ''}">${card.h ? card.a : escapeHtml(card.a)}</div>
             <div class="hint">clique ou espaço</div>
           </div>
         </div>
