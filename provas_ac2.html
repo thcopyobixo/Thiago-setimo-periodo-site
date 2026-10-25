@@ -644,6 +644,7 @@
     .tab { flex-shrink: 0; max-width: 240px; }
   }
 </style>
+<link rel="stylesheet" href="assets/relatorio.css">
 <link rel="stylesheet" href="assets/efeitos.css">
 </head>
 <body>
@@ -690,6 +691,8 @@ const PROVAS = [{"id": "cirrose", "titulo": "Cirrose Hepática", "tipo": "objeti
    Cada prova tem seu próprio progresso salvo neste navegador.
    QUESTIONS e state apontam sempre para a prova aberta.
    ============================================================ */
+const SUBTEMAS = {"cirrose-complicacoes":{"1":"Ascite e paracentese","2":"Peritonite bacteriana espontânea","3":"Síndrome hepatorrenal","4":"Encefalopatia hepática","5":"Rastreamento de varizes","6":"Hemorragia varicosa","7":"Recompensação (Baveno VII)","8":"Hiponatremia","9":"Hidrotórax hepático","10":"Hipertensão portal (betabloqueador)"},"cirrose":{"1":"Etiologia e diagnóstico","2":"Peritonite bacteriana espontânea","3":"Hipertensão portal (betabloqueador)","4":"Síndrome hepatorrenal","5":"Encefalopatia hepática","6":"Leitura crítica de estudos","7":"Etiologia e diagnóstico","8":"Fisiopatologia (AINE e rim)","9":"Leitura crítica de estudos","10":"Transplante hepático"},"drc-complicacoes":{"1":"Hipercalemia","2":"Hipercalemia","3":"Hipercalemia","4":"Acidose metabólica","5":"Anemia","6":"Anemia","7":"Distúrbio mineral e ósseo","8":"Hiperuricemia e gota","9":"Anticoagulação na DRC","10":"Leitura crítica de estudos"},"drc":{"1":"Estimativa da TFG","2":"Estimativa da TFG","3":"Tratamento (IECA/BRA, iSGLT2)","4":"IECA/BRA e creatinina","5":"Hipercalemia","6":"Tratamento (IECA/BRA, iSGLT2)","7":"Hiperuricemia","8":"Ajuste de dose de fármacos","9":"Início de diálise","10":"Leitura crítica de estudos"},"hipoparatireoidismo":{"1":"Hipocalcemia aguda","2":"Hipomagnesemia","3":"Cálcio corrigido e iônico","4":"Tratamento crônico","5":"Hipocalcemia autossômica dominante","6":"Síndrome da fome óssea","7":"Pseudo-hipoparatireoidismo","8":"Hipoparatireoidismo na gestação","9":"Leitura crítica de estudos","10":"Hipocalcemia aguda"},"histoplasmose":{"1":"Forma disseminada grave","2":"Diagnóstico em imunossuprimidos","3":"Insuficiência adrenal","4":"Forma leve a moderada","5":"Transição para itraconazol","6":"Histoplasmose do SNC","7":"Manutenção e suspensão","8":"Leitura crítica de estudos","9":"Leitura crítica de estudos","10":"Endocardite"},"miocardite-pericardite":{"1":"Diagnóstico de miocardite","2":"Pericardite recorrente","3":"Pericardite aguda","4":"Pericardite constritiva","5":"Tamponamento cardíaco","6":"Miocardite fulminante","7":"Miocardite por imunoterapia","8":"Leitura crítica de estudos","9":"Retorno ao esporte","10":"Diagnóstico de pericardite"},"pancreatite":{"1":"Gravidade e prognóstico","2":"Hidratação e suporte","3":"Nutrição e antibióticos","4":"CPRE e colangite","5":"Necrose infectada","6":"Colecistectomia","7":"Leitura crítica de estudos","8":"Hipertrigliceridemia","9":"Coleções e necrose","10":"Leitura crítica de estudos"},"tuberculose":{"1":"Fisiopatologia","2":"Coinfecção TB-HIV","3":"Hepatotoxicidade","4":"Infecção latente (ILTB)","5":"Diagnóstico (TRM-TB)","6":"Interações medicamentosas","7":"Recém-nascido exposto","8":"TB pleural","9":"Coinfecção TB-HIV","10":"Leitura crítica de estudos"},"valvulopatias":{"1":"Estenose mitral","2":"Estenose mitral","3":"Insuficiência mitral primária","4":"Insuficiência mitral secundária","5":"Estenose aórtica","6":"Leitura crítica de estudos","7":"Insuficiência aórtica","8":"Anticoagulação","9":"Anticoagulação","10":"Leitura crítica de estudos"}};
+PROVAS.forEach(p => p.questoes.forEach(q => { const t = (SUBTEMAS[p.id] || {})[q.n]; if (t) { q.tema = p.titulo; q.sub = t; } }));
 const STORE_KEY = 'provasAC2';
 const $main = document.getElementById('quiz');
 const $grid = document.getElementById('qGrid');
@@ -918,6 +921,27 @@ function renderQuestion() {
     '</div>';
 }
 
+/* Relatório: voltar a uma questão errada */
+function relGoTo(i) { state.index = i; state.finished = false; saveState(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+/* Relatório geral: soma todas as provas já respondidas */
+function relatorioGeral() {
+  const qs = [], ans = {};
+  let k = 0;
+  PROVAS.forEach(p => {
+    const st = store.provas[p.id];
+    if (!st) return;
+    questionsOf(p).forEach(q => { const a = st.answers[q.n]; if (!a) return; k++; qs.push(Object.assign({}, q, { n: k, _prova: p.id, _n: q.n })); ans[k] = a; });
+  });
+  return { qs: qs, ans: ans, provas: new Set(qs.map(q => q._prova)).size };
+}
+function relGoToGeral(i) {
+  const q = relatorioGeral().qs[i]; if (!q) return;
+  selectProva(q._prova);
+  const j = QUESTIONS.findIndex(x => x.n === q._n);
+  if (j >= 0) relGoTo(j);
+}
+
 function renderEnd() {
   let correct = 0, wrong = 0;
   QUESTIONS.forEach(q => { const a = state.answers[q.n]; if (!a) return; if (a === q.correta) correct++; else wrong++; });
@@ -944,6 +968,8 @@ function renderEnd() {
         '<div class="end-stat wrong"><div class="val">' + wrong + '</div><div class="lbl">Erros</div></div>' +
         '<div class="end-stat"><div class="val">' + answered + '/' + total + '</div><div class="lbl">Respondidas</div></div>' +
       '</div>' +
+      Relatorio.html(QUESTIONS, state.answers, { temaUnico: PROVA.titulo }) +
+      (function () { const g = relatorioGeral(); return g.provas > 1 ? '<div class="rel-geral-title">Somando todas as provas que você já fez (' + g.provas + ')</div>' + Relatorio.html(g.qs, g.ans, { goto: 'relGoToGeral' }) : ''; })() +
       '<div class="nav-buttons">' +
         '<button class="nav-btn" onclick="prev()">← Ver questões</button>' +
         '<button class="nav-btn" onclick="resetQuiz()">Refazer prova</button>' +
@@ -955,6 +981,7 @@ function renderEnd() {
 
 render();
 </script>
+<script src="assets/relatorio.js"></script>
 <script src="assets/efeitos.js"></script>
 </body>
 </html>

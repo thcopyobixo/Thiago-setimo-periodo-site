@@ -649,6 +649,7 @@
     .tab { flex-shrink: 0; max-width: 240px; }
   }
 </style>
+<link rel="stylesheet" href="assets/relatorio.css">
 <link rel="stylesheet" href="assets/efeitos.css">
 </head>
 <body>
@@ -1903,6 +1904,9 @@ document.querySelectorAll('.mode-switch a[data-sim]').forEach(a => a.classList.t
 document.querySelector('.brand .sub').textContent = 'AC 2 · ' + SIMS[SIM_ID].nome;
 document.title = SIMS[SIM_ID].nome + ' AC2 · Sétimo Período';
 
+const TAGS = {"1":{"1":["Diabetes","Diagnóstico e pré-diabetes"],"2":["Hepatites virais","Sorologia da hepatite B"],"3":["Pancreatite aguda","Diagnóstico"],"4":["Cirrose hepática","Classificação de Child-Pugh"],"5":["Complicações da cirrose","Peritonite bacteriana espontânea"],"6":["Tuberculose","Tratamento da TB pulmonar"],"7":["TEP","Probabilidade pré-teste e diagnóstico"],"8":["Diabetes","Cetoacidose diabética"],"9":["Hepatites virais","Diagnóstico da hepatite C"],"10":["Pancreatite aguda","Gravidade e prognóstico"],"11":["Complicações da cirrose","Encefalopatia hepática"],"12":["Complicações da cirrose","Ascite"],"13":["Tuberculose","Diagnóstico (TRM-TB)"],"14":["TEP","Anticoagulação"],"15":["Diabetes","Metas glicêmicas"],"16":["Hepatites virais","Hepatite A"],"17":["Pancreatite aguda","Coleções e necrose"],"18":["Complicações da cirrose","Hemorragia varicosa e profilaxia"],"19":["Complicações da cirrose","Hemorragia varicosa e profilaxia"],"20":["Tuberculose","TB pleural"],"21":["TEP","Probabilidade pré-teste e diagnóstico"],"22":["Diabetes","Tratamento farmacológico"],"23":["Hepatites virais","Sorologia da hepatite B"],"24":["Pancreatite aguda","Necrose infectada e antibióticos"],"25":["Complicações da cirrose","Síndrome hepatorrenal"],"26":["Complicações da cirrose","Hiponatremia"],"27":["Tuberculose","Coinfecção TB-HIV"],"28":["TEP","Classificação de gravidade"],"29":["Diabetes","Prevenção do DM2"],"30":["Hepatites virais","História natural da hepatite B"],"31":["Pancreatite aguda","Pancreatite biliar e colecistectomia"],"32":["Cirrose hepática","Coagulopatia"],"33":["Complicações da cirrose","Síndrome hepatorrenal"],"34":["Tuberculose","Infecção latente (ILTB)"],"35":["TEP","Duração da anticoagulação"],"36":["Diabetes","Hipoglicemia"],"37":["Hepatites virais","Tratamento da hepatite C"],"38":["Pancreatite aguda","Pancreatite pós-CPRE"],"39":["Complicações da cirrose","Ascite"],"40":["Cirrose hepática","Rastreamento de CHC"],"41":["Tuberculose","Hepatotoxicidade"],"42":["TEP","Anticoagulação"],"43":["Complicações da cirrose","Peritonite bacteriana espontânea"],"44":["Diabetes","Monitorização glicêmica (CGM)"],"45":["Pancreatite aguda","Necrose infectada e antibióticos"],"46":["Cirrose hepática","Rastreamento de varizes"],"47":["Cirrose hepática","Nutrição"],"48":["Tuberculose","TB na gestação"],"49":["TEP","Choque e suporte hemodinâmico"],"50":["Hepatites virais","História natural da hepatite B"]},"2":{"1":["Síncope","Síncope reflexa"],"2":["TEP","Probabilidade pré-teste e diagnóstico"],"3":["Hepatites virais","Sorologia da hepatite B"],"4":["Pancreatite aguda","Hidratação e suporte"],"5":["Miocardite e pericardite","Pericardite aguda"],"6":["Complicações da cirrose","Peritonite bacteriana espontânea"],"7":["Doença renal crônica","Tratamento (IECA/BRA, iSGLT2)"],"8":["Hipoparatireoidismo","Hipocalcemia aguda"],"9":["Histoplasmose","Diagnóstico"],"10":["Tuberculose","Tratamento da TB pulmonar"],"11":["Valvulopatias","Estenose mitral"],"12":["Diabetes","Diagnóstico e pré-diabetes"],"13":["Diabetes","Insulinoterapia"],"14":["Lesão renal aguda e tubulopatias","Necrose tubular aguda"],"15":["Complicações da DRC","Hipercalemia"],"16":["Miocardite e pericardite","Miocardite fulminante"],"17":["Complicações da cirrose","Hemorragia varicosa e profilaxia"],"18":["TEP","Choque e suporte hemodinâmico"],"19":["Hepatites virais","Hepatite A"],"20":["Síncope","Síncope cardíaca"],"21":["Pancreatite aguda","Necrose infectada e antibióticos"],"22":["Miocardite e pericardite","Tamponamento cardíaco"],"23":["Complicações da cirrose","Síndrome hepatorrenal"],"24":["Histoplasmose","Tratamento"],"25":["Tuberculose","TB pleural"],"26":["Hipoparatireoidismo","Pseudo-hipoparatireoidismo"],"27":["Valvulopatias","Estenose aórtica"],"28":["Diabetes","Tratamento farmacológico"],"29":["Complicações da DRC","Anemia"],"30":["Lesão renal aguda e tubulopatias","Nefrite intersticial aguda"],"31":["Complicações da cirrose","Encefalopatia hepática"],"32":["Hepatites virais","Tratamento da hepatite C"],"33":["Miocardite e pericardite","Pericardite constritiva"],"34":["TEP","TEP de baixo risco"],"35":["Diabetes","Insulinoterapia"],"36":["Síncope","Hipotensão ortostática"],"37":["Pancreatite aguda","Diagnóstico"],"38":["Tuberculose","Coinfecção TB-HIV"],"39":["Complicações da cirrose","Hemorragia varicosa e profilaxia"],"40":["Valvulopatias","Insuficiência aórtica"],"41":["Histoplasmose","Insuficiência adrenal"],"42":["Lesão renal aguda e tubulopatias","Acidose tubular renal"],"43":["Complicações da DRC","Acidose metabólica"],"44":["Hepatites virais","Hepatite B aguda grave"],"45":["Hipoparatireoidismo","Hipomagnesemia"],"46":["Diabetes","Cetoacidose diabética"],"47":["Doença renal crônica","Definição e classificação"],"48":["Doença renal crônica","Tratamento (IECA/BRA, iSGLT2)"],"49":["Tuberculose","Diagnóstico (TRM-TB)"],"50":["Pancreatite aguda","Pancreatite biliar e colecistectomia"]}};
+QUESTIONS.forEach(q => { const t = (TAGS[SIM_ID] || {})[q.n]; if (t) { q.tema = t[0]; q.sub = t[1]; } });
+
 const state = {
   index: 0,
   answers: {},   // { n: 'A'|'B'|'C'|'D' }  — respostas confirmadas
@@ -2121,6 +2125,9 @@ function renderQuestion() {
     '</div>';
 }
 
+/* Relatório: voltar a uma questão errada */
+function relGoTo(i) { state.index = i; state.finished = false; saveState(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
 function renderEnd() {
   let correct = 0, wrong = 0;
   QUESTIONS.forEach(q => {
@@ -2168,6 +2175,7 @@ function renderEnd() {
         '<div class="end-stat wrong"><div class="val">'+wrong+'</div><div class="lbl">Erros</div></div>' +
         '<div class="end-stat"><div class="val">'+answered+'/'+total+'</div><div class="lbl">Respondidas</div></div>' +
       '</div>' +
+      Relatorio.html(QUESTIONS, state.answers) +
       '<div class="nav-buttons">' +
         '<button class="nav-btn" onclick="prev()">← Ver questões</button>' +
         '<button class="nav-btn primary" onclick="resetQuiz()">Recomeçar simulado</button>' +
@@ -2182,6 +2190,7 @@ function renderEnd() {
 
 render();
 </script>
+<script src="assets/relatorio.js"></script>
 <script src="assets/efeitos.js"></script>
 </body>
 </html>

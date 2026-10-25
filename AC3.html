@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AC3 - Flashcards</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Albert+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  @property --accent { syntax: '<color>'; inherits: true; initial-value: #3b82f6; }
+  @property --accent-2 { syntax: '<color>'; inherits: true; initial-value: #60a5fa; }
+  @property --accent-3 { syntax: '<color>'; inherits: true; initial-value: #1d4ed8; }
+  @property --accent-deep { syntax: '<color>'; inherits: true; initial-value: #1e40af; }
+  @property --accent-deeper { syntax: '<color>'; inherits: true; initial-value: #172554; }
+  @property --accent-glow { syntax: '<color>'; inherits: true; initial-value: rgba(59,130,246,.35); }
+  @property --panel { syntax: '<color>'; inherits: true; initial-value: #0f1420; }
+  @property --panel-2 { syntax: '<color>'; inherits: true; initial-value: #1a2333; }
+  @property --border { syntax: '<color>'; inherits: true; initial-value: #1e2a44; }
+  @property --border-hover { syntax: '<color>'; inherits: true; initial-value: #2d4166; }
+  @property --muted { syntax: '<color>'; inherits: true; initial-value: #64748b; }
+  @property --muted-2 { syntax: '<color>'; inherits: true; initial-value: #94a3b8; }
+  @property --side-top { syntax: '<color>'; inherits: true; initial-value: rgba(15,20,32,.6); }
+  @property --side-btn { syntax: '<color>'; inherits: true; initial-value: rgba(15,20,32,.85); }
+  @property --front-1 { syntax: '<color>'; inherits: true; initial-value: #0f1420; }
+  @property --front-2 { syntax: '<color>'; inherits: true; initial-value: #0a0e18; }
+  :root {
+    --bg: #000000;
+    --bg-2: #0a0a0f;
+    --panel: #0f1420;
+    --panel-2: #1a2333;
+    --border: #1e2a44;
+    --border-hover: #2d4166;
+    --accent: #3b82f6;
+    --accent-2: #60a5fa;
+    --accent-3: #1d4ed8;
+    --accent-glow: rgba(59,130,246,.35);
+    --accent-deep: #1e40af;
+    --accent-deeper: #172554;
+    --side-top: rgba(15,20,32,.6);
+    --side-btn: rgba(15,20,32,.85);
+    --front-1: #0f1420;
+    --front-2: #0a0e18;
+    --text: #f8fafc;
+    --muted: #64748b;
+    --muted-2: #94a3b8;
+    --ok: #10b981;
+    --ok-glow: rgba(16,185,129,.3);
+    --err: #ef4444;
+    --err-glow: rgba(239,68,68,.3);
+    --warn: #f59e0b;
+    --shadow: 0 20px 50px rgba(0,0,0,.6);
+    --sidebar-w: 280px;
+    transition: --accent .9s cubic-bezier(.4,0,.2,1), --accent-2 .9s cubic-bezier(.4,0,.2,1), --accent-3 .9s cubic-bezier(.4,0,.2,1),
+      --accent-deep .9s cubic-bezier(.4,0,.2,1), --accent-deeper .9s cubic-bezier(.4,0,.2,1), --accent-glow .9s cubic-bezier(.4,0,.2,1),
+      --panel .9s cubic-bezier(.4,0,.2,1), --panel-2 .9s cubic-bezier(.4,0,.2,1), --border .9s cubic-bezier(.4,0,.2,1), --border-hover .9s cubic-bezier(.4,0,.2,1), --muted .9s cubic-bezier(.4,0,.2,1), --muted-2 .9s cubic-bezier(.4,0,.2,1), --side-top .9s cubic-bezier(.4,0,.2,1), --side-btn .9s cubic-bezier(.4,0,.2,1), --front-1 .9s cubic-bezier(.4,0,.2,1), --front-2 .9s cubic-bezier(.4,0,.2,1);
+  }
+  /* Revisão final: tema vermelho (as cores acima fazem a transição) */
+  :root.theme-red {
+    --accent: #ef4444;
+    --accent-2: #f87171;
+    --accent-3: #b91c1c;
+    --accent-deep: #991b1b;
+    --accent-deeper: #450a0a;
+    --accent-glow: rgba(239,68,68,.38);
+    --panel: #1f0b0e;
+    --panel-2: #2e1115;
+    --border: #4a1a20;
+    --border-hover: #73232c;
+    --muted: #9b6a6f;
+    --muted-2: #d4a5aa;
+    --side-top: rgba(60,12,16,.7);
+    --side-btn: rgba(40,10,13,.88);
+    --front-1: #24090d;
+    --front-2: #120406;
+  }
+  @media (prefers-reduced-motion: reduce) { :root { transition: none; } }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Albert Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "cv02","cv03","cv04","cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--accent) 8%, transparent) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, color-mix(in srgb, var(--accent-3) 6%, transparent) 0%, transparent 50%),
+      var(--bg);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* Sidebar */
+  aside.sidebar {
+    width: var(--sidebar-w);
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--side-top), rgba(0,0,0,.9));
+    border-right: 1px solid var(--border);
+    padding: 60px 20px 24px;
+    display: flex; flex-direction: column;
+    position: sticky; top: 0;
+    backdrop-filter: blur(10px);
+    transition: margin-left .35s cubic-bezier(.4,.2,.2,1);
+  }
+  body.sidebar-hidden aside.sidebar { margin-left: calc(var(--sidebar-w) * -1); }
+  main { transition: max-width .35s cubic-bezier(.4,.2,.2,1); }
+  body.sidebar-hidden main { max-width: 100vw; }
+  body.no-transition aside.sidebar,
+  body.no-transition main { transition: none !important; }
+
+  .sidebar-toggle {
+    position: fixed;
+    top: 14px; left: 14px;
+    z-index: 100;
+    width: 36px; height: 36px;
+    padding: 0;
+    background: var(--side-btn);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted-2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+    backdrop-filter: blur(8px);
+    font-family: inherit;
+  }
+  .sidebar-toggle:hover {
+    color: var(--accent-2);
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+  .sidebar-toggle svg { transition: transform .35s cubic-bezier(.4,.2,.2,1); }
+  body.sidebar-hidden .sidebar-toggle svg { transform: rotate(180deg); }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted-2);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .5px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    margin-bottom: 20px;
+    align-self: flex-start;
+    transition: all .2s;
+  }
+  .back-link:hover { color: var(--accent-2); background: var(--panel); border-color: var(--border); }
+  .back-link svg { transition: transform .2s; }
+  .back-link:hover svg { transform: translateX(-2px); }
+
+  .brand {
+    text-align: center;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand h1 {
+    margin: 0;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 52px;
+    letter-spacing: 4px;
+    font-weight: 700;
+    background: linear-gradient(135deg,var(--accent-2) 0%,var(--accent) 50%,var(--accent-3) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1;
+  }
+  .brand .sub {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    font-weight: 500;
+  }
+
+  .tabs {
+    display: flex; flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .tabs-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 12px 8px;
+    font-weight: 600;
+  }
+  .tab {
+    background: transparent;
+    color: var(--muted-2);
+    border: 1px solid transparent;
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: inherit;
+    transition: all .2s cubic-bezier(.4,.2,.2,1);
+    position: relative;
+  }
+  .tab:hover { background: var(--panel); color: var(--text); border-color: var(--border); }
+  .tab.active {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 8px 24px var(--accent-glow);
+  }
+  .tab.active::before {
+    content: ''; position: absolute; left: -20px; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 24px;
+    background: var(--accent-2);
+    border-radius: 0 3px 3px 0;
+  }
+  .tab .count {
+    background: rgba(255,255,255,.1);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tab.active .count { background: rgba(255,255,255,.2); }
+
+  /* Main */
+  main {
+    flex: 1;
+    padding: 40px 48px;
+    max-width: calc(100vw - var(--sidebar-w));
+    display: flex; flex-direction: column;
+  }
+  .empty {
+    text-align: center;
+    padding: 100px 20px;
+    color: var(--muted-2);
+    margin: auto;
+  }
+  .empty h2 { color: var(--text); font-weight: 600; font-size: 22px; margin-bottom: 8px; }
+
+  .toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; margin-bottom: 24px;
+  }
+  .deck-title {
+    font-size: 18px; font-weight: 700; color: var(--text);
+    letter-spacing: .3px;
+  }
+  .deck-progress-num {
+    font-family: 'Unbounded', sans-serif;
+    color: var(--muted-2); font-size: 14px; font-weight: 500;
+  }
+  .deck-progress-num .curr { color: var(--accent-2); font-weight: 700; font-size: 16px; }
+
+  .actions { display: flex; gap: 8px; }
+  .btn {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .btn:hover { background: var(--panel-2); border-color: var(--border-hover); }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; border-color: transparent; font-weight: 600;
+    box-shadow: 0 8px 20px var(--accent-glow);
+  }
+  .btn.primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px var(--accent-glow); }
+
+  .progress-bar {
+    height: 4px; background: var(--panel);
+    border-radius: 999px; overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-3), var(--accent), var(--accent-2));
+    transition: width .3s ease;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .card-container {
+    perspective: 1600px;
+    margin: 0 auto; width: 100%; max-width: 780px;
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .card-anim {
+    width: 100%;
+    position: relative;
+    will-change: transform, opacity;
+  }
+  .card-anim.enter-right { animation: enterRight .45s cubic-bezier(.34,1.2,.64,1) both; }
+  .card-anim.enter-left  { animation: enterLeft  .45s cubic-bezier(.34,1.2,.64,1) both; }
+  .card-anim.enter-up    { animation: enterUp    .5s  cubic-bezier(.34,1.2,.64,1) both; }
+  .card-anim.exit-left   { animation: exitLeft   .35s cubic-bezier(.4,.15,.6,1) forwards; }
+  .card-anim.exit-right  { animation: exitRight  .35s cubic-bezier(.4,.15,.6,1) forwards; }
+  .card-anim.exit-up     { animation: exitUp     .4s  cubic-bezier(.4,.15,.6,1) forwards; }
+  .card-anim.exit-down   { animation: exitDown   .4s  cubic-bezier(.4,.15,.6,1) forwards; }
+
+  @keyframes enterRight {
+    from { transform: translateX(60%) scale(.92); opacity: 0; }
+    to   { transform: translateX(0)   scale(1);   opacity: 1; }
+  }
+  @keyframes enterLeft {
+    from { transform: translateX(-60%) scale(.92); opacity: 0; }
+    to   { transform: translateX(0)    scale(1);   opacity: 1; }
+  }
+  @keyframes enterUp {
+    from { transform: translateY(30px) scale(.95); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);   opacity: 1; }
+  }
+  @keyframes exitLeft {
+    to { transform: translateX(-70%) rotate(-4deg) scale(.9); opacity: 0; }
+  }
+  @keyframes exitRight {
+    to { transform: translateX(70%) rotate(4deg) scale(.9); opacity: 0; }
+  }
+  @keyframes exitUp {
+    to { transform: translateY(-100%) scale(.85); opacity: 0; }
+  }
+  @keyframes exitDown {
+    to { transform: translateY(100%) scale(.85); opacity: 0; }
+  }
+
+  /* Flash overlay for correct/wrong */
+  .flash-overlay {
+    position: absolute; inset: -20px;
+    border-radius: 24px;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .flash-overlay.ok  { animation: flashOk  .55s ease-out forwards; }
+  .flash-overlay.err { animation: flashErr .55s ease-out forwards; }
+  @keyframes flashOk {
+    0%   { opacity: 0; box-shadow: 0 0 0 0 rgba(16,185,129,0), inset 0 0 0 0 rgba(16,185,129,0); }
+    30%  { opacity: 1; box-shadow: 0 0 80px 20px rgba(16,185,129,.6), inset 0 0 60px 0 rgba(16,185,129,.3); }
+    100% { opacity: 0; box-shadow: 0 0 120px 40px rgba(16,185,129,0), inset 0 0 100px 0 rgba(16,185,129,0); }
+  }
+  @keyframes flashErr {
+    0%   { opacity: 0; box-shadow: 0 0 0 0 rgba(239,68,68,0), inset 0 0 0 0 rgba(239,68,68,0); }
+    30%  { opacity: 1; box-shadow: 0 0 80px 20px rgba(239,68,68,.6), inset 0 0 60px 0 rgba(239,68,68,.3); }
+    100% { opacity: 0; box-shadow: 0 0 120px 40px rgba(239,68,68,0), inset 0 0 100px 0 rgba(239,68,68,0); }
+  }
+
+  .card {
+    position: relative;
+    width: 100%; min-height: 380px;
+    cursor: pointer;
+    will-change: transform, opacity, filter;
+    transition: box-shadow .25s;
+  }
+  .card > .face {
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+  }
+  .card > .front { opacity: 1; pointer-events: auto; }
+  .card.flipped > .front { opacity: 0; pointer-events: none; }
+  .card.flipped > .back  { opacity: 1; pointer-events: auto; }
+
+  .card.blinking { animation: cardBlink .4s cubic-bezier(.55,.05,.45,1); }
+  @keyframes cardBlink {
+    0%   { opacity: 1; transform: scale(1);    filter: blur(0);   }
+    45%  { opacity: 0; transform: scale(.88);  filter: blur(6px); }
+    55%  { opacity: 0; transform: scale(.88);  filter: blur(6px); }
+    100% { opacity: 1; transform: scale(1);    filter: blur(0);   }
+  }
+
+  .card:not(.blinking):hover { transform: translateY(-3px); }
+  .card:not(.blinking):not(.flipped):hover .face.front { box-shadow: 0 24px 60px rgba(0,0,0,.7), 0 0 30px color-mix(in srgb, var(--accent) 25%, transparent); }
+  .card:not(.blinking).flipped:hover .face.back { box-shadow: 0 24px 60px rgba(0,0,0,.7), 0 0 40px var(--accent-glow); }
+  .card .face {
+    position: absolute; inset: 0;
+    padding: 40px 44px;
+    border-radius: 20px;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .card .front {
+    background: linear-gradient(145deg, var(--front-1) 0%, var(--front-2) 100%);
+  }
+  .card .back {
+    background: linear-gradient(145deg, var(--accent-3) 0%, var(--accent-deep) 60%, var(--accent-deeper) 100%);
+    border-color: var(--accent);
+    box-shadow: 0 20px 50px rgba(0,0,0,.6), 0 0 40px var(--accent-glow);
+  }
+  .card .label {
+    position: absolute; top: 20px; left: 24px;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 3px; color: var(--muted-2);
+    font-weight: 700;
+  }
+  .card .back .label { color: rgba(255,255,255,.7); }
+  :root .fx-pill {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    box-shadow: 0 8px 24px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,.18);
+  }
+  :root .fx-aurora span { background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 13%, transparent), transparent 70%); }
+  :root .fx-aurora span:nth-child(2) { background: radial-gradient(closest-side, color-mix(in srgb, var(--accent-3) 14%, transparent), transparent 70%); }
+  :root .fx-aurora span:nth-child(3) { background: radial-gradient(closest-side, color-mix(in srgb, var(--accent-2) 7%, transparent), transparent 70%); }
+  .tabs .tabs-label.rev-label {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: #f87171;
+  }
+  .tabs .tabs-label.rev-label::before {
+    content: ''; width: 7px; height: 7px; border-radius: 50%;
+    background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,.8);
+  }
+  .tab.rev .count { background: rgba(239,68,68,.18); color: #fecaca; }
+  .tab.rev.active .count { background: rgba(255,255,255,.2); color: #fff; }
+  .card .content.rich { text-align: left; font-size: clamp(15px, 1.6vw, 17.5px); line-height: 1.55; width: 100%; }
+  .card .content.rich p { margin: 0 0 10px; }
+  .card .content.rich ul, .card .content.rich ol { margin: 0 0 10px; padding-left: 22px; }
+  .card .content.rich li { margin: 5px 0; }
+  .card .content.rich > :last-child { margin-bottom: 0; }
+  .card .content.rich table { width: 100%; border-collapse: collapse; margin: 4px 0 12px; font-size: .9em; }
+  .card .content.rich th, .card .content.rich td { border: 1px solid rgba(255,255,255,.22); padding: 6px 9px; vertical-align: top; }
+  .card .content.rich th { background: rgba(0,0,0,.22); font-weight: 700; }
+  .card .content {
+    font-size: clamp(17px, 2.1vw, 21px);
+    line-height: 1.6;
+    max-height: 100%; overflow-y: auto;
+    padding: 24px 8px;
+    font-weight: 400;
+  }
+  .card .hint {
+    position: absolute; bottom: 16px; right: 24px;
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .card .back .hint { color: rgba(255,255,255,.5); }
+
+  /* Directional hints below card */
+  .keymap {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    max-width: 780px;
+    margin: 24px auto 0;
+  }
+  .key {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+    color: var(--muted-2);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .key:hover { background: var(--panel-2); color: var(--text); border-color: var(--border-hover); transform: translateY(-2px); }
+  .key:active { transform: translateY(0) scale(.96); }
+  .key.pressed { animation: keyPress .35s ease-out; }
+  @keyframes keyPress {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(.92); box-shadow: 0 0 0 4px currentColor; }
+    100% { transform: scale(1); }
+  }
+  .key .icon {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 22px; font-weight: 700; line-height: 1;
+    color: var(--text);
+    transition: transform .2s;
+  }
+  .key:hover .icon { transform: scale(1.1); }
+  .key.err:hover { border-color: var(--err); color: var(--err); box-shadow: 0 8px 20px var(--err-glow); }
+  .key.err:hover .icon { color: var(--err); transform: scale(1.15) translateY(2px); }
+  .key.ok:hover { border-color: var(--ok); color: var(--ok); box-shadow: 0 8px 20px var(--ok-glow); }
+  .key.ok:hover .icon { color: var(--ok); transform: scale(1.15) translateY(-2px); }
+  .key.disabled { opacity: .35; cursor: not-allowed; }
+  .key.disabled:hover { transform: none; background: var(--panel); }
+
+  /* End screen */
+  .end-screen {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: auto; text-align: center;
+    max-width: 560px;
+    animation: fadeIn .5s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  .end-screen h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 32px; font-weight: 700;
+    margin: 0 0 4px;
+    letter-spacing: -.5px;
+    animation: slideDown .6s .1s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .end-screen .subtitle {
+    color: var(--muted-2); font-size: 15px;
+    margin-bottom: 40px;
+    animation: slideDown .6s .2s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .end-screen .donut { animation: scaleIn .7s .35s cubic-bezier(.34,1.4,.64,1) both; }
+  .end-screen .badge { animation: bounceIn .6s .8s cubic-bezier(.34,1.6,.64,1) both; }
+  .end-screen .end-stat:nth-child(1) { animation: slideUp .5s 1.0s cubic-bezier(.34,1.2,.64,1) both; }
+  .end-screen .end-stat:nth-child(2) { animation: slideUp .5s 1.1s cubic-bezier(.34,1.2,.64,1) both; }
+  .end-screen .end-stat:nth-child(3) { animation: slideUp .5s 1.2s cubic-bezier(.34,1.2,.64,1) both; }
+  .end-screen .end-actions { animation: slideUp .5s 1.35s cubic-bezier(.34,1.2,.64,1) both; }
+
+  @keyframes slideDown  { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: none; } }
+  @keyframes slideUp    { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes scaleIn    { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+  @keyframes bounceIn {
+    0%   { opacity: 0; transform: scale(.3); }
+    60%  { opacity: 1; transform: scale(1.08); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .donut .pct { animation: pulseGlow 2.5s ease-in-out infinite; }
+  @keyframes pulseGlow {
+    0%,100% { filter: drop-shadow(0 0 8px var(--accent-glow)); }
+    50%     { filter: drop-shadow(0 0 20px var(--accent-glow)); }
+  }
+  .donut {
+    width: 240px; height: 240px;
+    margin-bottom: 32px; position: relative;
+  }
+  .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .donut .track { fill: none; stroke: var(--panel); stroke-width: 14; }
+  .donut .fill-arc {
+    fill: none;
+    stroke-width: 14;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s cubic-bezier(.4,.2,.2,1);
+  }
+  .donut .center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .donut .pct {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 56px; font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .donut .pct-label {
+    font-size: 11px; color: var(--muted-2);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-top: 4px; font-weight: 600;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 18px; font-weight: 700;
+    letter-spacing: .5px;
+    margin-bottom: 32px;
+  }
+  .badge.excelente { background: rgba(16,185,129,.15); color: var(--ok); border: 1px solid var(--ok); }
+  .badge.otimo { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent-2); border: 1px solid var(--accent); }
+  .badge.regular { background: rgba(245,158,11,.15); color: var(--warn); border: 1px solid var(--warn); }
+  .badge.melhorar { background: rgba(239,68,68,.15); color: var(--err); border: 1px solid var(--err); }
+
+  .end-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 100%; max-width: 480px;
+    margin-bottom: 32px;
+  }
+  .end-stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .end-stat .val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 28px; font-weight: 700;
+    line-height: 1;
+  }
+  .end-stat.correct .val { color: var(--ok); }
+  .end-stat.wrong .val { color: var(--err); }
+  .end-stat .lbl {
+    font-size: 11px; color: var(--muted-2);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-top: 8px; font-weight: 600;
+  }
+  .end-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  /* ---- Revisão dos erros ---- */
+  .btn.err-btn { border-color: rgba(239,68,68,.45); color: #fecaca; }
+  .btn.err-btn:hover { background: rgba(239,68,68,.12); border-color: var(--err); }
+  .btn.err-btn b { display: inline-grid; place-items: center; min-width: 20px; height: 20px; margin-left: 6px; padding: 0 6px; border-radius: 99px; background: var(--err); color: #fff; font-size: 11px; }
+  .review-tag { display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; padding: 3px 10px; border-radius: 99px; background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.35); color: #fecaca; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; vertical-align: middle; }
+  .err-view { max-width: 820px; margin: 0 auto; animation: slideUp .45s cubic-bezier(.23,1,.32,1) both; }
+  .err-view h2 { font-family: 'Unbounded', sans-serif; font-size: 24px; margin: 6px 0 4px; }
+  .err-view .err-sub { color: var(--muted-2); font-size: 14px; margin-bottom: 18px; }
+  .err-view .err-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .err-list { display: grid; gap: 8px; }
+  .err-item { background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--err); border-radius: 12px; overflow: hidden; }
+  .err-item summary { list-style: none; cursor: pointer; padding: 13px 16px; display: flex; gap: 12px; align-items: baseline; font-weight: 500; line-height: 1.45; }
+  .err-item summary::-webkit-details-marker { display: none; }
+  .err-item summary:hover { background: rgba(255,255,255,.03); }
+  .err-item .err-n { font-family: 'Unbounded', sans-serif; font-size: 11px; color: var(--err); min-width: 26px; }
+  .err-item .err-a { padding: 0 16px 14px 54px; color: var(--muted-2); line-height: 1.55; font-size: 14.5px; }
+  .err-item .err-a p { margin: 0 0 8px; } .err-item .err-a ul, .err-item .err-a ol { margin: 0 0 8px; padding-left: 20px; }
+  .err-item .err-a table { border-collapse: collapse; font-size: .92em; margin: 4px 0 8px; }
+  .err-item .err-a th, .err-item .err-a td { border: 1px solid var(--border); padding: 5px 8px; }
+  .err-empty { text-align: center; padding: 40px 20px; color: var(--muted-2); }
+  .end-errors { max-width: 640px; margin: 26px auto 0; text-align: left; }
+  .end-errors .end-errors-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted-2); font-weight: 700; margin-bottom: 10px; }
+
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    body { flex-direction: column; }
+    aside.sidebar { width: 100%; min-height: auto; position: relative; padding: 60px 20px 20px; }
+    body.sidebar-hidden aside.sidebar { margin-left: 0; display: none; }
+    .brand h1 { font-size: 40px; }
+    .brand { padding-bottom: 16px; margin-bottom: 16px; }
+    .tabs { flex-direction: row; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .tabs-label { display: none; }
+    .tab { flex-shrink: 0; }
+    .tab.active::before { display: none; }
+    main { padding: 24px 16px; max-width: 100%; }
+    .card .face { padding: 24px; }
+    .keymap { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+<link rel="stylesheet" href="assets/efeitos.css">
+</head>
+<body>
+<script>
+  try { if (localStorage.getItem('sidebarHidden') === '1') { document.body.classList.add('sidebar-hidden','no-transition'); requestAnimationFrame(() => document.body.classList.remove('no-transition')); } } catch (e) {}
+</script>
+
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Alternar barra lateral" title="Alternar barra lateral (B)">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+    <rect x="3" y="4" width="18" height="16" rx="2"/>
+    <line x1="9" y1="4" x2="9" y2="20"/>
+  </svg>
+</button>
+
+<aside class="sidebar">
+  <a href="index.html" class="back-link" title="Voltar ao Sétimo Período">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    <span>Sétimo Período</span>
+  </a>
+  <div class="brand">
+    <h1>AC3</h1>
+    <div class="sub">Flashcards</div>
+  </div>
+  <div class="tabs-label">Temas</div>
+  <nav class="tabs" id="tabs"></nav>
+</aside>
+
+<main id="main"></main>
+
+<script>
+/* ============================================================
+   BANCO DE FLASHCARDS
+   ------------------------------------------------------------
+   Para adicionar um novo tema, adicione um objeto em DECKS:
+   {
+     id: "tema-slug",
+     name: "Nome do Tema",
+     cards: [
+       { q: "Pergunta 1?", a: "Resposta 1" },
+       { q: "Pergunta 2?", a: "Resposta 2" },
+       ...
+     ]
+   }
+   ============================================================ */
+const DECKS = [
+  {
+    id: "diarreia-aguda",
+    name: "Diarreia Aguda no Adulto",
+    cards: [
+      { q: "Quais hospedeiros têm maior risco de doença grave e justificam testar fezes e considerar antibiótico na diarreia aguda?", a: "Idade ≥70 anos, cardiopatia, imunossupressão, doença inflamatória intestinal e gestação. Nesses pacientes a perda de volume e a invasão tecidual têm consequência pior." },
+      { q: "Por que a maioria das diarreias agudas do adulto é tratada sem identificar o agente?", a: "A maioria é infecciosa e autolimitada; o que muda o desfecho é a reposição de volume. O diagnóstico etiológico só altera a conduta em subgrupos (gravidade, sangue, risco, surto)." },
+      { q: "Por que a diarreia de intestino delgado é volumosa e aquosa, enquanto a de cólon é de pequeno volume com sangue/muco?", a: "O delgado secreta/absorve grandes volumes; sua falha gera grande perda de água e eletrólitos. O cólon, afetado por patógenos invasivos, produz inflamação e ulceração (sangue, muco, tenesmo, febre), com volume menor." },
+      { q: "Por que a SRO funciona mesmo em diarreia secretora intensa (ex.: cólera)?", a: "O cotransporte Na⁺-glicose do enterócito permanece funcional; glicose e sódio em proporção equimolar arrastam água. A SRO hipo-osmolar da OMS tem 75 mEq/L de Na⁺, 75 mmol/L de glicose, 245 mOsm/L." },
+      { q: "Por que bebidas ricas em açúcar (suco, refrigerante) pioram a diarreia?", a: "Osmolaridade alta e pouco sódio: o açúcar não absorvido atrai água para o lúmen (efeito osmótico) e não oferece sódio para o cotransporte." },
+      { q: "Por que o caldo de galinha não serve como reidratante?", a: "Tem muito sódio (cerca de 250 mEq/L) e quase nenhuma glicose: osmolaridade alta, risco de sobrecarga de sódio e ausência do cotransporte." },
+      { q: "Diarreia com febre, sangue e muco, pequeno volume e tenesmo sugere qual sítio e mecanismo?", a: "Colo; processo invasivo/inflamatório (Shigella, Salmonella, Campylobacter, STEC, E. histolytica)." },
+      { q: "Fezes em “água de arroz”, volumosas, sem febre, em surto ou área endêmica: qual hipótese?", a: "Cólera (V. cholerae): diarreia secretora de delgado com perda de volume muito rápida." },
+      { q: "Quais achados na diarreia aguda indicam gravidade e necessidade de avaliar internação?", a: "Febre ≥38,5 °C, hipovolemia, ≥6 evacuações/24 h, dor abdominal intensa, sangue nas fezes, persistência; além de hospedeiro de risco (idoso, cardiopata, imunossuprimido, DII, gestante)." },
+      { q: "Qual sinal de hipovolemia grave exige acesso IV imediato?", a: "Letargia/inconsciência, incapacidade de beber ou pulso radial fraco: a via oral não repõe rápido o suficiente nem é segura." },
+      { q: "Por que o idoso cardiopata exige cuidado na reposição IV?", a: "A infusão rápida pode sobrecarregar o volume circulante e descompensar a doença cardíaca; titular e reavaliar." },
+      { q: "Dor abdominal localizada em quadrante inferior, íleo ou sinais peritoneais em paciente com diarreia: o que fazer?", a: "Pensar em complicação (megacólon tóxico, perfuração, colite isquêmica/grave): imagem (TC) e avaliação cirúrgica; evitar antimotilidade." },
+      { q: "Quando indicar exame de fezes na diarreia aguda do adulto?", a: "Gravidade, características inflamatórias (sangue, muco, febre), hospedeiro de risco, surto/saúde pública, persistência. Diarreia aquosa leve não precisa." },
+      { q: "Qual achado microscópico define disenteria amebiana?", a: "Trofozoítos de E. histolytica com hemácias ingeridas. Sangue sem leucócitos fecais é pista adicional." },
+      { q: "Por que, no painel molecular positivo, pode ser preciso pedir cultura?", a: "O painel (PCR) não dá antibiograma e pode detectar DNA sem doença ativa; a cultura orienta o antibiótico e a vigilância." },
+      { q: "Qual cuidado com antibiótico quando há sangue nas fezes sem febre e suspeita de STEC?", a: "Reter o antibiótico até que o teste de toxina Shiga afaste STEC: antibiótico (sobretudo beta-lactâmico) se associa à SHU." },
+      { q: "O que separa cólera de shigelose à beira-leito?", a: "Cólera: aquosa, volumosa, sem sangue e sem febre. Shigelose: pequeno volume, sangue/muco, febre e tenesmo." },
+      { q: "Diarreia aguda em paciente com antibiótico nos últimos 3 meses: qual mimetizador lembrar?", a: "C. difficile. Em diarreia grave e alta suspeita, o tratamento empírico é razoável; loperamida é em geral evitada." },
+      { q: "Deve-se pedir coprocultura de controle após a resolução da salmonelose?", a: "Não, a menos que haja exigência ocupacional/de saúde pública ou recidiva/alto risco." },
+      { q: "Mulher, 28 anos, 2 dias de diarreia líquida sem sangue, afebril, bebe bem, sem comorbidades. O que fazer?", a: "SRO/líquidos, manter dieta, sem exame de fezes e sem antibiótico. Erro comum: “coprocultura e ciprofloxacino”." },
+      { q: "Homem, 45 anos, volta de viagem, diarreia com sangue e muco, febre 38,9 °C, 10 evacuações/dia, sem antibiótico prévio. Próximo passo?", a: "Hidratar, coletar fezes (cultura/painel) e iniciar antibiótico empírico (azitromicina, por febre/disenteria). Erro comum: loperamida." },
+      { q: "Qual a conduta inicial na diarreia sem hipovolemia?", a: "SRO após cada evacuação (até 2 L/dia), manter alimentação e reavaliar nas primeiras 6 h." },
+      { q: "Qual a conduta na hipovolemia leve a moderada do adulto?", a: "SRO 2,2–4 L nas primeiras 4 h mais reposição de perdas contínuas, com reavaliação frequente." },
+      { q: "Qual a conduta e a meta na hipovolemia grave?", a: "IV com Ringer lactato ou solução de cólera: 30 mL/kg em 30 min e depois mais lento; meta de 200 mL/kg em 24 h (100 mL/kg nas 4 primeiras horas); passar para SRO ao estabilizar." },
+      { q: "Por que Ringer lactato é preferível ao soro fisiológico na reposição grande?", a: "Contém potássio e base (lactato), repondo o que as fezes perdem; o SF não tem K⁺ nem base e favorece acidose hiperclorêmica." },
+      { q: "Quando usar ondansetrona na diarreia?", a: "Em vômitos que impedem a SRO; dar a droga e iniciar SRO em pequenos volumes ~15 min depois." },
+      { q: "Quando o antibiótico empírico é indicado na diarreia aguda do adulto?", a: "Gravidade (febre ≥38,5 °C, hipovolemia, ≥6 evacuações/24 h, dor intensa), características inflamatórias ou hospedeiro de risco. Aquosa leve: não tratar." },
+      { q: "Azitromicina ou fluoroquinolona como empírico?", a: "Azitromicina se febre/disenteria ou risco de resistência a quinolona (ex.: viagem ao Sudeste Asiático)." },
+      { q: "Quando tratar salmonelose?", a: "Grave (>9–10 evacuações/dia, febre alta/persistente, internação) ou alto risco de doença invasiva (<12 meses, >50 anos com doença vascular, HIV, imunossuprimidos, prótese). Imunocompetente leve: não tratar." },
+      { q: "Quanto tempo tratar Salmonella em cada situação?", a: "Grave imunocompetente: 3–7 dias; imunocomprometido: ≥14 dias; HIV com CD4 <200: 2–6 semanas; recidiva em alto risco: 4–6 semanas." },
+      { q: "Antibiótico e duração na shigelose do adulto?", a: "Levofloxacino, ciprofloxacino ou azitromicina por 3 dias; cefixima, ceftriaxona, SMX-TMP ou ampicilina por 5 dias; S. dysenteriae 1 ou HIV: 5–7 dias; bacteremia: 14 dias." },
+      { q: "Posologia de loperamida na diarreia aguda do adulto?", a: "4 mg inicial, 2 mg após cada evacuação não formada, por <2 dias, máximo 16 mg/dia." },
+      { q: "Quando evitar loperamida?", a: "Disenteria/febre alta sem antibiótico, suspeita de C. difficile ou megacólon; ela pode mascarar perda de volume." },
+      { q: "Qual o cuidado com subsalicilato de bismuto?", a: "Toxicidade por salicilato: cuidado com aspirina e gestantes. Dose: 30 mL ou 2 comprimidos a cada 30 min × 8 doses." },
+      { q: "Dose de metronidazol na amebíase intestinal sintomática?", a: "500–750 mg VO 3×/dia por 7–10 dias, seguido de agente intraluminal." },
+      { q: "Antibióticos orais na cólera do adulto (dose)?", a: "Doxiciclina 300 mg dose única; azitromicina 1 g dose única; ciprofloxacino 500 mg 2×/dia por 3 dias; tetraciclina 500 mg 4×/dia por 3 dias." },
+      { q: "Probióticos no adulto com gastroenterite infecciosa?", a: "Não são recomendados: o benefício não foi comprovado." },
+      { q: "Qual divergência entre UpToDate e Ministério da Saúde na hipovolemia grave?", a: "UpToDate prefere Ringer lactato/solução de cólera com meta de 200 mL/kg em 24 h; o MS usa SF 0,9% 30 mL/kg e depois Ringer lactato 70 mL/kg em 2 h 30 min." },
+      { q: "Idoso de 78 anos, cardiopata, 3 dias de diarreia, 7 evacuações/dia, febre 38,6 °C, tontura ortostática. Próximo passo?", a: "Hospedeiro de risco com gravidade: avaliar internação, hidratar com cautela (cardiopatia), coletar fezes e considerar antibiótico empírico. Erro comum: “viral, só SRO em casa”." },
+      { q: "Qual antibiótico empírico parenteral não cobre Campylobacter?", a: "Ceftriaxona." },
+      { q: "Qual efeito adverso de classe das fluoroquinolonas aparece como alerta?", a: "Tendinite, anormalidades da aorta, efeitos neurológicos e disfunção metabólica." },
+      { q: "Quando reduzir o ciprofloxacino na cólera?", a: "Se ClCr <30 mL/min." },
+      { q: "Qual a letalidade da cólera com e sem tratamento?", a: "Cerca de 40% sem tratamento e <1% com tratamento (reposição de volume é o determinante)." },
+      { q: "Por que imunossuprimidos com salmonelose recebem ≥14 dias de antibiótico?", a: "Tratamentos curtos (< 10 dias) levam a recidiva: a infecção persiste no hospedeiro sem imunidade eficaz." },
+      { q: "Quais medidas de prevenção primária importam?", a: "Lavagem de mãos com sabão, água potável, segurança alimentar, aleitamento, vacinas (rotavírus; cólera oral em cenários específicos)." },
+      { q: "Quando um manipulador de alimentos/profissional de saúde retorna ao trabalho?", a: "Afastar enquanto sintomático; seguir a regra local de saúde pública (algumas exigem culturas negativas)." },
+      { q: "Quais sequelas pós-infecciosas lembrar?", a: "Artrite reativa, síndrome de Guillain-Barré (C. jejuni), SHU (STEC), má absorção secundária de lactose." },
+      { q: "Quando investigar além do episódio agudo?", a: "Persistência (>14 dias): buscar parasitas, C. difficile e causas não infecciosas (DII, medicamentos, isquemia)." }
+    ]
+  },
+  {
+    id: "diarreia-cronica-cdi",
+    name: "Diarreia Crônica e C. difficile",
+    cards: [
+      { q: "Qual é o desafio central da diarreia crônica, mais do que a lista de causas?", a: "A ordem de investigação: separar quem tem sinais de alarme (doença orgânica, endoscopia) de quem tem quadro funcional ou causa tratável simples. Uma causa específica é achada em mais de 90%." },
+      { q: "Definição de diarreia crônica?", a: "Bristol 5–7 com >3 evacuações/dia por ≥4 semanas. Prevalência estimada de 3 a 7%." },
+      { q: "Causas mais comuns em países com recursos abundantes x limitados?", a: "Abundantes: SII, DII, má absorção (lactose, celíaca), infecções crônicas em imunossuprimidos. Limitados: infecções bacterianas, micobacterianas e parasitárias crônicas." },
+      { q: "Que cirurgias e antecedentes predispõem a diarreia crônica?", a: "Colecistectomia, ressecção ileal e radiação abdominal (ácidos biliares); vagotomia, SIBO, intestino curto; diabetes (neuropatia autonômica, insuficiência pancreática, SIBO); HIV, transplante, amiloidose." },
+      { q: "Por que a diarreia por ácidos biliares cessa em jejum?", a: "O fígado secreta menos bile em jejum; sem sais biliares chegando ao cólon (via AMPc, aumentam secreção de sal e água), a diarreia para." },
+      { q: "Por que a colecistectomia causa diarreia?", a: "Sem vesícula, a bile drena de forma contínua ao delgado e pode superar a capacidade de reabsorção do íleo terminal; também ocorre após ressecção ileal e radiação." },
+      { q: "Como distinguir diarreia secretória de osmótica pelo jejum?", a: "Secretória persiste em jejum (grande volume); osmótica melhora ou cessa em 12–24 h e tem <200 mL/dia, pH <6, gap osmótico >75 mOsm/kg e sódio fecal <70 mEq/L." },
+      { q: "Por que há esteatorreia?", a: "Má digestão (pâncreas, pouca bile) ou má absorção (mucosa, intestino curto, SIBO): gordura chega ao cólon e produz fezes pálidas, volumosas e malcheirosas." },
+      { q: "O que a calprotectina elevada indica?", a: "Inflamação intestinal (proteína de neutrófilos): diarreia inflamatória. Normal torna DII improvável." },
+      { q: "Por que as categorias secretória e osmótica têm utilidade limitada?", a: "Muitas doenças combinam os dois processos; as categorias servem só para estreitar a lista de causas." },
+      { q: "Quais são os sinais de alarme da diarreia crônica?", a: "Início >50 anos, sangramento retal/melena, dor ou diarreia noturna, dor progressiva, perda de peso/febre/sintomas sistêmicos, anemia ferropriva, PCR/VHS, calprotectina ou sangue oculto alterados, parente de 1º grau com DII ou câncer colorretal." },
+      { q: "Qual o padrão da SII com diarreia?", a: "Dor cólica baixa com mudança do hábito; fezes frequentes de pequeno/moderado volume na vigília (manhã, pós-prandial), urgência, muco em cerca de metade, ligação com estresse." },
+      { q: "Perfil da colite microscópica?", a: "Meia-idade/idosos; 4–9 evacuações aquosas/dia, curso intermitente; colonoscopia com mucosa normal." },
+      { q: "Qual achado de pele sugere doença celíaca? E DII?", a: "Dermatite herpetiforme (celíaca); eritema nodoso e pioderma gangrenoso (DII)." },
+      { q: "Por que anemia ferropriva importa na diarreia crônica?", a: "Pode ser a única pista de doença celíaca; também sinal de alarme e indicação de colonoscopia." },
+      { q: "O que é frequentemente confundido com diarreia?", a: "Incontinência fecal; separar por anamnese e exame do esfíncter/toque retal." },
+      { q: "A má absorção sempre dá fezes gordurosas?", a: "Não. O quadro clássico é incomum; a maioria tem sintomas leves que imitam SII (flatos, distensão, borborigmos) ou é assintomática." },
+      { q: "Mulher de 52 anos, diarreia aquosa há 3 meses, 6 evacuações/dia, inclusive à noite, perda de 4 kg. Qual a hipótese e o próximo passo?", a: "Doença orgânica (alarme: noturna, perda de peso, >50 anos): exames de 1ª linha (incluindo calprotectina e celíaca) e colonoscopia com biópsias. Erro comum: tratar como SII." },
+      { q: "Quais exames gerais de 1ª linha?", a: "Hemograma, TSH/T4 livre, sorologia de celíaca, PCR/VHS, sangue oculto, calprotectina fecal; eletrólitos se grave/desidratado; Giardia nas fezes." },
+      { q: "Como usar a calprotectina?", a: "Normal: DII improvável. Elevada: ileocolonoscopia com biópsia." },
+      { q: "Os leucócitos fecais ajudam?", a: "Não: sensibilidade e especificidade de 20 a 90%; com sensibilidade de 70%, especificidade de 50%." },
+      { q: "Quando a colonoscopia é preferível à sigmoidoscopia?", a: "Anemia ferropriva, necessidade de ver o íleo (Crohn), rastreio de câncer por idade e suspeita de colite microscópica (biópsias do cólon inteiro)." },
+      { q: "Por que biopsiar mesmo com mucosa normal?", a: "Colite microscópica tem mucosa macroscopicamente normal e a lesão histológica é menos intensa no cólon distal." },
+      { q: "Quando pedir imagem?", a: "Dor como sintoma principal, sintomas sistêmicos (febre, perda de peso) ou suspeita de Crohn/pâncreas: TC ou RM; colangiorressonância se pancreatite crônica; enterorressonância para Crohn de delgado/tumores." },
+      { q: "Quando pedir hormônios e triagem de laxativos?", a: "Só em quem não tem outra causa: gastrina, calcitonina, somatostatina, VIP, 5-HIAA urinário; laxativos se melanose do cólon." },
+      { q: "Critérios de SII?", a: "Dor recorrente ≥3 dias/mês nos últimos 3 meses + mudança da frequência ou forma das fezes + melhora com a evacuação. Diarreia funcional: sem dor predominante." },
+      { q: "Qual achado separa diarreia osmótica alimentar da secretória?", a: "A osmótica melhora com jejum e com retirada do agente (lactose, sorbitol); a secretória persiste em jejum." },
+      { q: "Quando testar C. difficile numa diarreia crônica?", a: "Antibiótico recente ou suspeita clínica (CDI recorrente é causa de diarreia crônica); ver Doença 2." },
+      { q: "Homem de 30 anos, fezes pequenas e frequentes pela manhã com cólica baixa aliviada ao evacuar, estresse, sem alarme, calprotectina e celíaca normais. Hipótese?", a: "SII com diarreia (critérios + exclusão limitada). Erro comum: colonoscopia imediata ou DII." },
+      { q: "Mulher de 45 anos, 5 meses pós-colecistectomia, diarreia aquosa que cessa em jejum, sem alarme, exames normais. Próximo passo?", a: "Terapia empírica com resina de ácidos biliares (colestiramina ou colestipol). Erro comum: colonoscopia imediata ou loperamida isolada." },
+      { q: "Terapias empíricas aceitas na diarreia crônica?", a: "Colestiramina em diarreia por ácidos biliares; restrição temporária de lactose; antibiótico empírico em SIBO recorrente com fator predisponente." },
+      { q: "Como iniciar a colestiramina?", a: "2 g 1–2×/dia e titular (1 sachê = 4 g de resina), máximo de 24 g/dia. Conferir a apresentação." },
+      { q: "Por que muitos preferem colestipol?", a: "Vem em comprimido (a colestiramina é pó); mesma classe." },
+      { q: "Principal cuidado ao usar resinas?", a: "Reduzem a absorção de outros fármacos: tomá-los ≥1 h antes ou 4–6 h depois. Efeito comum: constipação; uso prolongado: déficit de vitaminas K, A e D." },
+      { q: "Dose máxima e alerta da loperamida?", a: "16 mg/dia; risco de torsades/parada cardíaca com doses acima das recomendadas e com inibidores de CYP3A4/CYP2C8/P-gp." },
+      { q: "Quando a loperamida é contraindicada?", a: "Colite pseudomembranosa (CDI), disenteria aguda, retocolite aguda, enterocolite bacteriana invasiva, dor sem diarreia." },
+      { q: "Quando encaminhar ao gastroenterologista?", a: "Alarme, diarreia grave, suspeita de DII, diagnóstico inconclusivo, falha de terapia empírica ou manejo de longo prazo (DII, pancreatite crônica)." },
+      { q: "Idoso em uso de fármaco que prolonga o QT com diarreia crônica. Pode usar loperamida sem preocupações?", a: "Não: risco de torsades; usar a menor dose e evitar interações. Erro comum: dose alta para controlar a diarreia." },
+      { q: "Cite classes de medicamentos que causam diarreia crônica.", a: "Metformina, produtos com magnésio, AINEs, macrolídeos, IBP, anti-H2, colchicina, antineoplásicos, olmesartana (enteropatia tipo espru), inibidores de checkpoint, laxativos/sorbitol, 5-ASA (olsalazina)." },
+      { q: "Qual medicamento se associa a enteropatia tipo espru?", a: "Olmesartana (BRA)." },
+      { q: "Quanto tempo dura a diarreia pós-colecistectomia?", a: "Frequentemente melhora em semanas a meses (frequência de 2 a 50%)." },
+      { q: "Qual a frequência de SII pós-infecciosa?", a: "Até 30% após infecções bacterianas entéricas documentadas; cerca de 10% após CDI tratada." },
+      { q: "O que fazer se a SII não responde ao tratamento?", a: "Reinvestigar: sintomas persistentes, atípicos (início tardio) ou progressivos exigem avaliação de causas alternativas." },
+      { q: "Por que a fidaxomicina passou a ser preferida à vancomicina no 1º episódio, se a cura inicial é igual?", a: "Porque a resposta sustentada em 4 semanas é maior, isto é, há menos recorrência; a cura inicial é igual." },
+      { q: "Em que lugar o metronidazol ficou no tratamento da CDI?", a: "Só como alternativa no 1º episódio não grave quando fidaxomicina e vancomicina não estão disponíveis (500 mg VO 8/8 h, 10–14 dias). Evitar em frágeis, ≥65 anos e DII; não recomendado em doença grave." },
+      { q: "Qual é o principal fator de risco modificável para CDI e quando o risco é maior?", a: "Antibióticos. Risco 7 a 10 vezes maior durante o uso e no 1º mês, persistindo por cerca de 3 meses. Classes de alto risco: fluoroquinolonas, clindamicina, cefalosporinas de 2ª–5ª geração, carbapenêmicos, penicilinas de amplo espectro." },
+      { q: "Ausência de antibiótico recente exclui CDI?", a: "Não. Cerca de 30% dos casos comunitários não tiveram antibiótico. Outros fatores: >65 anos, internação recente, inibidor de bomba de prótons, DII, transplante, doença renal crônica." },
+      { q: "Um paciente tem NAAT positivo, mas fezes formadas e nenhum sintoma. Trata?", a: "Não. É portador (até 20% dos internados e 50% dos residentes de instituições de longa permanência). Não se rastreia, não se trata e não exige contato." },
+      { q: "Por que a diarreia pode desaparecer no paciente com CDI grave?", a: "A toxina leva à perda do tônus colônico e a íleo paralítico: o cólon dilatado retém secreções. Distensão com queda da diarreia = suspeitar de megacólon, não de melhora." },
+      { q: "Por que há hipoalbuminemia, ascite e edema em alguns casos?", a: "A inflamação da parede permite fuga de albumina para o lúmen; o fígado não compensa (enteropatia perdedora de proteínas, albumina <2 g/dL). Responde ao tratamento da infecção." },
+      { q: "Como se forma a pseudomembrana?", a: "A toxina ulcera a mucosa; proteínas séricas, muco e células inflamatórias extravasam sobre a úlcera e formam placa elevada amarelada." },
+      { q: "Por que vancomicina IV não trata CDI?", a: "Ela não é excretada no cólon em concentração suficiente; o tratamento exige droga que alcance a luz colônica (oral/retal)." },
+      { q: "Por que o metronidazol falha mais?", a: "É bem absorvido; seu nível fecal cai quando a inflamação diminui, enquanto vancomicina e fidaxomicina (pouco ou nada absorvidas) permanecem altas no cólon." },
+      { q: "Por que testes de PCR (NAAT) não distinguem portador de doente?", a: "Detectam o gene da toxina (tcdB), não a toxina produzida; só a toxina por EIA sugere produção ativa." },
+      { q: "Qual o sintoma cardinal da CDI?", a: "Diarreia aquosa (≥3 evacuações líquidas em 24 h), frequentemente com muco, dor/cólica em abdome inferior, febre baixa, náusea e anorexia. Melena ou hematoquezia são raras." },
+      { q: "Quais critérios definem CDI fulminante?", a: "Hipotensão ou choque, íleo ou megacólon (megacólon: cólon >7 cm ou ceco >12 cm no raio X). Internar, imagem e cirurgia precoces." },
+      { q: "Quais critérios definem CDI grave (não fulminante)?", a: "Leucócitos >15 000/µL e/ou creatinina ≥1,5 mg/dL (ou aumento ≥50% da basal). Não grave: ≤15 000 e creatinina <1,5." },
+      { q: "Cite achados que pedem avaliação cirúrgica precoce.", a: "Qualquer um: hipotensão, febre ≥38,5 °C, íleo ou distensão, peritonite, alteração mental, leucócitos ≥20 000/µL, lactato >2,2 mmol/L, UTI, falência de órgão, sem melhora em 3–5 dias de tratamento máximo." },
+      { q: "Como a CDI pode se apresentar sem diarreia?", a: "Como íleo: paciente muito doente, com dilatação colônica, espessamento, febre e leucocitose; a diarreia fica oculta por retenção em cólon atônico." },
+      { q: "Na DII, como a CDI se comporta?", a: "CDI causa cerca de metade das infecções entéricas que provocam recaídas; a endoscopia raramente mostra pseudomembranas; colectomia é mais frequente. Testar todo \"flare\" após antibiótico ou internação." },
+      { q: "Mulher de 74 anos, internada há 7 dias com ceftriaxona, tem 8 evacuações líquidas/dia, dor em cólica, febre 37,9 °C, leucócitos 19 000, creatinina 1,2, PA 120/80. Classificação?", a: "CDI grave (leucócitos >15 000), não fulminante (sem hipotensão, íleo ou megacólon). Erro comum: pensar em fulminante pela leucocitose." },
+      { q: "Quem deve ser testado para CDI?", a: "Quem tem diarreia nova e inexplicada com ≥3 evacuações líquidas em 24 h, em fator de risco. Só fezes líquidas (íleo: swab retal). Não testar fezes formadas nem repetir em 7 dias; não fazer teste de cura." },
+      { q: "Qual é a lógica do teste em duas etapas?", a: "Teste sensível (NAAT ou GDH) para excluir CDI; se positivo, toxina A/B por EIA (específica) para separar doença de colonização; NAAT arbitra GDH+/toxina−." },
+      { q: "NAAT+ e toxina EIA−: como interpretar e o que fazer?", a: "Portador ou CDI com pouca toxina. Avaliar quadro clínico e outras causas; tratar se grave ou sem outra explicação para a diarreia." },
+      { q: "O que significa NAAT negativo?", a: "Exclui CDI com alta segurança (sem CDI e sem portador)." },
+      { q: "Sensibilidade e especificidade do EIA de toxina A/B?", a: "Sensibilidade média cerca de 75% (varia por kit); especificidade até 99%. Falsos negativos porque exigem 100–1000 pg de toxina. Toxina degrada à temperatura ambiente: manter a 4 °C se houver atraso." },
+      { q: "Qual exame de imagem pedir na CDI grave/fulminante?", a: "TC de abdome e pelve com contraste oral e IV (raio X se TC indisponível). Raio X costuma ser normal na CDI comum." },
+      { q: "Qual achado endoscópico é muito sugestivo e qual cuidado ao pedir endoscopia?", a: "Pseudomembranas (placas elevadas amarelas/esbranquiçadas até 2 cm). Usar retossigmoidoscopia flexível limitada sem insuflação; colonoscopia completa não é recomendada (risco de perfuração). Biópsia não é necessária." },
+      { q: "O que é o sinal do acordeão na TC?", a: "Contraste oral retido entre haustrações espessadas e edemaciadas; muito sugestivo de colite pseudomembranosa. Espessamento de parede, sinal do alvo e ascite são inespecíficos." },
+      { q: "Qual achado separa diarreia osmótica por antibiótico de CDI?", a: "A osmótica cessa com jejum e não tem dor/cólica nem alterações laboratoriais/imagem; na CDI há dor, febre, leucocitose, toxina positiva." },
+      { q: "Qual achado favorece infecção bacteriana invasiva e colite isquêmica em vez de CDI?", a: "Sangue nas fezes (CDI raramente causa diarreia sanguinolenta)." },
+      { q: "Diarreia persiste após tratamento adequado de CDI. Qual a principal hipótese?", a: "SII pós-infecciosa (cerca de 10%). A falta de qualquer melhora (inclusive da dor) exige procurar outro diagnóstico; teste pode ficar positivo por 6 semanas." },
+      { q: "Diarreia aquosa crônica com biópsia de colonoscopia: qual diagnóstico em vez de CDI?", a: "Colite microscópica (diagnóstico por histopatologia); CDI é aguda." },
+      { q: "Homem de 68 anos, em uso de clindamicina, tem diarreia aquosa e dor há 3 dias, hemograma normal, e a diarreia cessa em jejum. NAAT+ e toxina−. Hipótese mais provável?", a: "Diarreia osmótica por antibiótico em portador de C. difficile (discordante, sem dor típica/leucocitose, cessa em jejum). Erro comum: tratar o NAAT+ como CDI. Conduta: suspender antibiótico e avaliar clínica." },
+      { q: "Qual a primeira medida em todo paciente com CDI?", a: "Suspender o antibiótico desencadeante o quanto antes, com hidratação e eletrólitos e precauções de contato." },
+      { q: "Esquema do 1º episódio (grave ou não)?", a: "Fidaxomicina 200 mg VO 12/12 h por 10 dias (preferida); alternativa: vancomicina 125 mg VO 6/6 h por 10 dias." },
+      { q: "Como tratar a 1ª recorrência após vancomicina? E após fidaxomicina?", a: "Após vancomicina: fidaxomicina (10 dias, ou 200 mg 12/12 h por 5 dias e depois dias alternados por 20 dias). Após fidaxomicina: vancomicina em desmame (alternativa: 125 mg 6/6 h por 10 dias)." },
+      { q: "Qual o desmame de vancomicina?", a: "125 mg 6/6 h por 10–14 dias, 12/12 h por 7 dias, 1×/dia por 7 dias e a cada 2–3 dias por 2–8 semanas." },
+      { q: "Conduta na 2ª recorrência?", a: "Fidaxomicina (ou vancomicina em desmame, ou vancomicina 10 dias + rifaximina 400 mg 8/8 h por 20 dias) mais FMP (Rebyota ou Vowst) após o antibiótico." },
+      { q: "Conduta na 3ª recorrência ou mais?", a: "Esquema prolongado de fidaxomicina/vancomicina e depois FMT tradicional (ou FMP se não usado). Sem FMT possível: vancomicina 125 mg 1×/dia por 6–8 semanas ou indefinidamente." },
+      { q: "Tratamento da CDI fulminante?", a: "Vancomicina 500 mg VO/SNG 6/6 h + metronidazol 500 mg IV 8/8 h. Íleo: vancomicina retal 500 mg em 100 mL SF a cada 6 h. Fidaxomicina não é usada. Reavaliar em 24–48 h e avaliar cirurgia." },
+      { q: "Paciente fulminante piora em 24–48 h. O que fazer?", a: "Reavaliação cirúrgica (colectomia subtotal com preservação do reto). Se não for candidato, considerar FMT tradicional (risco de perfuração: restringir)." },
+      { q: "Quando usar antimotilidade?", a: "Raramente: só após iniciar tratamento específico, sem íleo nem distensão, se houver dificuldade de repor perdas. Tradicionalmente evitados." },
+      { q: "Quando internar?", a: "Todo fulminante; considerar internação em grave, frágil, desidratado ou com apoio social precário." },
+      { q: "Qual contraindicação/cuidado na fidaxomicina?", a: "Hipersensibilidade (dispneia, rash, angioedema), sobretudo se alergia a macrolídeos. Sem ajuste renal." },
+      { q: "Qual risco do metronidazol em cursos repetidos ou prolongados?", a: "Neurotoxicidade cumulativa e possivelmente irreversível (neuropatia); por isso não é profilaxia secundária." },
+      { q: "Quando monitorar vancomicina sérica?", a: "Colite grave/fulminante com depuração de creatinina <10 mL/min e curso >10 dias (exceto diálise): a absorção sistêmica ocorre quando a mucosa está lesada." },
+      { q: "Como se administra Vowst?", a: "4 cápsulas 1×/dia por 3 dias, em jejum, 2–4 dias após o último antibiótico; citrato de magnésio 296 mL no dia anterior (ou polietilenoglicol se disfunção renal); evitar se CD4 <200/µL ou neutrófilos <500/µL." },
+      { q: "Como se administra Rebyota?", a: "150 mL por via retal, dose única, 24–72 h após o último antibiótico; descongelar na geladeira por cerca de 24 h." },
+      { q: "Dose e alerta do bezlotoxumabe?", a: "10 mg/kg IV dose única durante o antibiótico. Alerta: ICC prévia, usar só se benefício superar o risco." },
+      { q: "Probióticos: recomenda-se?", a: "Não: os dados são inconsistentes e nenhum agente tem eficácia reprodutível." },
+      { q: "Homem de 80 anos com 1ª CDI não grave tratado com vancomicina há 5 semanas, volta com diarreia após novo antibiótico. NAAT e toxina positivos. Conduta?", a: "1ª recorrência após vancomicina: fidaxomicina (10 dias ou esquema estendido). Erro comum: repetir vancomicina ou usar metronidazol." },
+      { q: "Paciente de 66 anos, PA 80/50, abdome distendido, diarreia que diminuiu, leucócitos 28 000, lactato 4. Qual o próximo passo?", a: "CDI fulminante com provável megacólon: vancomicina oral/SNG 500 mg 6/6 h + metronidazol IV (+ vancomicina retal por íleo), TC, UTI e cirurgia imediata. Erro comum: fidaxomicina." },
+      { q: "Quais fármacos não devem ser usados de rotina na CDI?", a: "Vancomicina IV; probióticos; resinas (colestipol, colestiramina, tolevamer); bismuto; nitazoxanida/teicoplanina/ridinilazol (sem superioridade ou investigacionais); metronidazol em doença grave ou como profilaxia secundária." },
+      { q: "Posologia de rifaximina na CDI recorrente?", a: "400 mg VO 8/8 h por 20 dias, depois de vancomicina 125 mg 6/6 h por 10 dias." },
+      { q: "Medidas de controle de infecção?", a: "Precauções de contato (preemptivas), quarto privativo com banheiro, luvas e avental, água e sabão em surto/contato com fezes, esporicida; manter isolamento ≥48 h após a diarreia cessar." },
+      { q: "Como prevenir CDI primária?", a: "Reduzir uso, duração e número de antibióticos (sobretudo fluoroquinolonas, clindamicina, cefalosporinas) e evitar supressão ácida desnecessária. Não se recomenda suspender IBP só para prevenir." },
+      { q: "Quem pode receber vancomicina profilática?", a: "Alguns especialistas usam 125 mg 1×/dia durante antibiótico (>1 semana) e por mais 1 semana em ≥65 anos ou imunossuprimidos internados por CDI grave nos últimos 3 meses. Aumenta o risco de VRE." },
+      { q: "Qual a taxa de recorrência?", a: "Até 25% em 30 dias; sobe a cada recorrência. A maioria é recaída da mesma cepa." },
+      { q: "Precisa repetir exame para confirmar a cura?", a: "Não. Testes podem seguir positivos por até 6 semanas (até 50%). Repetir só se os sintomas recorrerem." },
+      { q: "Como definir recorrência e persistência?", a: "Recorrência: resolução com tratamento e retorno em 2–8 semanas após parar. Persistência sem qualquer melhora: investigar outro diagnóstico (ex.: SII pós-infecciosa)." },
+      { q: "Quando a CDI aparece numa diarreia crônica?", a: "Como CDI recorrente (causa de diarreia crônica) e como mimetizador de recaída de DII; testar se houver antibiótico ou internação recente." },
+      { q: "Por que não dar loperamida antes de excluir CDI?", a: "É contraindicada na colite pseudomembranosa e tradicionalmente evitada na CDI; risco de íleo/megacólon." },
+      { q: "Calprotectina alta separa DII de CDI?", a: "Não: eleva-se nas duas (inflamatória). Só o teste de fezes separa; podem coexistir." },
+      { q: "Antibiótico causa diarreia por quais dois caminhos?", a: "Osmótica (cessa em jejum, sem dor) ou CDI (mediada por toxina, persiste em jejum, dor/febre/leucocitose)." },
+      { q: "Mulher de 38 anos com retocolite, após ciprofloxacino tem piora da diarreia com sangue e febre baixa. Próximo passo?", a: "Testar CDI (teste em duas etapas) além de avaliar atividade da DII; evitar metronidazol/FMT em DII. Erro comum: só escalar imunossupressor." }
+    ]
+  }
+];
+
+/* ============================================================
+   LÓGICA DO APP
+   ============================================================ */
+function toggleSidebar() {
+  const hidden = document.body.classList.toggle('sidebar-hidden');
+  try { localStorage.setItem('sidebarHidden', hidden ? '1' : '0'); } catch (e) {}
+}
+
+const state = {
+  currentDeck: null,
+  index: 0,
+  flipped: false,
+  order: [],
+  results: {},   // { cardIdx: 'ok' | 'err' }
+  finished: false,
+  mode: 'normal', // 'normal' | 'erros' (revisando só os cards errados)
+  view: null,     // 'erros' quando a lista de errados está aberta
+  animating: false,
+  enterDir: null  // 'right'|'left'|'up' for entering card animation
+};
+
+const $tabs = document.getElementById("tabs");
+const $main = document.getElementById("main");
+
+/* -------- Sons (Web Audio API, sem arquivos) -------- */
+let audioCtx = null;
+let masterGain = null;
+const MASTER_VOL = 0.45; // volume geral do site
+function getAudio() {
+  if (!audioCtx) {
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = MASTER_VOL;
+      masterGain.connect(audioCtx.destination);
+    } catch {}
+  }
+  return audioCtx;
+}
+function playTone(freqs, duration = 0.2, type = 'sine', gainStart = 0.15) {
+  const ctx = getAudio();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') ctx.resume();
+  const now = ctx.currentTime;
+  freqs.forEach((f, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(f.freq, now + (f.at || 0));
+    if (f.slideTo) osc.frequency.exponentialRampToValueAtTime(f.slideTo, now + (f.at || 0) + duration);
+    gain.gain.setValueAtTime(0, now + (f.at || 0));
+    gain.gain.linearRampToValueAtTime(gainStart, now + (f.at || 0) + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + (f.at || 0) + duration);
+    osc.connect(gain).connect(masterGain);
+    osc.start(now + (f.at || 0));
+    osc.stop(now + (f.at || 0) + duration + 0.02);
+  });
+}
+function makeNoiseBurst(ctx, at, duration, freqStart, freqEnd, peakGain, filterType = 'bandpass', Q = 3) {
+  const bufSize = Math.max(1, Math.floor(ctx.sampleRate * duration));
+  const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const filter = ctx.createBiquadFilter();
+  filter.type = filterType;
+  filter.frequency.setValueAtTime(freqStart, at);
+  filter.frequency.exponentialRampToValueAtTime(freqEnd, at + duration);
+  filter.Q.value = Q;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0, at);
+  g.gain.linearRampToValueAtTime(peakGain, at + 0.015);
+  g.gain.exponentialRampToValueAtTime(0.001, at + duration);
+  src.connect(filter).connect(g).connect(masterGain);
+  src.start(at);
+  src.stop(at + duration + 0.02);
+}
+function soundOk() {
+  // acorde ascendente: C5, E5, G5 (523, 659, 784)
+  playTone([
+    { freq: 523.25, at: 0 },
+    { freq: 659.25, at: 0.08 },
+    { freq: 783.99, at: 0.16 }
+  ], 0.35, 'triangle', 0.14);
+}
+function soundErr() {
+  // descendente grave
+  playTone([
+    { freq: 220, slideTo: 110, at: 0 }
+  ], 0.35, 'sawtooth', 0.12);
+}
+function soundEnd() {
+  playTone([
+    { freq: 523.25, at: 0 },
+    { freq: 659.25, at: 0.12 },
+    { freq: 783.99, at: 0.24 },
+    { freq: 1046.50, at: 0.36 }
+  ], 0.4, 'triangle', 0.12);
+}
+function soundFlip() {
+  const ctx = getAudio();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') ctx.resume();
+  const now = ctx.currentTime;
+  // Swoosh: ruído bandpass varrendo 2000 → 500 Hz
+  makeNoiseBurst(ctx, now, 0.18, 2000, 500, 0.22, 'bandpass', 3);
+  // Estalo curto no final (carta pousando)
+  const clickAt = now + 0.12;
+  const clickBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.04), ctx.sampleRate);
+  const cd = clickBuf.getChannelData(0);
+  for (let i = 0; i < cd.length; i++) cd[i] = (Math.random() * 2 - 1) * (1 - i / cd.length);
+  const click = ctx.createBufferSource();
+  click.buffer = clickBuf;
+  const clickHp = ctx.createBiquadFilter();
+  clickHp.type = 'highpass';
+  clickHp.frequency.value = 1500;
+  const clickGain = ctx.createGain();
+  clickGain.gain.setValueAtTime(0.28, clickAt);
+  clickGain.gain.exponentialRampToValueAtTime(0.001, clickAt + 0.05);
+  click.connect(clickHp).connect(clickGain).connect(masterGain);
+  click.start(clickAt);
+  click.stop(clickAt + 0.05);
+}
+function soundSlide(direction = 'right') {
+  const ctx = getAudio();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') ctx.resume();
+  const now = ctx.currentTime;
+  // Whoosh mais suave e curto que o flip — sem estalo
+  // direção altera o "pitch" do filtro (esquerda = pitch mais alto)
+  const startF = direction === 'left' ? 2400 : 1800;
+  const endF   = direction === 'left' ? 700  : 400;
+  makeNoiseBurst(ctx, now, 0.22, startF, endF, 0.18, 'bandpass', 2);
+}
+function soundShuffle() {
+  const ctx = getAudio();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') ctx.resume();
+  const now = ctx.currentTime;
+  // Riffle: 7 estalos curtos com variação (som de baralho embaralhando)
+  const N = 7;
+  for (let i = 0; i < N; i++) {
+    const at = now + i * 0.055 + (Math.random() * 0.015);
+    // pequeno swoosh
+    makeNoiseBurst(ctx, at, 0.06, 2600 + Math.random() * 1500, 900, 0.14, 'bandpass', 4);
+    // estalo curto
+    const clickBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.025), ctx.sampleRate);
+    const cd = clickBuf.getChannelData(0);
+    for (let j = 0; j < cd.length; j++) cd[j] = (Math.random() * 2 - 1) * (1 - j / cd.length);
+    const click = ctx.createBufferSource();
+    click.buffer = clickBuf;
+    const hp = ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 2500 + Math.random() * 1500;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.14 + Math.random() * 0.06, at + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, at + 0.035);
+    click.connect(hp).connect(g).connect(masterGain);
+    click.start(at + 0.02);
+    click.stop(at + 0.05);
+  }
+}
+
+const PROG_PREFIX = "ac3_";
+
+/* -------- Cards errados: lista e revisão -------- */
+function errKey(id) { return PROG_PREFIX + id + "_erros"; }
+function loadErros(id) {
+  try { const a = JSON.parse(localStorage.getItem(errKey(id)) || "[]"); return Array.isArray(a) ? a : []; } catch { return []; }
+}
+function saveErros(id, arr) {
+  try { localStorage.setItem(errKey(id), JSON.stringify(arr)); } catch (e) {}
+}
+function registrarErro(cardIdx, kind) {
+  const deck = state.currentDeck; if (!deck) return;
+  const set = new Set(loadErros(deck.id));
+  if (kind === 'err') set.add(cardIdx); else set.delete(cardIdx);
+  saveErros(deck.id, [...set].filter(i => i < deck.cards.length).sort((a, b) => a - b));
+}
+function answerHtml(card) { return card.h ? card.a : escapeHtml(card.a); }
+
+function showErros() {
+  state.view = 'erros';
+  const deck = state.currentDeck;
+  const erros = loadErros(deck.id).filter(i => i < deck.cards.length);
+  $main.innerHTML = `
+    <div class="err-view">
+      <button class="btn" onclick="closeErros()">← Voltar</button>
+      <h2>Cards que você errou</h2>
+      <div class="err-sub">${escapeHtml(deck.name)} · ${erros.length} ${erros.length === 1 ? 'card' : 'cards'}. Um card sai da lista quando você acerta ele de novo.</div>
+      ${erros.length ? `
+      <div class="err-actions">
+        <button class="btn primary" onclick="startReviewErros()">Revisar em modo flashcard</button>
+        <button class="btn" onclick="clearErros()">Limpar lista</button>
+      </div>
+      <div class="err-list">
+        ${erros.map((i, k) => `
+          <details class="err-item">
+            <summary><span class="err-n">${k + 1}</span><span>${escapeHtml(deck.cards[i].q)}</span></summary>
+            <div class="err-a">${answerHtml(deck.cards[i])}</div>
+          </details>`).join('')}
+      </div>` : `<div class="err-empty">Nenhum card errado neste tema por enquanto.</div>`}
+    </div>`;
+}
+function closeErros() { state.view = null; render(); }
+function clearErros() {
+  if (!confirm("Limpar a lista de cards errados deste tema?")) return;
+  saveErros(state.currentDeck.id, []);
+  showErros();
+}
+function startReviewErros(lista) {
+  const deck = state.currentDeck;
+  const erros = (lista || loadErros(deck.id)).filter(i => i < deck.cards.length);
+  if (!erros.length) { showErros(); return; }
+  state.view = null;
+  state.mode = 'erros';
+  state.order = erros.slice();
+  state.index = 0;
+  state.results = {};
+  state.finished = false;
+  state.flipped = false;
+  state.enterDir = 'up';
+  soundShuffle();
+  render();
+}
+function exitReview() {
+  state.mode = 'normal';
+  selectDeck(state.currentDeck);
+}
+
+function saveProgress() {
+  if (!state.currentDeck || state.mode === 'erros') return;
+  localStorage.setItem("ac3_" + state.currentDeck.id, JSON.stringify({
+    index: state.index,
+    order: state.order,
+    results: state.results,
+    finished: state.finished
+  }));
+}
+
+function loadProgress(deckId) {
+  try {
+    const raw = localStorage.getItem("ac3_" + deckId);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    return {
+      index: p.index || 0,
+      order: p.order || null,
+      results: p.results || {},
+      finished: !!p.finished
+    };
+  } catch { return null; }
+}
+
+function renderTabs() {
+  $tabs.innerHTML = "";
+  DECKS.forEach((deck, i) => {
+    if (deck.rev && !(DECKS[i - 1] && DECKS[i - 1].rev)) {
+      const lbl = document.createElement("div");
+      lbl.className = "tabs-label rev-label";
+      lbl.textContent = "Revisão final";
+      $tabs.appendChild(lbl);
+    }
+    const btn = document.createElement("button");
+    btn.className = "tab" + (deck.rev ? " rev" : "") + (state.currentDeck && state.currentDeck.id === deck.id ? " active" : "");
+    btn.innerHTML = '<span>' + escapeHtml(deck.name) + '</span><span class="count">' + deck.cards.length + '</span>';
+    btn.onclick = () => selectDeck(deck);
+    $tabs.appendChild(btn);
+  });
+}
+
+function selectDeck(deck) {
+  state.currentDeck = deck;
+  state.mode = 'normal';
+  state.view = null;
+  document.documentElement.classList.toggle('theme-red', !!deck.rev);
+  state.flipped = false;
+  state.enterDir = 'up';
+  const saved = loadProgress(deck.id);
+  if (saved && saved.order && saved.order.length === deck.cards.length) {
+    state.index = saved.index;
+    state.order = saved.order;
+    state.results = saved.results;
+    state.finished = saved.finished;
+  } else {
+    state.index = 0;
+    state.order = deck.cards.map((_, i) => i);
+    state.results = {};
+    state.finished = false;
+  }
+  renderTabs();
+  render();
+}
+
+function shuffle() {
+  soundShuffle();
+  for (let i = state.order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [state.order[i], state.order[j]] = [state.order[j], state.order[i]];
+  }
+  state.index = 0;
+  state.flipped = false;
+  state.results = {};
+  state.finished = false;
+  state.enterDir = 'up';
+  saveProgress();
+  render();
+}
+
+function resetDeck() {
+  if (!confirm("Reiniciar progresso deste tema?")) return;
+  state.index = 0;
+  state.order = state.currentDeck.cards.map((_, i) => i);
+  state.results = {};
+  state.finished = false;
+  state.flipped = false;
+  saveProgress();
+  render();
+}
+
+function animateExit(exitClass, cb) {
+  const wrap = document.querySelector('.card-anim');
+  if (!wrap || state.animating) { cb(); return; }
+  state.animating = true;
+  wrap.classList.remove('enter-right','enter-left','enter-up');
+  wrap.classList.add(exitClass);
+  setTimeout(() => {
+    state.animating = false;
+    cb();
+  }, 320);
+}
+
+function next() {
+  if (state.finished || state.animating) return;
+  if (state.index < state.order.length - 1) {
+    soundSlide('left');
+    animateExit('exit-left', () => {
+      state.index++;
+      state.flipped = false;
+      state.enterDir = 'right';
+      saveProgress();
+      render();
+    });
+  }
+}
+
+function prev() {
+  if (state.animating) return;
+  if (state.finished) {
+    soundSlide('right');
+    state.finished = false;
+    state.index = state.order.length - 1;
+    state.flipped = false;
+    state.enterDir = 'left';
+    saveProgress();
+    render();
+    return;
+  }
+  if (state.index > 0) {
+    soundSlide('right');
+    animateExit('exit-right', () => {
+      state.index--;
+      state.flipped = false;
+      state.enterDir = 'left';
+      saveProgress();
+      render();
+    });
+  }
+}
+
+function flip() {
+  if (state.animating) return;
+  const cardEl = document.querySelector('.card');
+  if (!cardEl) return;
+  if (cardEl.classList.contains('blinking')) return;
+
+  const wasFlipped = state.flipped;
+  state.flipped = !wasFlipped;
+  saveProgress();
+  soundFlip();
+
+  cardEl.classList.add('blinking');
+
+  // Troca a face no meio (quando o card está invisível)
+  setTimeout(() => {
+    if (wasFlipped) cardEl.classList.remove('flipped');
+    else cardEl.classList.add('flipped');
+  }, 190);
+
+  setTimeout(() => {
+    cardEl.classList.remove('blinking');
+  }, 410);
+}
+
+function mark(kind) {
+  if (state.finished || state.animating) return;
+  const cardIdx = state.order[state.index];
+  state.results[cardIdx] = kind;
+  registrarErro(cardIdx, kind);
+
+  // som
+  if (kind === 'ok') soundOk(); else soundErr();
+
+  // botão pulsa
+  const keyBtn = document.querySelector(`.key.${kind === 'ok' ? 'ok' : 'err'}`);
+  if (keyBtn) { keyBtn.classList.add('pressed'); setTimeout(() => keyBtn.classList.remove('pressed'), 400); }
+
+  // flash overlay
+  const container = document.querySelector('.card-container');
+  if (container) {
+    const flash = document.createElement('div');
+    flash.className = 'flash-overlay ' + kind;
+    container.appendChild(flash);
+    setTimeout(() => flash.remove(), 600);
+  }
+
+  animateExit(kind === 'ok' ? 'exit-up' : 'exit-down', () => {
+    state.flipped = false;
+    if (state.index < state.order.length - 1) {
+      state.index++;
+      state.enterDir = 'up';
+    } else {
+      state.finished = true;
+      soundEnd();
+    }
+    saveProgress();
+    render();
+  });
+}
+
+function countResults() {
+  let correct = 0, wrong = 0;
+  Object.values(state.results).forEach(v => {
+    if (v === 'ok') correct++;
+    else if (v === 'err') wrong++;
+  });
+  return { correct, wrong };
+}
+
+function classify(pct) {
+  if (pct >= 90) return { key: 'excelente', label: 'Excelente' };
+  if (pct >= 75) return { key: 'otimo', label: 'Ótimo' };
+  if (pct >= 60) return { key: 'regular', label: 'Regular' };
+  return { key: 'melhorar', label: 'Precisa Melhorar' };
+}
+
+function render() {
+  const deck = state.currentDeck;
+  if (!deck) { renderEmpty(); return; }
+  if (state.view === 'erros') { showErros(); return; }
+  if (state.finished) { renderEnd(); return; }
+  renderDeck();
+}
+
+function renderDeck() {
+  const deck = state.currentDeck;
+  const total = state.order.length;
+  const nErros = loadErros(deck.id).length;
+  const revisando = state.mode === 'erros';
+  const cardIdx = state.order[state.index];
+  const card = deck.cards[cardIdx];
+  const progress = ((state.index + 1) / total) * 100;
+  const atFirst = state.index === 0;
+
+  $main.innerHTML = `
+    <div class="toolbar">
+      <div>
+        <div class="deck-title">${escapeHtml(deck.name)}${revisando ? '<span class="review-tag">Revisando erros</span>' : ''}</div>
+        <div class="deck-progress-num"><span class="curr">${state.index + 1}</span> de ${total}</div>
+      </div>
+      <div class="actions">
+        ${revisando ? `<button class="btn" onclick="exitReview()">Sair da revisão</button>` : `
+        ${nErros ? `<button class="btn err-btn" onclick="showErros()">Errados<b>${nErros}</b></button>` : ''}
+        <button class="btn" onclick="shuffle()">Embaralhar</button>
+        <button class="btn" onclick="resetDeck()">Reiniciar</button>`}
+      </div>
+    </div>
+
+    <div class="progress-bar"><div class="fill" style="width:${progress}%"></div></div>
+
+    <div class="card-container">
+      <div class="card-anim ${state.enterDir ? 'enter-' + state.enterDir : ''}">
+        <div class="card ${state.flipped ? 'flipped' : ''}" onclick="flip()">
+          <div class="face front">
+            <div class="label">Pergunta</div>
+            <div class="content">${escapeHtml(card.q)}</div>
+            <div class="hint">clique ou espaço</div>
+          </div>
+          <div class="face back">
+            <div class="label">Resposta</div>
+            <div class="content${card.h ? ' rich' : ''}">${card.h ? card.a : escapeHtml(card.a)}</div>
+            <div class="hint">clique ou espaço</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="keymap">
+      <button class="key ${atFirst ? 'disabled' : ''}" onclick="prev()" ${atFirst ? 'disabled' : ''}>
+        <span class="icon">←</span><span>Anterior</span>
+      </button>
+      <button class="key err" onclick="mark('err')">
+        <span class="icon">↓</span><span>Errei</span>
+      </button>
+      <button class="key ok" onclick="mark('ok')">
+        <span class="icon">↑</span><span>Acertei</span>
+      </button>
+      <button class="key" onclick="next()">
+        <span class="icon">→</span><span>Próximo</span>
+      </button>
+    </div>
+  `;
+  // Clear entry direction after render so flipping doesn't retrigger animation
+  state.enterDir = null;
+}
+
+function renderEnd() {
+  const deck = state.currentDeck;
+  const total = state.order.length;
+  const revisando = state.mode === 'erros';
+  const erradosRodada = state.order.filter(i => state.results[i] === 'err');
+  const { correct, wrong } = countResults();
+  const answered = correct + wrong;
+  const pct = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+  const cls = classify(pct);
+
+  // donut math
+  const r = 100;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - pct / 100);
+  const colorFor = {
+    excelente: 'var(--ok)',
+    otimo: 'var(--accent)',
+    regular: 'var(--warn)',
+    melhorar: 'var(--err)'
+  }[cls.key];
+
+  $main.innerHTML = `
+    <div class="end-screen">
+      <h2>${revisando ? 'Revisão dos Erros Concluída' : 'Sessão Concluída'}</h2>
+      <div class="subtitle">${escapeHtml(deck.name)} · ${total} flashcards${revisando ? ' revisados' : ''}</div>
+
+      <div class="donut">
+        <svg viewBox="0 0 240 240">
+          <circle class="track" cx="120" cy="120" r="${r}"></circle>
+          <circle class="fill-arc" cx="120" cy="120" r="${r}"
+                  stroke="${colorFor}"
+                  stroke-dasharray="${circ}"
+                  stroke-dashoffset="${circ}"
+                  id="arc"></circle>
+        </svg>
+        <div class="center">
+          <div class="pct">${pct}%</div>
+          <div class="pct-label">Acertos</div>
+        </div>
+      </div>
+
+      <div class="badge ${cls.key}">${cls.label}</div>
+
+      <div class="end-stats">
+        <div class="end-stat correct">
+          <div class="val">${correct}</div>
+          <div class="lbl">Acertos</div>
+        </div>
+        <div class="end-stat wrong">
+          <div class="val">${wrong}</div>
+          <div class="lbl">Erros</div>
+        </div>
+        <div class="end-stat">
+          <div class="val">${answered}/${total}</div>
+          <div class="lbl">Respondidos</div>
+        </div>
+      </div>
+
+      ${erradosRodada.length ? `
+      <div class="end-errors">
+        <div class="end-errors-title">${revisando ? 'Ainda errou' : 'Você errou'} ${erradosRodada.length} ${erradosRodada.length === 1 ? 'card' : 'cards'}</div>
+        <div class="err-list">
+          ${erradosRodada.map((i, k) => `
+            <details class="err-item">
+              <summary><span class="err-n">${k + 1}</span><span>${escapeHtml(deck.cards[i].q)}</span></summary>
+              <div class="err-a">${answerHtml(deck.cards[i])}</div>
+            </details>`).join('')}
+        </div>
+      </div>` : ''}
+
+      <div class="end-actions">
+        ${erradosRodada.length ? `<button class="btn primary" onclick="startReviewErros([${erradosRodada.join(',')}])">${erradosRodada.length === 1 ? 'Revisar o card que errei' : 'Revisar os ' + erradosRodada.length + ' que errei'}</button>` : ''}
+        ${revisando ? `<button class="btn" onclick="exitReview()">Voltar ao tema completo</button>` : `
+        <button class="btn" onclick="prev()">Voltar ao último</button>
+        <button class="btn ${erradosRodada.length ? '' : 'primary'}" onclick="resetDeck()">Recomeçar</button>
+        <button class="btn" onclick="shuffle()">Embaralhar</button>
+        ${loadErros(deck.id).length ? `<button class="btn err-btn" onclick="showErros()">Todos os errados<b>${loadErros(deck.id).length}</b></button>` : ''}`}
+      </div>
+    </div>
+  `;
+
+  // Animate donut fill
+  requestAnimationFrame(() => {
+    const arc = document.getElementById('arc');
+    if (arc) arc.style.strokeDashoffset = offset;
+  });
+}
+
+function renderEmpty() {
+  $main.innerHTML = `
+    <div class="empty">
+      <h2>Selecione um tema</h2>
+      <p>Escolha um tema na barra lateral para começar.</p>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+document.addEventListener("keydown", (e) => {
+  if ((e.key === 'b' || e.key === 'B') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    const t = e.target; const tag = (t && t.tagName || '').toLowerCase();
+    if (tag !== 'input' && tag !== 'textarea' && !(t && t.isContentEditable)) {
+      toggleSidebar(); return;
+    }
+  }
+  if (!state.currentDeck) return;
+  if (state.view === 'erros') return;
+  if (state.finished) {
+    if (e.key === "ArrowLeft") prev();
+    return;
+  }
+  if (e.key === "ArrowLeft") prev();
+  else if (e.key === "ArrowRight") next();
+  else if (e.key === "ArrowUp") { e.preventDefault(); mark('ok'); }
+  else if (e.key === "ArrowDown") { e.preventDefault(); mark('err'); }
+  else if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); }
+});
+
+renderTabs();
+if (DECKS.length > 0) selectDeck(DECKS[0]);
+</script>
+
+<script src="assets/efeitos.js"></script>
+</body>
+</html>

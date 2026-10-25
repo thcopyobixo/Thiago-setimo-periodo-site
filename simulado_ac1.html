@@ -520,6 +520,7 @@
     .q-grid { grid-template-columns: repeat(10, 1fr); }
   }
 </style>
+<link rel="stylesheet" href="assets/relatorio.css">
 <link rel="stylesheet" href="assets/efeitos.css">
 </head>
 <body>
@@ -1155,6 +1156,9 @@ const QUESTIONS = [
   }
 ];
 
+const TAGS = {"1":["Insuficiência cardíaca","Tratamento da ICFEr"],"2":["DPOC","Classificação GOLD"],"3":["Hipertensão arterial","Emergências hipertensivas"],"4":["Febre reumática","Critérios de Jones"],"5":["Litíase renal","Prevenção dietética"],"6":["DRESS","Fisiopatologia e diagnóstico"],"7":["Asma","Tratamento (GINA)"],"8":["Injúria renal aguda","NTA e estadiamento KDIGO"],"9":["DRGE","Classificação (Lyon 2.0)"],"10":["Hiperparatireoidismo primário","Indicação cirúrgica"],"11":["Tétano","Tratamento"],"12":["Esofagite eosinofílica","Diagnóstico"],"13":["Hipertensão arterial","Hipertensão resistente"],"14":["Doença ulcerosa péptica","Erradicação do H. pylori"],"15":["Insuficiência cardíaca","Tratamento da ICFEr"],"16":["Nefrite intersticial aguda","Etiologia e diagnóstico"],"17":["Asma","Tratamento (GINA)"],"18":["Hipertensão arterial","Diagnóstico e fenótipos (MAPA)"],"19":["Injúria renal aguda","Síndrome hepatorrenal"],"20":["DPOC","Tratamento da DPOC estável"],"21":["Insuficiência cardíaca","IC com FE recuperada"],"22":["Litíase renal","Cálculos de ácido úrico"],"23":["Tétano","Profilaxia"],"24":["Hipertensão arterial","Emergências hipertensivas"],"25":["DRESS","Tratamento"],"26":["DRGE","Classificação (Lyon 2.0)"],"27":["Febre reumática","Critérios de Jones"],"28":["Insuficiência cardíaca","Peptídeos natriuréticos"],"29":["Esofagite eosinofílica","Monitorização e tratamento"],"30":["Injúria renal aguda","Nefrotoxicidade (triple whammy)"],"31":["Hiperparatireoidismo primário","Tratamento clínico"],"32":["Hipertensão arterial","Emergências hipertensivas"],"33":["Doença ulcerosa péptica","Hemorragia digestiva (Forrest)"],"34":["Febre reumática","Profilaxia secundária"],"35":["Nefrite intersticial aguda","Tratamento"],"36":["DPOC","Exacerbação"],"37":["Asma","Controle da asma"],"38":["Hipertensão arterial","Hipertensão na gestação"],"39":["Esofagite eosinofílica","Monitorização e tratamento"],"40":["Doença ulcerosa péptica","Complicações"],"41":["Hipertensão arterial","Tratamento farmacológico"],"42":["Litíase renal","Cálculos de estruvita"],"43":["Tétano","Tratamento"],"44":["Insuficiência cardíaca","Etiologia"],"45":["DRGE","Manifestações extraesofágicas"],"46":["Febre reumática","Profilaxia primária"],"47":["Hipertensão arterial","Tratamento não farmacológico"],"48":["Injúria renal aguda","Indicações de diálise"],"49":["DRESS","Diagnóstico diferencial"],"50":["Hipertensão arterial","Hipertensão resistente"]};
+QUESTIONS.forEach(q => { const t = TAGS[q.n]; if (t) { q.tema = t[0]; q.sub = t[1]; } });
+
 const state = {
   index: 0,
   answers: {},   // { n: 'A'|'B'|'C'|'D' }  — respostas confirmadas
@@ -1373,6 +1377,9 @@ function renderQuestion() {
     '</div>';
 }
 
+/* Relatório: voltar a uma questão errada */
+function relGoTo(i) { state.index = i; state.finished = false; saveState(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
 function renderEnd() {
   let correct = 0, wrong = 0;
   QUESTIONS.forEach(q => {
@@ -1420,6 +1427,7 @@ function renderEnd() {
         '<div class="end-stat wrong"><div class="val">'+wrong+'</div><div class="lbl">Erros</div></div>' +
         '<div class="end-stat"><div class="val">'+answered+'/'+total+'</div><div class="lbl">Respondidas</div></div>' +
       '</div>' +
+      Relatorio.html(QUESTIONS, state.answers) +
       '<div class="nav-buttons">' +
         '<button class="nav-btn" onclick="prev()">← Ver questões</button>' +
         '<button class="nav-btn primary" onclick="resetQuiz()">Recomeçar simulado</button>' +
@@ -1434,6 +1442,7 @@ function renderEnd() {
 
 render();
 </script>
+<script src="assets/relatorio.js"></script>
 <script src="assets/efeitos.js"></script>
 </body>
 </html>
