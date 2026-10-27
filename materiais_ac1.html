@@ -162,6 +162,21 @@
     text-transform: uppercase; color: var(--accent-2);
     font-weight: 600; margin-bottom: 8px;
   }
+
+  /* Botão de download do PDF original */
+  .dl-btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    margin-top: 16px; padding: 10px 16px;
+    border-radius: 10px; text-decoration: none;
+    background: linear-gradient(135deg, var(--accent-3, #1d4ed8), var(--accent, #3b82f6));
+    color: #fff; font-weight: 600; font-size: 14px;
+    box-shadow: 0 8px 22px var(--accent-glow, rgba(59,130,246,.35));
+    transition: transform .15s, box-shadow .2s, filter .2s;
+  }
+  .dl-btn:hover { transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 12px 28px var(--accent-glow, rgba(59,130,246,.45)); }
+  .dl-btn:active { transform: translateY(0) scale(.97); }
+  .dl-btn svg { width: 17px; height: 17px; }
+  .dl-btn small { font-weight: 500; opacity: .8; font-size: 12px; }
   .tut-title {
     font-family: 'Unbounded', sans-serif;
     font-size: clamp(30px, 4vw, 44px);
@@ -298,6 +313,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Documento 01 · 10 páginas</div>
         <h1 class="tut-title">Fluxogramas Terapêuticos</h1>
+        <a class="dl-btn" href="assets/pdfs/ac1-fluxogramas.pdf" download="AC1 - Documento 01 - Fluxogramas Terapêuticos.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>30 KB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais_ac1/fluxogramas/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 10</figcaption></figure>
@@ -316,6 +332,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Documento 02 · 6 páginas</div>
         <h1 class="tut-title">Diagnóstico e Tratamento</h1>
+        <a class="dl-btn" href="assets/pdfs/ac1-diagnostico.pdf" download="AC1 - Documento 02 - Diagnóstico e Tratamento.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>17 KB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais_ac1/diagnostico/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 6</figcaption></figure>

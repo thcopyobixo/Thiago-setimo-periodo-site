@@ -178,6 +178,21 @@
     text-transform: uppercase; color: var(--accent-2);
     font-weight: 600; margin-bottom: 8px;
   }
+
+  /* Botão de download do PDF original */
+  .dl-btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    margin-top: 16px; padding: 10px 16px;
+    border-radius: 10px; text-decoration: none;
+    background: linear-gradient(135deg, var(--accent-3, #1d4ed8), var(--accent, #3b82f6));
+    color: #fff; font-weight: 600; font-size: 14px;
+    box-shadow: 0 8px 22px var(--accent-glow, rgba(59,130,246,.35));
+    transition: transform .15s, box-shadow .2s, filter .2s;
+  }
+  .dl-btn:hover { transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 12px 28px var(--accent-glow, rgba(59,130,246,.45)); }
+  .dl-btn:active { transform: translateY(0) scale(.97); }
+  .dl-btn svg { width: 17px; height: 17px; }
+  .dl-btn small { font-weight: 500; opacity: .8; font-size: 12px; }
   .tut-title {
     font-family: 'Unbounded', sans-serif;
     font-size: clamp(30px, 4vw, 44px);
@@ -338,6 +353,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 01 · 23 páginas</div>
         <h1 class="tut-title">Diarreia Aguda no Adulto</h1>
+        <a class="dl-btn" href="assets/pdfs/ac3-diarreia-aguda.pdf" download="AC3 - Tutoria 01 - Diarreia Aguda no Adulto.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>2,2 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais_ac3/diarreia-aguda/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 23</figcaption></figure>
@@ -369,6 +385,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 02 · 28 páginas</div>
         <h1 class="tut-title">Diarreia Crônica e C. difficile</h1>
+        <a class="dl-btn" href="assets/pdfs/ac3-diarreia-cronica-cdi.pdf" download="AC3 - Tutoria 02 - Diarreia Crônica e C. difficile.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>3,4 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais_ac3/diarreia-cronica-cdi/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 28</figcaption></figure>

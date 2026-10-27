@@ -178,6 +178,21 @@
     text-transform: uppercase; color: var(--accent-2);
     font-weight: 600; margin-bottom: 8px;
   }
+
+  /* Botão de download do PDF original */
+  .dl-btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    margin-top: 16px; padding: 10px 16px;
+    border-radius: 10px; text-decoration: none;
+    background: linear-gradient(135deg, var(--accent-3, #1d4ed8), var(--accent, #3b82f6));
+    color: #fff; font-weight: 600; font-size: 14px;
+    box-shadow: 0 8px 22px var(--accent-glow, rgba(59,130,246,.35));
+    transition: transform .15s, box-shadow .2s, filter .2s;
+  }
+  .dl-btn:hover { transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 12px 28px var(--accent-glow, rgba(59,130,246,.45)); }
+  .dl-btn:active { transform: translateY(0) scale(.97); }
+  .dl-btn svg { width: 17px; height: 17px; }
+  .dl-btn small { font-weight: 500; opacity: .8; font-size: 12px; }
   .tut-title {
     font-family: 'Unbounded', sans-serif;
     font-size: clamp(30px, 4vw, 44px);
@@ -390,6 +405,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 01 · 47 páginas</div>
         <h1 class="tut-title">Hepatites Virais A, B e C</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-hepatites.pdf" download="AC2 - Tutoria 01 - Hepatites Virais A, B e C.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>2,5 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/hepatites/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 47</figcaption></figure>
@@ -445,6 +461,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 02 · 45 páginas</div>
         <h1 class="tut-title">Tromboembolismo Pulmonar Agudo</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-tep.pdf" download="AC2 - Tutoria 02 - Tromboembolismo Pulmonar Agudo.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>5,2 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/tep/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 45</figcaption></figure>
@@ -498,6 +515,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 03 · 30 páginas</div>
         <h1 class="tut-title">Cirrose Hepática</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-cirrose.pdf" download="AC2 - Tutoria 03 - Cirrose Hepática.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>962 KB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/cirrose/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 30</figcaption></figure>
@@ -536,6 +554,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 04 · 29 páginas</div>
         <h1 class="tut-title">Complicações da Cirrose</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-cirrose-complicacoes.pdf" download="AC2 - Tutoria 04 - Complicações da Cirrose.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>1,4 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/cirrose-complicacoes/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 29</figcaption></figure>
@@ -573,6 +592,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 05 · 31 páginas</div>
         <h1 class="tut-title">Tuberculose</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-tuberculose.pdf" download="AC2 - Tutoria 05 - Tuberculose.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>2,6 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/tuberculose/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 31</figcaption></figure>
@@ -612,6 +632,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 06 · 40 páginas</div>
         <h1 class="tut-title">Pancreatite Aguda</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-pancreatite.pdf" download="AC2 - Tutoria 06 - Pancreatite Aguda.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>974 KB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/pancreatite/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 40</figcaption></figure>
@@ -660,6 +681,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 07 · 24 páginas</div>
         <h1 class="tut-title">Histoplasmose Disseminada</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-histoplasmose.pdf" download="AC2 - Tutoria 07 - Histoplasmose Disseminada.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>3,1 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/histoplasmose/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 24</figcaption></figure>
@@ -692,6 +714,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 08 · 33 páginas</div>
         <h1 class="tut-title">Doença Renal Crônica (KDIGO 2024)</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-drc.pdf" download="AC2 - Tutoria 08 - Doença Renal Crônica (KDIGO 2024).pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>1,6 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/drc/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 33</figcaption></figure>
@@ -733,6 +756,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 09 · 27 páginas</div>
         <h1 class="tut-title">Complicações da Doença Renal Crônica</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-drc-complicacoes.pdf" download="AC2 - Tutoria 09 - Complicações da Doença Renal Crônica.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>1,4 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/drc-complicacoes/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 27</figcaption></figure>
@@ -768,6 +792,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Tutoria 10 · 22 páginas</div>
         <h1 class="tut-title">Hipoparatireoidismo</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-hipoparatireoidismo.pdf" download="AC2 - Tutoria 10 - Hipoparatireoidismo.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>1,8 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/hipoparatireoidismo/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 22</figcaption></figure>
@@ -798,6 +823,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Conferência C01 · 51 páginas</div>
         <h1 class="tut-title">ADA — Diabetes 2026 (Resumo Clínico)</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-ada-diabetes.pdf" download="AC2 - Conferência C01 - ADA — Diabetes 2026 (Resumo Clínico).pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>2,5 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/ada-diabetes/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 51</figcaption></figure>
@@ -857,6 +883,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Conferência C02 · 26 páginas</div>
         <h1 class="tut-title">Valvulopatias Esquerdas — SBC 2020</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-valvulopatias.pdf" download="AC2 - Conferência C02 - Valvulopatias Esquerdas — SBC 2020.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>1,2 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/valvulopatias/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 26</figcaption></figure>
@@ -891,6 +918,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Conferência C03 · 33 páginas</div>
         <h1 class="tut-title">Miocardite e Pericardite — ACC/ESC 2025</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-miocardite-pericardite.pdf" download="AC2 - Conferência C03 - Miocardite e Pericardite — ACC-ESC 2025.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>5,9 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/miocardite-pericardite/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 33</figcaption></figure>
@@ -932,6 +960,7 @@
       <div class="tut-header">
         <div class="tut-crumb">Conferência C04 · 19 páginas</div>
         <h1 class="tut-title">DM1 e Insulinoterapia no Adulto — ADA 2026</h1>
+        <a class="dl-btn" href="assets/pdfs/ac2-dm1-insulinoterapia.pdf" download="AC2 - Conferência C04 - DM1 e Insulinoterapia no Adulto — ADA 2026.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>Baixar PDF</span><small>1,6 MB</small></a>
       </div>
     <div class="pdf-viewer">
       <figure class="pdf-page"><img src="assets/materiais/dm1-insulinoterapia/page-01.png" alt="Página 1" loading="lazy" decoding="async"><figcaption>Página 1 de 19</figcaption></figure>
