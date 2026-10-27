@@ -461,3 +461,53 @@ main > .hero h1 { font-size: clamp(34px, 5.5vw, 72px) !important; letter-spacing
   .card.blinking { animation-duration: 1ms !important; }
   ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
 }
+
+/* =========================================================
+   Fundo do site: azul-escuro com ruído, brilho central e grade
+   (modelo "Noise Dark Blue Gradient with Squares", 21st.dev)
+   O brilho e a grade seguem --accent (ficam vermelhos na Revisão final).
+   ========================================================= */
+:root {
+  --fx-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --fx-grid-line: color-mix(in srgb, var(--accent, #3b82f6) 11%, transparent);
+  --fx-site-bg:
+    var(--fx-noise),
+    radial-gradient(ellipse 65% 55% at 50% 42%, color-mix(in srgb, var(--accent, #3b82f6) 24%, transparent) 0%, color-mix(in srgb, var(--accent, #3b82f6) 7%, transparent) 45%, transparent 75%),
+    linear-gradient(var(--fx-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--fx-grid-line) 1px, transparent 1px),
+    linear-gradient(180deg, #070c1d 0%, #040713 60%, #02040b 100%);
+  --fx-site-bg-size: 180px 180px, 100% 100%, 56px 56px, 56px 56px, 100% 100%;
+}
+html { background: #040713 !important; }
+html body { background: transparent !important; }
+html::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image: var(--fx-site-bg);
+  background-size: var(--fx-site-bg-size);
+  background-position: 0 0, 0 0, -1px -1px, -1px -1px, 0 0;
+}
+/* a tela inicial é uma camada fixa por cima: recebe o mesmo fundo */
+.landing {
+  background-image: var(--fx-site-bg) !important;
+  background-size: var(--fx-site-bg-size) !important;
+  background-position: 0 0, 0 0, -1px -1px, -1px -1px, 0 0 !important;
+  background-color: #040713 !important;
+}
+/* a grade some suavemente nas bordas */
+html::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: radial-gradient(ellipse 120% 90% at 50% 40%, transparent 55%, rgba(2, 4, 11, .75) 100%);
+}
+
+/* quadradinho da grade que acende sob o mouse (efeitos.js) */
+.fx-grid-hover { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.landing > .fx-grid-hover { z-index: 0; }
+.landing > .landing-inner { position: relative; z-index: 1; }

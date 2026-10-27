@@ -822,43 +822,414 @@
   .hex.soon { cursor: default; }
   .hex.soon .hex-shape { opacity: .45; filter: grayscale(.6); }
   .hex.soon .hex-go { display: none; }
+
+
+  /* Título em partículas (assets/canvas-text.js) */
+  .ct-title {
+    position: relative;
+    width: min(100%, 980px);
+    min-height: 180px;
+    margin: 0 auto;
+    cursor: default;
+    filter: drop-shadow(0 0 22px rgba(59, 130, 246, .35));
+  }
+  .ct-title canvas { position: absolute; inset: 0; display: block; }
+  .ct-title .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  /* centraliza sem cortar o topo quando o conteúdo é mais alto que a tela */
+  .landing { align-items: flex-start !important; padding-top: 40px; padding-bottom: 40px; }
+  .landing-inner { margin: auto 0; }
+  .landing.exit .ct-title { opacity: 0; transform: translateY(-16px); transition: opacity .25s, transform .3s; }
+  /* ==== Tela inicial: cartões que se expandem (AC 1, AC 2, AC 3, ECG) ==== */
+  .landing-inner { max-width: 1180px; }
+  .xcards {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    height: clamp(340px, calc(100vh - 410px), 560px);
+    margin-top: 30px;
+  }
+  .xcard {
+    --ease: cubic-bezier(.23, 1, .32, 1);
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    border-radius: 22px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #070b14;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .55);
+    transition: flex-grow .7s var(--ease), border-color .4s, box-shadow .5s;
+    outline: none;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+    animation: xIn .7s var(--ease) backwards;
+  }
+  .xcard:nth-child(2) { animation-delay: 80ms; }
+  .xcard:nth-child(3) { animation-delay: 160ms; }
+  .xcard:nth-child(4) { animation-delay: 240ms; }
+  @keyframes xIn { from { opacity: 0; transform: translateY(28px) scale(.97); } }
+  .xcard.active {
+    flex-grow: 5;
+    border-color: rgba(96, 165, 250, .55);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, .6), 0 0 0 1px rgba(59, 130, 246, .25), 0 0 60px rgba(59, 130, 246, .22);
+  }
+  .xcard:focus-visible { box-shadow: 0 0 0 3px var(--accent-2); }
+
+  /* fundo */
+  .xbg { position: absolute; inset: 0; overflow: hidden; }
+  .xbg > * { position: absolute; inset: 0; transition: opacity .6s, transform 1.2s var(--ease); }
+  .x-collage, .x-giant, .x-bigicon { opacity: 0; }
+  .bg-collage .x-collage, .bg-giant .x-giant, .bg-icon .x-bigicon { opacity: 1; }
+  .bg-mix .x-collage { opacity: .55; }
+  .bg-mix .x-giant { opacity: 1; }
+
+  /* opção A: páginas reais do material */
+  .x-collage { filter: grayscale(1) contrast(1.05) brightness(.8); }
+  .x-collage img {
+    position: absolute; width: 62%; border-radius: 6px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, .6);
+    transition: transform 1.2s var(--ease);
+  }
+  .x-collage img:nth-child(1) { left: 4%;  top: 8%;  transform: rotate(-8deg); }
+  .x-collage img:nth-child(2) { left: 36%; top: -4%; transform: rotate(6deg); }
+  .x-collage img:nth-child(3) { left: 20%; top: 42%; transform: rotate(-2deg); }
+  .x-ecg .x-collage img { width: 120%; left: -10%; border-radius: 0; filter: invert(1) hue-rotate(180deg); }
+  .x-ecg .x-collage img:nth-child(1) { top: 6%; transform: rotate(-4deg); }
+  .x-ecg .x-collage img:nth-child(2) { top: 38%; transform: rotate(2deg); }
+  .x-ecg .x-collage img:nth-child(3) { top: 70%; transform: rotate(-1deg); }
+  .xcard.active .x-collage img:nth-child(1) { transform: rotate(-5deg) translateY(-6px) scale(1.03); }
+  .xcard.active .x-collage img:nth-child(2) { transform: rotate(4deg) translateY(4px) scale(1.03); }
+
+  /* opção B: número gigante vazado */
+  .x-giant {
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 6%;
+    font-family: 'Unbounded', sans-serif; font-weight: 800;
+    font-size: clamp(220px, 34vh, 380px); line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(96, 165, 250, .35);
+    background: radial-gradient(circle at 75% 45%, rgba(59, 130, 246, .28), transparent 60%);
+  }
+  .x-ecg .x-giant { font-size: clamp(120px, 18vh, 210px); }
+  .xcard:not(.active) .x-giant { opacity: 0 !important; }
+  .xcard.active .x-giant { transform: translateX(0); }
+
+  /* opção C: ícone grande em linha */
+  .x-bigicon { display: flex; align-items: center; justify-content: flex-end; padding-right: 4%; color: rgba(96, 165, 250, .28); }
+  .x-bigicon svg { width: min(62%, 360px); height: auto; filter: drop-shadow(0 0 30px rgba(59, 130, 246, .35)); }
+  .xcard:not(.active) .x-bigicon { opacity: 0 !important; }
+
+  /* sombra por cima do fundo */
+  .xshade {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(3, 7, 18, .1) 0%, rgba(3, 7, 18, .55) 45%, rgba(3, 7, 18, .96) 100%),
+      linear-gradient(90deg, rgba(3, 7, 18, .85) 0%, rgba(3, 7, 18, .2) 70%),
+      linear-gradient(135deg, rgba(29, 78, 216, .35), rgba(0, 0, 0, 0) 60%);
+    transition: opacity .6s;
+  }
+  .xcard:not(.active) .xshade { background: linear-gradient(180deg, rgba(3, 7, 18, .55), rgba(3, 7, 18, .92)), linear-gradient(135deg, rgba(29, 78, 216, .3), transparent 70%); }
+
+  /* faixa vertical (cartão fechado) */
+  .xvert {
+    position: absolute; left: 50%; bottom: 26px;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    transform: translateX(-50%);
+    color: #dbeafe;
+    transition: opacity .35s, transform .5s var(--ease);
+    pointer-events: none;
+  }
+  .xvert > span:last-child {
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 4px; white-space: nowrap;
+  }
+  .xvert-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: rgba(59, 130, 246, .18); border: 1px solid rgba(96, 165, 250, .35); color: var(--accent-2); }
+  .xvert-icon svg { width: 20px; height: 20px; }
+  .xcard.active .xvert { opacity: 0; transform: translateX(-50%) translateY(16px); }
+  .xcard:not(.active):hover .xvert-icon { background: rgba(59, 130, 246, .3); }
+
+  /* conteúdo (cartão aberto) */
+  .xcontent {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 34px 36px;
+    max-width: 560px;
+    opacity: 0; transform: translateY(18px);
+    transition: opacity .3s, transform .5s var(--ease);
+    pointer-events: none;
+  }
+  .xcard.active .xcontent { opacity: 1; transform: none; transition-delay: .22s, .22s; pointer-events: auto; }
+  .xtag { font-size: 13px; letter-spacing: 6px; text-transform: uppercase; color: var(--accent-2); font-weight: 700; }
+  .xtitle {
+    margin: 2px 0 10px;
+    font-family: 'Unbounded', sans-serif; font-weight: 800;
+    font-size: clamp(64px, 9vh, 104px); line-height: 1;
+    background: linear-gradient(135deg, #f8fafc 10%, #93c5fd 60%, #3b82f6);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .xdesc { margin: 0 0 18px; color: #cbd5e1; font-size: 15.5px; line-height: 1.55; }
+  .xstats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .xstats span {
+    display: inline-flex; align-items: baseline; gap: 6px;
+    padding: 6px 12px; border-radius: 999px;
+    background: rgba(15, 20, 32, .75); border: 1px solid rgba(96, 165, 250, .25);
+    font-size: 12.5px; color: var(--muted-2); backdrop-filter: blur(6px);
+  }
+  .xstats b { color: #fff; font-weight: 700; }
+  .xgo {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 20px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; font-weight: 700; font-size: 14.5px;
+    box-shadow: 0 10px 26px rgba(59, 130, 246, .4);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .xcard.active:hover .xgo { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(59, 130, 246, .5); }
+  .xgo span { transition: transform .2s; }
+  .xcard.active:hover .xgo span { transform: translateX(4px); }
+
+  /* saída ao escolher */
+  .xcards.exit .xcard:not(.chosen) { opacity: 0; transform: scale(.94); transition: opacity .25s, transform .3s; }
+  .xcards.exit .xcard.chosen { transform: scale(1.02); transition: transform .3s; }
+
+
+  /* fotos dos AC: cinza quando fechado, colorida quando aberto */
+  .xcard.has-photo .x-collage { display: none; }
+  .x-photo { opacity: 1 !important; }
+  .x-photo img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: grayscale(1) brightness(.55) contrast(1.05);
+    transform: scale(1.08);
+    transition: filter .8s var(--ease), transform 1.4s var(--ease);
+  }
+  .xcard.active .x-photo img { filter: grayscale(0) brightness(.8) saturate(1.05); transform: scale(1); }
+  .xcard:not(.active):hover .x-photo img { filter: grayscale(.6) brightness(.65); }
+  .xcard.has-photo.active .xshade {
+    background:
+      linear-gradient(180deg, rgba(3, 7, 18, 0) 25%, rgba(3, 7, 18, .6) 60%, rgba(3, 7, 18, .95) 100%),
+      linear-gradient(90deg, rgba(3, 7, 18, .75) 0%, rgba(3, 7, 18, 0) 65%);
+  }
+  /* celular: cartões empilhados */
+  @media (max-width: 720px) {
+    .landing { padding: 40px 16px; }
+    .xcards { flex-direction: column; height: auto; gap: 10px; margin-top: 28px; }
+    .xcard { flex: none; height: 74px; transition: height .6s var(--ease), border-color .4s, box-shadow .5s; }
+    .xcard.active { height: 380px; }
+    .xvert { left: 22px; bottom: auto; top: 50%; flex-direction: row; transform: translateY(-50%); }
+    .xvert > span:last-child { writing-mode: horizontal-tb; transform: none; font-size: 16px; }
+    .xcard.active .xvert { transform: translateY(-30%); }
+    .xcontent { padding: 22px; }
+    .xtitle { font-size: 56px; }
+    .x-giant { font-size: 220px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .xcard, .xcontent, .xvert, .xbg > *, .x-collage img { transition: none !important; animation: none !important; }
+  }
+
+  /* ==== Dentro da AC: central ligada aos itens (modelo "Integration Card", 21st.dev) ==== */
+  .hub-card {
+    width: min(100%, 760px);
+    margin: 6px auto 48px;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    overflow: hidden;
+    background: rgba(8, 12, 24, .72);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, .5);
+    animation: hubIn .6s cubic-bezier(.23, 1, .32, 1) both;
+  }
+  @keyframes hubIn { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .hub-visual {
+    position: relative;
+    aspect-ratio: 564 / 410;
+    background:
+      radial-gradient(circle, rgba(148, 163, 184, .22) 1px, transparent 1.4px) 0 0 / 30px 30px,
+      radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, .14), transparent 65%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hub-visual::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(8, 12, 24, .7) 0%, transparent 22%, transparent 78%, rgba(8, 12, 24, .7) 100%);
+  }
+  .hub-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .hub-line { stroke: rgba(96, 165, 250, .22); stroke-width: 1.2; }
+  .hub-pulse {
+    stroke-width: 2.4; stroke-linecap: round;
+    stroke-dasharray: 40 160; stroke-dashoffset: 200;
+    animation: hubPulse 4s linear infinite;
+    transition: stroke-width .3s, filter .3s;
+  }
+  .hub-pulse.on { stroke-width: 3.2; filter: drop-shadow(0 0 6px rgba(96, 165, 250, .9)); animation-duration: 2s; }
+  @keyframes hubPulse { to { stroke-dashoffset: -200; } }
+
+  .hub-center {
+    position: absolute; left: 50%; top: 50%; z-index: 3;
+    transform: translate(-50%, -50%);
+    width: 86px; height: 86px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 22px;
+    background: linear-gradient(145deg, #0f1a33, #070b16);
+    border: 1px solid rgba(96, 165, 250, .45);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .55), 0 0 40px rgba(59, 130, 246, .3), inset 0 1px 0 rgba(255, 255, 255, .08);
+  }
+  .hub-center-tag { font-size: 10px; letter-spacing: 4px; color: var(--accent-2); font-weight: 700; margin-left: 4px; }
+  .hub-center-num {
+    font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 38px; line-height: 1;
+    background: linear-gradient(135deg, #f8fafc, #93c5fd 55%, #3b82f6);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hub-ring {
+    position: absolute; inset: -1px; border-radius: inherit;
+    border: 2px solid rgba(96, 165, 250, .35);
+    animation: hubRing 3s ease-in-out infinite;
+  }
+  @keyframes hubRing { 0%, 100% { transform: scale(1); opacity: .5; } 50% { transform: scale(1.18); opacity: 0; } }
+
+  .hub-node {
+    position: absolute; z-index: 2;
+    transform: translate(-50%, -50%);
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px 10px 10px;
+    width: 214px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(17, 24, 42, .96), rgba(8, 12, 24, .96));
+    border: 1px solid var(--border);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .45);
+    color: var(--text); text-decoration: none;
+    animation: hubNode .55s cubic-bezier(.34, 1.4, .64, 1) var(--d) both;
+    transition: border-color .25s, box-shadow .3s, background .3s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @keyframes hubNode { from { opacity: 0; transform: translate(-50%, -50%) scale(.75); } }
+  .hub-node:hover, .hub-node:focus-visible {
+    border-color: rgba(96, 165, 250, .7);
+    background: linear-gradient(145deg, rgba(29, 78, 216, .35), rgba(8, 12, 24, .96));
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .55), 0 0 30px rgba(59, 130, 246, .35);
+    outline: none;
+  }
+  .hub-icon {
+    flex: none; width: 46px; height: 46px;
+    display: grid; place-items: center;
+    border-radius: 12px;
+    background: rgba(59, 130, 246, .14);
+    border: 1px solid rgba(96, 165, 250, .3);
+    color: var(--accent-2);
+    transition: transform .3s cubic-bezier(.34, 1.4, .64, 1), background .3s;
+  }
+  .hub-icon svg { width: 22px; height: 22px; }
+  .hub-node:hover .hub-icon { transform: rotate(-6deg) scale(1.08); background: rgba(59, 130, 246, .28); }
+  .hub-text { display: flex; flex-direction: column; gap: 2px; text-align: left; }
+  .hub-title { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .hub-node .meta { font-size: 11.5px; color: var(--muted-2); letter-spacing: .2px; }
+  .hub-node.soon { opacity: .5; filter: grayscale(.6); cursor: default; }
+
+  .hub-content { padding: 24px 30px 28px; text-align: left; }
+  .hub-info-title { margin: 0 0 6px; font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; color: var(--text); }
+  .hub-info-desc { margin: 0; color: var(--muted-2); font-size: 15px; line-height: 1.6; min-height: 3.2em; }
+  .hub-info-title, .hub-info-desc { transition: opacity .18s; }
+  .hub-content.swap .hub-info-title, .hub-content.swap .hub-info-desc { opacity: 0; }
+
+  /* celular: central em cima, itens em lista */
+  @media (max-width: 640px) {
+    .hub-visual { aspect-ratio: auto; display: flex; flex-direction: column; align-items: stretch; gap: 10px; padding: 22px 16px; }
+    .hub-svg { display: none; }
+    .hub-center { position: relative; left: auto; top: auto; transform: none; margin: 0 auto 8px; }
+    .hub-node { position: relative; left: auto !important; top: auto !important; transform: none; width: auto; }
+    @keyframes hubNode { from { opacity: 0; transform: translateY(10px); } }
+    .hub-content { padding: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hub-pulse, .hub-ring, .hub-node, .hub-card { animation: none !important; }
+  }
 </style>
 <link rel="stylesheet" href="assets/efeitos.css">
 </head>
 <body>
 <script>
+  // index.html#ac1 / #ac2 / #ac3 abre direto no lobby do AC (sem a tela inicial)
+  (function () {
+    var m = /^#(ac[123])$/.exec(location.hash);
+    if (!m) return;
+    document.body.classList.add('detail-view');
+    document.addEventListener('DOMContentLoaded', function () { selectSection(m[1]); });
+  })();
   try { if (localStorage.getItem('sidebarHidden') === '1') { document.body.classList.add('sidebar-hidden','no-transition'); requestAnimationFrame(() => document.body.classList.remove('no-transition')); } } catch (e) {}
 </script>
 
 <!-- Tela inicial: 7º Período + AC 1, 2, 3 + ECG -->
 <section class="landing" id="landing">
   <div class="landing-inner">
-    <h1 class="landing-title">7º Período</h1>
+    <h1 class="ct-title" data-lines="Thiago|7º Período"><span class="sr-only">Thiago · 7º Período</span><canvas aria-hidden="true"></canvas></h1>
     <div class="landing-sub">Central de Estudos</div>
-    <div class="ac-grid">
-      <button class="ac-btn" onclick="openAC('ac1')">
-        <div class="ac-tag">AC</div>
-        <div class="ac-num">1</div>
-        <div class="ac-caption">Materiais · Flash Cards · Simulados</div>
-      </button>
-      <button class="ac-btn" onclick="openAC('ac2')">
-        <div class="ac-tag">AC</div>
-        <div class="ac-num">2</div>
-        <div class="ac-caption">Materiais · Flash Cards · Simulados</div>
-      </button>
-      <button class="ac-btn" onclick="openAC('ac3')">
-        <div class="ac-tag">AC</div>
-        <div class="ac-num">3</div>
-        <div class="ac-caption">Materiais · Flash Cards</div>
-      </button>
-      <a class="ac-btn ecg-btn" href="ecg.html">
-        <div class="ac-tag">Guia</div>
-        <div class="ecg-mark" aria-hidden="true">
-          <svg viewBox="0 0 120 48" preserveAspectRatio="none"><path d="M0 26 H30 L36 20 L42 26 H50 L54 30 L60 4 L66 44 L70 26 H82 Q90 14 98 26 H120"/></svg>
+    <div class="xcards bg-collage" id="xcards">
+      <div class="xcard has-photo x-ac1 active" tabindex="0" role="button" data-go="openAC('ac1')" aria-label="AC 1">
+        <div class="xbg">
+          <div class="x-photo"><img src="assets/inicio/ac1.jpg" alt="Monitor multiparamétrico em centro cirúrgico" style="object-position:50% 28%" decoding="async"></div>
+          <div class="x-collage"><img src="assets/materiais_ac1/fluxogramas/page-01.png" alt="" loading="lazy" decoding="async"><img src="assets/materiais_ac1/diagnostico/page-01.png" alt="" loading="lazy" decoding="async"><img src="assets/materiais_ac1/fluxogramas/page-03.png" alt="" loading="lazy" decoding="async"></div>
+          <div class="x-giant" aria-hidden="true">1</div>
+          <div class="x-bigicon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></svg></div>
         </div>
-        <div class="ac-num ecg-word">ECG</div>
-        <div class="ac-caption"><span class="meta">24 capítulos · 98 traçados</span></div>
-      </a>
+        <div class="xshade"></div>
+        <div class="xvert"><span class="xvert-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></svg></span><span>AC 1</span></div>
+        <div class="xcontent">
+          <div class="xtag">AC</div>
+          <h2 class="xtitle">1</h2>
+          <p class="xdesc">Cardiologia, nefrologia, pneumologia e gastro: hipertensão, insuficiência cardíaca, IRA, asma, DPOC, DRGE e mais.</p>
+          <div class="xstats"><span><b>2 documentos</b>Materiais</span><span><b>615 cards</b>Flash Cards</span><span><b>50 questões</b>Simulado</span></div>
+          <span class="xgo">Entrar <span aria-hidden="true">→</span></span>
+        </div>
+      </div>
+      <div class="xcard has-photo x-ac2" tabindex="0" role="button" data-go="openAC('ac2')" aria-label="AC 2">
+        <div class="xbg">
+          <div class="x-photo"><img src="assets/inicio/ac2.jpg" alt="Soros e bomba de infusão no leito" style="object-position:50% 22%" decoding="async"></div>
+          <div class="x-collage"><img src="assets/materiais/hepatites/page-01.png" alt="" loading="lazy" decoding="async"><img src="assets/materiais/tep/page-01.png" alt="" loading="lazy" decoding="async"><img src="assets/materiais/cirrose/page-01.png" alt="" loading="lazy" decoding="async"></div>
+          <div class="x-giant" aria-hidden="true">2</div>
+          <div class="x-bigicon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></svg></div>
+        </div>
+        <div class="xshade"></div>
+        <div class="xvert"><span class="xvert-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></svg></span><span>AC 2</span></div>
+        <div class="xcontent">
+          <div class="xtag">AC</div>
+          <h2 class="xtitle">2</h2>
+          <p class="xdesc">Hepatites, TEP, cirrose, tuberculose, pancreatite, DRC, histoplasmose, valvulopatias e diabetes.</p>
+          <div class="xstats"><span><b>14 resumos</b>Materiais</span><span><b>1014 cards</b>Flash Cards</span><span><b>2 + 10 provas</b>Simulados</span></div>
+          <span class="xgo">Entrar <span aria-hidden="true">→</span></span>
+        </div>
+      </div>
+      <div class="xcard has-photo x-ac3" tabindex="0" role="button" data-go="openAC('ac3')" aria-label="AC 3">
+        <div class="xbg">
+          <div class="x-photo"><img src="assets/inicio/ac3.jpg" alt="Paciente internada com bomba de infusão" style="object-position:50% 40%" decoding="async"></div>
+          <div class="x-collage"><img src="assets/materiais_ac3/diarreia-aguda/page-01.png" alt="" loading="lazy" decoding="async"><img src="assets/materiais_ac3/diarreia-cronica-cdi/page-01.png" alt="" loading="lazy" decoding="async"><img src="assets/materiais_ac3/diarreia-aguda/page-05.png" alt="" loading="lazy" decoding="async"></div>
+          <div class="x-giant" aria-hidden="true">3</div>
+          <div class="x-bigicon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2v2"/><path d="M5 2v2"/><path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1"/><path d="M8 15a6 6 0 0 0 12 0v-3"/><circle cx="20" cy="10" r="2"/></svg></div>
+        </div>
+        <div class="xshade"></div>
+        <div class="xvert"><span class="xvert-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2v2"/><path d="M5 2v2"/><path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1"/><path d="M8 15a6 6 0 0 0 12 0v-3"/><circle cx="20" cy="10" r="2"/></svg></span><span>AC 3</span></div>
+        <div class="xcontent">
+          <div class="xtag">AC</div>
+          <h2 class="xtitle">3</h2>
+          <p class="xdesc">Começando agora: diarreia aguda, diarreia crônica e infecção por C. difficile.</p>
+          <div class="xstats"><span><b>2 resumos</b>Materiais</span><span><b>154 cards</b>Flash Cards</span></div>
+          <span class="xgo">Entrar <span aria-hidden="true">→</span></span>
+        </div>
+      </div>
+      <div class="xcard has-photo x-ecg" tabindex="0" role="button" data-go="location.href='ecg.html'" aria-label="ECG">
+        <div class="xbg">
+          <div class="x-photo"><img src="assets/inicio/ecg.jpg" alt="Monitor com traçado em papel quadriculado" style="object-position:50% 62%" decoding="async"></div>
+          <div class="x-collage"><img src="assets/ecg/litfl-bav-2-1.jpg" alt="" loading="lazy" decoding="async"><img src="assets/ecg/litfl-aneurisma-ve.jpg" alt="" loading="lazy" decoding="async"><img src="assets/ecg/litfl-ECG-strip-bifid-P-wave-p-mitrale.jpg" alt="" loading="lazy" decoding="async"></div>
+          <div class="x-giant" aria-hidden="true">ECG</div>
+          <div class="x-bigicon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg></div>
+        </div>
+        <div class="xshade"></div>
+        <div class="xvert"><span class="xvert-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg></span><span>ECG</span></div>
+        <div class="xcontent">
+          <div class="xtag">Guia</div>
+          <h2 class="xtitle">ECG</h2>
+          <p class="xdesc">Guia completo de eletrocardiograma, do traçado normal às arritmias, com traçados reais comentados.</p>
+          <div class="xstats"><span><b>24</b>Capítulos</span><span><b>98</b>Traçados</span></div>
+          <span class="xgo">Entrar <span aria-hidden="true">→</span></span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -891,7 +1262,7 @@
     </button>
     <button class="nav-item active" data-section="ac2" onclick="selectSection('ac2')">
       <span>AC 2</span>
-      <span class="badge">3</span>
+      <span class="badge">4</span>
     </button>
     <button class="nav-item" data-section="ac3" onclick="selectSection('ac3')">
       <span>AC 3</span>
@@ -923,38 +1294,27 @@
       <div class="chip">3 seções</div>
     </div>
 
-    <div class="hex-stage">
-      <div class="hex-grid">
-      <a href="materiais_ac1.html" class="hex h-mat" data-title="Materiais" data-desc="Fluxogramas terapêuticos e guia de diagnóstico e tratamento integrados dos temas de AC 1.">
-        <span class="hex-shape"><span class="hex-inner">
-          <span class="hex-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-          <span class="hex-title">Materiais</span>
-          <span class="meta">2 documentos · 16 páginas</span>
-          <span class="hex-go">Abrir <span aria-hidden="true">→</span></span>
-        </span></span>
-      </a>
-      <a href="AC1.html" class="hex h-flash" data-title="Flash Cards" data-desc="Revisão ativa por tema, com efeito de baralho, som e classificação de desempenho ao final.">
-        <span class="hex-shape"><span class="hex-inner">
-          <span class="hex-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="16" rx="2"/><path d="M7 3h14v16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/></svg></span>
-          <span class="hex-title">Flash Cards</span>
-          <span class="meta">15 temas · 615 cards</span>
-          <span class="hex-go">Abrir <span aria-hidden="true">→</span></span>
-        </span></span>
-      </a>
-      <a href="simulado_ac1.html" class="hex h-sim" data-title="Simulados" data-desc="Questões de caso clínico com gabarito comentado, feedback imediato de acerto/erro e desempenho ao final.">
-        <span class="hex-shape"><span class="hex-inner">
-          <span class="hex-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3l8 -8"/><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"/></svg></span>
-          <span class="hex-title">Simulados</span>
-          <span class="meta">50 questões</span>
-          <span class="hex-go">Abrir <span aria-hidden="true">→</span></span>
-        </span></span>
-      </a>
+    <div class="hub-card">
+      <div class="hub-visual">
+        <svg class="hub-svg" viewBox="0 0 564 410" fill="none" aria-hidden="true"><path class="hub-line" d="M 268 205 V 107 Q 268 92 253 92 H 118"/><path class="hub-pulse" data-i="0" d="M 268 205 V 107 Q 268 92 253 92 H 118" stroke="url(#g-ac1-0)" style="animation-delay:-0.0s"/><linearGradient id="g-ac1-0" gradientUnits="userSpaceOnUse" x1="98" x2="302" y1="0" y2="0"><stop offset="0" stop-color="var(--accent-2)" stop-opacity="0"/><stop offset=".5" stop-color="var(--accent-2)"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient><path class="hub-line" d="M 312 205 H 462"/><path class="hub-pulse" data-i="1" d="M 312 205 H 462" stroke="url(#g-ac1-1)" style="animation-delay:-1.3s"/><linearGradient id="g-ac1-1" gradientUnits="userSpaceOnUse" x1="262" x2="482" y1="0" y2="0"><stop offset="0" stop-color="var(--accent-2)" stop-opacity="0"/><stop offset=".5" stop-color="var(--accent-2)"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient><path class="hub-line" d="M 296 220 V 323 Q 296 338 311 338 H 420"/><path class="hub-pulse" data-i="2" d="M 296 220 V 323 Q 296 338 311 338 H 420" stroke="url(#g-ac1-2)" style="animation-delay:-2.6s"/><linearGradient id="g-ac1-2" gradientUnits="userSpaceOnUse" x1="262" x2="440" y1="0" y2="0"><stop offset="0" stop-color="var(--accent-2)" stop-opacity="0"/><stop offset=".5" stop-color="var(--accent-2)"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient></svg>
+        <div class="hub-center"><span class="hub-center-tag">AC</span><span class="hub-center-num">1</span><span class="hub-ring"></span></div>
+        <a class="hub-node" href="materiais_ac1.html" data-i="0" data-title="Materiais" data-desc="Fluxogramas terapêuticos e guia de diagnóstico e tratamento integrados dos temas de AC 1." style="left:20.92%;top:22.44%;--d:0.15s">
+          <span class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+          <span class="hub-text"><span class="hub-title">Materiais</span><span class="meta">2 documentos · 16 páginas</span></span>
+        </a>
+        <a class="hub-node" href="AC1.html" data-i="1" data-title="Flash Cards" data-desc="Revisão ativa por tema, com efeito de baralho, som e classificação de desempenho ao final." style="left:81.91%;top:50.00%;--d:0.27s">
+          <span class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="16" rx="2"/><path d="M7 3h14v16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/></svg></span>
+          <span class="hub-text"><span class="hub-title">Flash Cards</span><span class="meta">15 temas · 615 cards</span></span>
+        </a>
+        <a class="hub-node" href="simulado_ac1.html" data-i="2" data-title="Simulados" data-desc="Questões de caso clínico com gabarito comentado, feedback imediato de acerto/erro e desempenho ao final." style="left:74.47%;top:82.44%;--d:0.39s">
+          <span class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3l8 -8"/><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"/></svg></span>
+          <span class="hub-text"><span class="hub-title">Simulados</span><span class="meta">50 questões</span></span>
+        </a>
       </div>
-      <aside class="hex-info" aria-live="polite">
-        <div class="hex-info-kicker">AC 1</div>
-        <div class="hex-info-title">Materiais, Flash Cards e Simulados</div>
-        <p class="hex-info-desc">Passe o mouse sobre um hexágono para ver o que tem dentro, ou toque para abrir.</p>
-      </aside>
+      <div class="hub-content">
+        <h3 class="hub-info-title">Materiais, Flash Cards e Simulados</h3>
+        <p class="hub-info-desc">Passe o mouse sobre um item para ver o que tem dentro, ou toque para abrir.</p>
+      </div>
     </div>
   </section>
 
@@ -964,41 +1324,34 @@
         <div class="section-title">AC 2</div>
         <div class="section-sub">Escolha uma área para começar</div>
       </div>
-      <div class="chip">3 seções</div>
+      <div class="chip">4 seções</div>
     </div>
 
-    <div class="hex-stage">
-      <div class="hex-grid">
-      <a href="materiais.html" class="hex h-mat" data-title="Materiais" data-desc="Resumos integrados por tutoria: quadro clínico, diagnóstico, tratamento e diagnóstico diferencial.">
-        <span class="hex-shape"><span class="hex-inner">
-          <span class="hex-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-          <span class="hex-title">Materiais</span>
-          <span class="meta">10 tutorias + 4 conferências · 457 páginas</span>
-          <span class="hex-go">Abrir <span aria-hidden="true">→</span></span>
-        </span></span>
-      </a>
-      <a href="AC2.html" class="hex h-flash" data-title="Flash Cards" data-desc="Revisão ativa por tema, com efeito de baralho, som e classificação de desempenho ao final.">
-        <span class="hex-shape"><span class="hex-inner">
-          <span class="hex-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="16" rx="2"/><path d="M7 3h14v16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/></svg></span>
-          <span class="hex-title">Flash Cards</span>
-          <span class="meta">13 temas + revisão final · 1014 cards</span>
-          <span class="hex-go">Abrir <span aria-hidden="true">→</span></span>
-        </span></span>
-      </a>
-      <a href="simulado_ac2.html" class="hex h-sim" data-title="Simulados" data-desc="Questões de caso clínico com gabarito comentado, feedback imediato de acerto/erro e desempenho ao final. São 2 simulados completos de 50 questões, mais as provas individuais de cada matéria (100 questões).">
-        <span class="hex-shape"><span class="hex-inner">
-          <span class="hex-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3l8 -8"/><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"/></svg></span>
-          <span class="hex-title">Simulados</span>
-          <span class="meta">2 simulados (100 questões) + 10 provas</span>
-          <span class="hex-go">Abrir <span aria-hidden="true">→</span></span>
-        </span></span>
-      </a>
+    <div class="hub-card">
+      <div class="hub-visual">
+        <svg class="hub-svg" viewBox="0 0 564 410" fill="none" aria-hidden="true"><path class="hub-line" d="M 268 205 V 107 Q 268 92 253 92 H 118"/><path class="hub-pulse" data-i="0" d="M 268 205 V 107 Q 268 92 253 92 H 118" stroke="url(#g-ac2-0)" style="animation-delay:-0.0s"/><linearGradient id="g-ac2-0" gradientUnits="userSpaceOnUse" x1="98" x2="302" y1="0" y2="0"><stop offset="0" stop-color="var(--accent-2)" stop-opacity="0"/><stop offset=".5" stop-color="var(--accent-2)"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient><path class="hub-line" d="M 296 205 V 107 Q 296 92 311 92 H 446"/><path class="hub-pulse" data-i="1" d="M 296 205 V 107 Q 296 92 311 92 H 446" stroke="url(#g-ac2-1)" style="animation-delay:-1.3s"/><linearGradient id="g-ac2-1" gradientUnits="userSpaceOnUse" x1="262" x2="466" y1="0" y2="0"><stop offset="0" stop-color="var(--accent-2)" stop-opacity="0"/><stop offset=".5" stop-color="var(--accent-2)"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient><path class="hub-line" d="M 268 220 V 303 Q 268 318 253 318 H 118"/><path class="hub-pulse" data-i="2" d="M 268 220 V 303 Q 268 318 253 318 H 118" stroke="url(#g-ac2-2)" style="animation-delay:-2.6s"/><linearGradient id="g-ac2-2" gradientUnits="userSpaceOnUse" x1="98" x2="302" y1="0" y2="0"><stop offset="0" stop-color="var(--accent-2)" stop-opacity="0"/><stop offset=".5" stop-color="var(--accent-2)"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient><path class="hub-line" d="M 296 220 V 303 Q 296 318 311 318 H 446"/><path class="hub-pulse" data-i="3" d="M 296 220 V 303 Q 296 318 311 318 H 446" stroke="url(#g-ac2-3)" style="animation-delay:-3.9s"/><linearGradient id="g-ac2-3" gradientUnits="userSpaceOnUse" x1="262" x2="466" y1="0" y2="0"><stop offset="0" stop-color="var(--accent-2)" stop-opacity="0"/><stop offset=".5" stop-color="var(--accent-2)"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient></svg>
+        <div class="hub-center"><span class="hub-center-tag">AC</span><span class="hub-center-num">2</span><span class="hub-ring"></span></div>
+        <a class="hub-node" href="materiais.html" data-i="0" data-title="Materiais" data-desc="Resumos integrados por tutoria: quadro clínico, diagnóstico, tratamento e diagnóstico diferencial." style="left:20.92%;top:22.44%;--d:0.15s">
+          <span class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+          <span class="hub-text"><span class="hub-title">Materiais</span><span class="meta">10 tutorias + 4 conferências · 457 páginas</span></span>
+        </a>
+        <a class="hub-node" href="AC2.html" data-i="1" data-title="Flash Cards" data-desc="Revisão ativa por tema, com efeito de baralho, som e classificação de desempenho ao final." style="left:79.08%;top:22.44%;--d:0.27s">
+          <span class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="16" rx="2"/><path d="M7 3h14v16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/></svg></span>
+          <span class="hub-text"><span class="hub-title">Flash Cards</span><span class="meta">13 temas + revisão final · 1014 cards</span></span>
+        </a>
+        <a class="hub-node" href="simulado_ac2.html" data-i="2" data-title="Simulados" data-desc="Dois simulados completos de 50 questões, com gabarito comentado e relatório de desempenho por tema." style="left:20.92%;top:77.56%;--d:0.39s">
+          <span class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3l8 -8"/><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"/></svg></span>
+          <span class="hub-text"><span class="hub-title">Simulados</span><span class="meta">2 simulados · 100 questões</span></span>
+        </a>
+        <a class="hub-node" href="provas_ac2.html" data-i="3" data-title="Provas" data-desc="Provas individuais de cada matéria, com relatório final dos subtemas que você precisa revisar." style="left:79.08%;top:77.56%;--d:0.51s">
+          <span class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg></span>
+          <span class="hub-text"><span class="hub-title">Provas</span><span class="meta">10 provas · 100 questões</span></span>
+        </a>
       </div>
-      <aside class="hex-info" aria-live="polite">
-        <div class="hex-info-kicker">AC 2</div>
-        <div class="hex-info-title">Materiais, Flash Cards e Simulados</div>
-        <p class="hex-info-desc">Passe o mouse sobre um hexágono para ver o que tem dentro, ou toque para abrir.</p>
-      </aside>
+      <div class="hub-content">
+        <h3 class="hub-info-title">Materiais, Flash Cards, Simulados e Provas</h3>
+        <p class="hub-info-desc">Passe o mouse sobre um item para ver o que tem dentro, ou toque para abrir.</p>
+      </div>
     </div>
   </section>
 
@@ -1011,44 +1364,34 @@
       <div class="chip">3 seções</div>
     </div>
 
-    <div class="hex-stage">
-      <div class="hex-grid">
-      <a href="materiais_ac3.html" class="hex h-mat" data-title="Materiais" data-desc="Resumos integrados por tutoria: quadro clínico, diagnóstico, tratamento e diagnóstico diferencial.">
-        <span class="hex-shape"><span class="hex-inner">
-          <span class="hex-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-          <span class="hex-title">Materiais</span>
-          <span class="meta">2 tutorias · 51 páginas</span>
-          <span class="hex-go">Abrir <span aria-hidden="true">→</span></span>
-        </span></span>
-      </a>
-      <a href="AC3.html" class="hex h-flash" data-title="Flash Cards" data-desc="Revisão ativa por tema, com efeito de baralho, som e classificação de desempenho ao final.">
-        <span class="hex-shape"><span class="hex-inner">
-          <span class="hex-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="16" rx="2"/><path d="M7 3h14v16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/></svg></span>
-          <span class="hex-title">Flash Cards</span>
-          <span class="meta">2 temas · 154 cards</span>
-          <span class="hex-go">Abrir <span aria-hidden="true">→</span></span>
-        </span></span>
-      </a>
-      <a href="#" class="hex h-sim soon" onclick="return alertSoon()" data-title="Simulados" data-desc="Ainda não há simulado do AC 3. Ele aparece aqui assim que for adicionado.">
-        <span class="hex-shape"><span class="hex-inner">
-          <span class="hex-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3l8 -8"/><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"/></svg></span>
-          <span class="hex-title">Simulados</span>
-          <span class="meta">Em breve</span>
-          <span class="hex-go">Abrir <span aria-hidden="true">→</span></span>
-        </span></span>
-      </a>
+    <div class="hub-card">
+      <div class="hub-visual">
+        <svg class="hub-svg" viewBox="0 0 564 410" fill="none" aria-hidden="true"><path class="hub-line" d="M 268 205 V 107 Q 268 92 253 92 H 118"/><path class="hub-pulse" data-i="0" d="M 268 205 V 107 Q 268 92 253 92 H 118" stroke="url(#g-ac3-0)" style="animation-delay:-0.0s"/><linearGradient id="g-ac3-0" gradientUnits="userSpaceOnUse" x1="98" x2="302" y1="0" y2="0"><stop offset="0" stop-color="var(--accent-2)" stop-opacity="0"/><stop offset=".5" stop-color="var(--accent-2)"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient><path class="hub-line" d="M 312 205 H 462"/><path class="hub-pulse" data-i="1" d="M 312 205 H 462" stroke="url(#g-ac3-1)" style="animation-delay:-1.3s"/><linearGradient id="g-ac3-1" gradientUnits="userSpaceOnUse" x1="262" x2="482" y1="0" y2="0"><stop offset="0" stop-color="var(--accent-2)" stop-opacity="0"/><stop offset=".5" stop-color="var(--accent-2)"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient><path class="hub-line" d="M 296 220 V 323 Q 296 338 311 338 H 420"/><path class="hub-pulse" data-i="2" d="M 296 220 V 323 Q 296 338 311 338 H 420" stroke="url(#g-ac3-2)" style="animation-delay:-2.6s"/><linearGradient id="g-ac3-2" gradientUnits="userSpaceOnUse" x1="262" x2="440" y1="0" y2="0"><stop offset="0" stop-color="var(--accent-2)" stop-opacity="0"/><stop offset=".5" stop-color="var(--accent-2)"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient></svg>
+        <div class="hub-center"><span class="hub-center-tag">AC</span><span class="hub-center-num">3</span><span class="hub-ring"></span></div>
+        <a class="hub-node" href="materiais_ac3.html" data-i="0" data-title="Materiais" data-desc="Resumos integrados por tutoria: quadro clínico, diagnóstico, tratamento e diagnóstico diferencial." style="left:20.92%;top:22.44%;--d:0.15s">
+          <span class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+          <span class="hub-text"><span class="hub-title">Materiais</span><span class="meta">2 tutorias · 51 páginas</span></span>
+        </a>
+        <a class="hub-node" href="AC3.html" data-i="1" data-title="Flash Cards" data-desc="Revisão ativa por tema, com efeito de baralho, som e classificação de desempenho ao final." style="left:81.91%;top:50.00%;--d:0.27s">
+          <span class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="16" rx="2"/><path d="M7 3h14v16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/></svg></span>
+          <span class="hub-text"><span class="hub-title">Flash Cards</span><span class="meta">2 temas · 154 cards</span></span>
+        </a>
+        <a class="hub-node soon" href="#" onclick="return alertSoon()" aria-disabled="true" data-i="2" data-title="Simulados" data-desc="Ainda não há simulado do AC 3. Ele aparece aqui assim que for adicionado." style="left:74.47%;top:82.44%;--d:0.39s">
+          <span class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3l8 -8"/><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"/></svg></span>
+          <span class="hub-text"><span class="hub-title">Simulados</span><span class="meta">Em breve</span></span>
+        </a>
       </div>
-      <aside class="hex-info" aria-live="polite">
-        <div class="hex-info-kicker">AC 3</div>
-        <div class="hex-info-title">Materiais, Flash Cards e Simulados</div>
-        <p class="hex-info-desc">Passe o mouse sobre um hexágono para ver o que tem dentro, ou toque para abrir.</p>
-      </aside>
+      <div class="hub-content">
+        <h3 class="hub-info-title">Materiais, Flash Cards e Simulados</h3>
+        <p class="hub-info-desc">Passe o mouse sobre um item para ver o que tem dentro, ou toque para abrir.</p>
+      </div>
     </div>
   </section>
 </main>
 
 <script>
   function selectSection(id) {
+    if (document.body.classList.contains('detail-view') && location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
     document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.section === id));
     document.querySelectorAll('.ac-section').forEach(s => s.hidden = (s.id !== 'section-' + id));
   }
@@ -1061,6 +1404,7 @@
       landing.hidden = true;
       landing.classList.remove('exit');
       document.body.classList.add('detail-view');
+      history.pushState(null, '', '#' + id);
       selectSection(id);
       window.scrollTo({top: 0, behavior: 'instant'});
     }, 300);
@@ -1068,6 +1412,7 @@
 
   function backToLanding() {
     const landing = document.getElementById('landing');
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
     document.body.classList.remove('detail-view');
     if (landing) landing.hidden = false;
     window.scrollTo({top: 0, behavior: 'instant'});
@@ -1083,6 +1428,12 @@
       if (tag === 'input' || tag === 'textarea' || (t && t.isContentEditable)) return;
       toggleSidebar();
     }
+  });
+
+  window.addEventListener('popstate', () => {
+    const m = /^#(ac[123])$/.exec(location.hash);
+    if (m) { document.body.classList.add('detail-view'); const l = document.getElementById('landing'); if (l) l.hidden = true; selectSection(m[1]); }
+    else backToLanding();
   });
 
   function alertSoon(name) {
@@ -1146,6 +1497,61 @@
     stage.querySelector('.hex-grid').addEventListener('mouseleave', () => show(null));
   });
 </script>
+<script>
+  /* Tela inicial: cartões que se expandem */
+  (function () {
+    const wrap = document.getElementById('xcards');
+    if (!wrap) return;
+    const cards = [...wrap.querySelectorAll('.xcard')];
+    const canHover = window.matchMedia('(hover: hover)').matches;
+    // opção de fundo para comparação: index.html?fundo=collage|giant|icon|mix
+    const fundo = new URLSearchParams(location.search).get('fundo');
+    if (fundo) wrap.className = 'xcards bg-' + fundo;
+    function activate(c) { cards.forEach(x => x.classList.toggle('active', x === c)); }
+    const ativo = +new URLSearchParams(location.search).get('ativo');
+    if (ativo && cards[ativo - 1]) activate(cards[ativo - 1]);
+    function go(c) {
+      wrap.classList.add('exit'); c.classList.add('chosen');
+      setTimeout(() => { wrap.classList.remove('exit'); c.classList.remove('chosen'); new Function(c.dataset.go)(); }, 260);
+    }
+    cards.forEach(c => {
+      if (canHover) c.addEventListener('mouseenter', () => activate(c));
+      // no toque, o 1º toque só abre o cartão; o 2º entra
+      let wasActive = false;
+      c.addEventListener('pointerdown', () => { wasActive = c.classList.contains('active'); });
+      c.addEventListener('focus', () => activate(c));
+      c.addEventListener('click', e => { if (wasActive || (canHover && e.pointerType !== 'touch')) go(c); else activate(c); wasActive = false; });
+      c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(c); } });
+    });
+  })();
+</script>
+<script>
+  /* Dentro da AC: ao passar o mouse num item, a linha dele acende e o texto embaixo muda */
+  document.querySelectorAll('.hub-card').forEach(card => {
+    const content = card.querySelector('.hub-content');
+    const title = card.querySelector('.hub-info-title');
+    const desc = card.querySelector('.hub-info-desc');
+    const intro = { t: title.textContent, d: desc.textContent };
+    let cur = null;
+    function show(node) {
+      if (node === cur) return;
+      cur = node;
+      card.querySelectorAll('.hub-pulse').forEach(p => p.classList.toggle('on', !!node && p.dataset.i === node.dataset.i));
+      content.classList.add('swap');
+      setTimeout(() => {
+        title.textContent = node ? node.dataset.title : intro.t;
+        desc.textContent = node ? node.dataset.desc : intro.d;
+        content.classList.remove('swap');
+      }, 160);
+    }
+    card.querySelectorAll('.hub-node').forEach(n => {
+      n.addEventListener('mouseenter', () => show(n));
+      n.addEventListener('focus', () => show(n));
+    });
+    card.querySelector('.hub-visual').addEventListener('mouseleave', () => show(null));
+  });
+</script>
+<script src="assets/canvas-text.js"></script>
 <script src="assets/efeitos.js"></script>
 </body>
 </html>

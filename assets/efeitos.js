@@ -559,3 +559,64 @@
     }, true);
   }
 })();
+
+/* =========================================================
+   Fundo: o quadradinho da grade sob o mouse acende e apaga devagar
+   (grade de 56 px, a mesma do fundo em efeitos.css)
+   ========================================================= */
+(function () {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var GRID = 56, FADE = 900;            // tamanho da célula e tempo para apagar (ms)
+  var cv = document.createElement('canvas');
+  cv.className = 'fx-grid-hover';
+  cv.setAttribute('aria-hidden', 'true');
+  var ctx = cv.getContext('2d');
+  var cells = new Map();                // "col,lin" -> momento em que acendeu
+  var running = false, dpr = 1, last = '';
+
+  function size() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(innerWidth * dpr); cv.height = Math.round(innerHeight * dpr);
+    cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px';
+  }
+  // a tela inicial é uma camada por cima de tudo: o canvas vai junto com ela
+  function host() {
+    var l = document.getElementById('landing');
+    var inLanding = l && !l.hidden && !document.body.classList.contains('detail-view');
+    var target = inLanding ? l : document.body;
+    if (cv.parentNode !== target) target.insertBefore(cv, target.firstChild);
+  }
+  function accent() {
+    return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#3b82f6';
+  }
+  function draw(now) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    var color = accent();
+    cells.forEach(function (t, key) {
+      var a = 1 - (now - t) / FADE;
+      if (a <= 0) { cells.delete(key); return; }
+      var p = key.split(','), x = p[0] * GRID, y = p[1] * GRID;
+      ctx.globalAlpha = a * 0.22;
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, GRID - 1, GRID - 1);
+      ctx.globalAlpha = a * 0.55;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x + 0.5, y + 0.5, GRID - 2, GRID - 2);
+    });
+    ctx.globalAlpha = 1;
+    if (cells.size) requestAnimationFrame(draw); else running = false;
+  }
+  window.addEventListener('mousemove', function (e) {
+    var key = Math.floor(e.clientX / GRID) + ',' + Math.floor(e.clientY / GRID);
+    host();
+    cells.set(key, performance.now());   // a célula atual fica acesa enquanto o mouse está nela
+    if (key !== last) last = key;
+    if (!running) { running = true; requestAnimationFrame(draw); }
+  }, { passive: true });
+  window.addEventListener('resize', size);
+  size();
+  host();
+})();
