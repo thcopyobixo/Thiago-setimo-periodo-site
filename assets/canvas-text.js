@@ -38,7 +38,8 @@
     var t;
     new ResizeObserver(function () {
       if (host.clientWidth === self.W) return;   // só reconstrói se a largura mudar
-      clearTimeout(t); t = setTimeout(function () { self.build(true); }, 120);
+      var first = !self.W;
+      clearTimeout(t); t = setTimeout(function () { self.build(!first); }, first ? 0 : 120);
     }).observe(host);
     host.addEventListener('pointermove', function (e) {
       var r = self.canvas.getBoundingClientRect();
@@ -51,12 +52,14 @@
 
   CanvasText.prototype.build = function (keepSettled) {
     var host = this.host, o = this.o;
+    // título invisível (ex.: index aberto direto num AC): espera aparecer
+    if (!host.clientWidth || !window.innerHeight) { this.ps = this.ps || []; this.W = 0; return; }
     var W = Math.max(1, host.clientWidth);
     // tamanho da fonte: a maior linha ocupa até 92% da largura
     var probe = document.createElement('canvas').getContext('2d');
     probe.font = o.fontWeight + ' 100px ' + o.fontFamily;
     var widest = Math.max.apply(null, this.lines.map(function (l) { return probe.measureText(l).width; }));
-    var fs = Math.min(150, window.innerHeight * 0.115, Math.max(34, (W * 0.92) / widest * 100));
+    var fs = Math.max(34, Math.min(150, window.innerHeight * 0.115, (W * 0.92) / widest * 100));
     var lineH = fs * 1.08;
     var H = Math.ceil(lineH * this.lines.length + fs * 0.35);
     host.style.height = H + 'px';
@@ -115,7 +118,7 @@
   };
 
   CanvasText.prototype.kick = function () {
-    if (this.running || this.reduced || document.hidden) return;
+    if (!this.W || this.running || this.reduced || document.hidden) return;
     this.running = true; this.last = performance.now();
     requestAnimationFrame(this.tick);
   };
@@ -169,6 +172,7 @@
   };
 
   CanvasText.prototype.paint = function () {
+    if (!this.W) return;
     var ctx = this.ctx, ps = this.ps, s = this.particleSize, h = s / 2;
     ctx.clearRect(0, 0, this.W, this.H);
     ctx.fillStyle = this.fill;
