@@ -493,7 +493,7 @@
       <div class="atls-role"><b>📋 Aplicador</b><span>Fica com o aparelho, revela os achados só quando o médico examinar ou pedir e marca o checklist.</span></div>
     </div>`;
   const REGRAS = `<div class="atls-card"><h3>Como a nota é calculada</h3>
-      <p style="font-size:14.5px;color:#cbd5e1">Cada estação vale <b>6,0</b>. Itens valem 0,25, 0,50 ou 0,75 (★ essencial). <b>Adequado</b> = valor inteiro, <b>Parcial</b> = metade, <b>Inadequado</b> = zero.
+      <p style="font-size:14.5px;color:#cbd5e1">Cada estação vale <b>6,0</b>. Itens valem 0,25, 0,50 ou 0,75 (★ essencial). <b>Adequado</b> = valor inteiro, <b>Parcial</b> = metade, <b>Inadequado</b> = zero. A soma dos itens é convertida para 6,0.
       Erro grave <b>⚠</b> tira 3,0 pontos; erro <b>✖</b> (potencialmente fatal) zera a nota. A nota mínima é zero.</p></div>`;
 
   function renderInicio() {
@@ -528,17 +528,18 @@
   // ---- cálculo da nota ----
   function calcular() {
     const c = S.caso;
-    let soma = 0;
+    let soma = 0, total = 0;
     const porBloco = c.blocos.map((b, bi) => {
       let f = 0, max = 0;
       b.itens.forEach((it, ii) => { max += it.v; const n = S.notas[bi + '-' + ii]; if (n) f += it.v * n; });
-      soma += f;
+      soma += f; total += max;
       return { nome: b.titulo, f, max };
     }).filter(x => x.max > 0);
     const nAg = [...S.erros].filter(i => !c.erros[i].z).length;
     const fatal = [...S.erros].some(i => c.erros[i].z);
-    const nota = fatal ? 0 : Math.max(0, soma - 3 * nAg);
-    return { soma, nAg, fatal, nota, porBloco };
+    const conv = total ? soma / total * 6 : 0;   // nota da estação em 6,0
+    const nota = fatal ? 0 : Math.max(0, conv - 3 * nAg);
+    return { soma, total, conv, nAg, fatal, nota, porBloco };
   }
   function atualizarLive() {
     const r = calcular(), el = document.getElementById('live');
@@ -603,7 +604,7 @@
       <h1 class="atls-h1">${esc(c.titulo)}</h1>
       <div class="atls-card"><div class="atls-score">
         <div class="atls-big" style="color:${cor}">${num(r.nota)}<span style="font-size:24px;color:var(--muted-2)"> / 6,0</span></div>
-        <div class="atls-calc">Soma dos itens: <b>${num(r.soma)}</b><br>Erros ⚠: ${r.nAg} × 3,0 = −${num(3 * r.nAg)}${r.fatal ? '<br><span class="atls-zero">Erro ✖ potencialmente fatal: nota zerada</span>' : ''}<br>Tempo: ${fmt(r.tempo)}</div>
+        <div class="atls-calc">Itens: <b>${num(r.soma)}</b> de ${num(r.total)} → <b>${num(r.conv)}</b> em 6,0<br>Erros ⚠: ${r.nAg} × 3,0 = −${num(3 * r.nAg)}${r.fatal ? '<br><span class="atls-zero">Erro ✖ potencialmente fatal: nota zerada</span>' : ''}<br>Tempo: ${fmt(r.tempo)}</div>
       </div></div>
       <div class="atls-card"><h3>Pontuação por etapa</h3><div class="atls-bars">${r.porBloco.map(x => { const p = x.f / x.max * 100;
         return `<div class="atls-barrow"><span class="nm" title="${esc(x.nome)}">${esc(x.nome)}</span><span class="track"><span class="fill ${p < 50 ? 'low' : p < 80 ? 'mid' : ''}" style="width:${p}%"></span></span><span class="n">${num(x.f)}/${num(x.max)}</span></div>`; }).join('')}</div></div>
