@@ -579,6 +579,11 @@
     .card .face { padding: 24px; }
     .keymap { grid-template-columns: repeat(2, 1fr); }
   }
+  /* Barra lateral com rolagem própria; o centro fica fixo na tela */
+  @media (min-width: 901px) {
+    aside.sidebar { height: 100vh; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+    aside.sidebar .tabs { min-height: 0; overscroll-behavior: contain; }
+  }
 </style>
 <link rel="stylesheet" href="assets/efeitos.css">
 </head>
