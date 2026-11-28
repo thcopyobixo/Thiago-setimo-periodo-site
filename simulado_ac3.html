@@ -1,0 +1,2274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulado AC3 · Sétimo Período</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Albert+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --panel: #0f1420;
+    --panel-2: #1a2333;
+    --border: #1e2a44;
+    --border-hover: #2d4166;
+    --accent: #3b82f6;
+    --accent-2: #60a5fa;
+    --accent-3: #1d4ed8;
+    --accent-glow: rgba(59,130,246,.35);
+    --text: #f8fafc;
+    --muted: #64748b;
+    --muted-2: #94a3b8;
+    --ok: #10b981;
+    --ok-glow: rgba(16,185,129,.3);
+    --err: #ef4444;
+    --err-glow: rgba(239,68,68,.3);
+    --warn: #f59e0b;
+    --sidebar-w: 300px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: 'Albert Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "cv02","cv03","cv04","cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(circle at 15% 20%, rgba(59,130,246,.08) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, rgba(29,78,216,.06) 0%, transparent 50%),
+      var(--bg);
+    min-height: 100vh;
+  }
+  [hidden] { display: none !important; }
+
+  aside.sidebar {
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: linear-gradient(180deg, rgba(15,20,32,.6), rgba(0,0,0,.9));
+    border-right: 1px solid var(--border);
+    padding: 60px 20px 24px;
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0;
+    overflow-y: auto;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    transition: transform .35s cubic-bezier(.4,.2,.2,1);
+  }
+  body.sidebar-hidden aside.sidebar { transform: translateX(-100%); }
+  main {
+    margin-left: var(--sidebar-w);
+    transition: margin-left .35s cubic-bezier(.4,.2,.2,1);
+    min-height: 100vh;
+    padding: 48px 60px 80px;
+  }
+  body.sidebar-hidden main { margin-left: 0; }
+  body.no-transition aside.sidebar,
+  body.no-transition main { transition: none !important; }
+
+  .sidebar-toggle {
+    position: fixed;
+    top: 14px; left: 14px;
+    z-index: 100;
+    width: 36px; height: 36px;
+    padding: 0;
+    background: rgba(15,20,32,.85);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted-2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+    backdrop-filter: blur(8px);
+    font-family: inherit;
+  }
+  .sidebar-toggle:hover {
+    color: var(--accent-2); border-color: var(--accent);
+    background: rgba(59,130,246,.15);
+  }
+  .sidebar-toggle svg { transition: transform .35s cubic-bezier(.4,.2,.2,1); }
+  body.sidebar-hidden .sidebar-toggle svg { transform: rotate(180deg); }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted-2); text-decoration: none;
+    font-size: 12px; font-weight: 500; letter-spacing: .5px;
+    padding: 8px 12px; border-radius: 8px;
+    border: 1px solid transparent;
+    align-self: flex-start;
+    transition: all .2s;
+  }
+  .back-link:hover { color: var(--accent-2); background: var(--panel); border-color: var(--border); }
+  .back-link svg { transition: transform .2s; }
+  .back-link:hover svg { transform: translateX(-2px); }
+
+  .brand {
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand h1 {
+    margin: 0; font-family: 'Unbounded', sans-serif;
+    font-size: 30px; letter-spacing: 3px; font-weight: 700;
+    background: linear-gradient(135deg,#60a5fa 0%,#3b82f6 50%,#1d4ed8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1;
+  }
+  .brand .sub {
+    color: var(--muted); font-size: 10px;
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-top: 8px; font-weight: 500;
+  }
+
+  /* Overview of questions in sidebar */
+  .q-list-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); padding: 0 12px 10px; font-weight: 600;
+  }
+  .q-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    padding: 0 4px 20px;
+  }
+  .q-cell {
+    width: 100%; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px; font-weight: 600;
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--muted-2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .q-cell:hover { border-color: var(--border-hover); color: var(--text); }
+  .q-cell.current { background: linear-gradient(135deg, var(--accent-3), var(--accent)); color:#fff; border-color: transparent; box-shadow: 0 4px 12px var(--accent-glow); }
+  .q-cell.correct { background: rgba(16,185,129,.15); color: var(--ok); border-color: var(--ok); }
+  .q-cell.wrong { background: rgba(239,68,68,.15); color: var(--err); border-color: var(--err); }
+  .q-cell.current.correct { background: var(--ok); color: #fff; box-shadow: 0 4px 12px var(--ok-glow); }
+  .q-cell.current.wrong { background: var(--err); color: #fff; box-shadow: 0 4px 12px var(--err-glow); }
+
+  /* Main content */
+  .toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+  }
+  .crumb {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent-2);
+    font-weight: 600;
+  }
+  .actions { display: flex; gap: 8px; }
+  .btn {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 16px; border-radius: 10px;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .btn:hover { background: var(--panel-2); border-color: var(--border-hover); }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; border-color: transparent; font-weight: 600;
+    box-shadow: 0 8px 20px var(--accent-glow);
+  }
+  .btn.primary:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: .35; cursor: not-allowed; }
+
+  .progress-bar {
+    height: 4px; background: var(--panel);
+    border-radius: 999px; overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-3), var(--accent), var(--accent-2));
+    transition: width .3s ease;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .question-card {
+    max-width: 820px;
+    margin: 0 auto;
+    animation: fadeUp .35s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .q-number {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(59,130,246,.12);
+    border: 1px solid rgba(59,130,246,.35);
+    border-radius: 999px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-2);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .q-enun {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #e2e8f0;
+    margin-bottom: 28px;
+    background: linear-gradient(145deg, #0f1420, #0a0e18);
+    border: 1px solid var(--border);
+    padding: 24px 28px;
+    border-radius: 14px;
+  }
+
+  .alts { display: flex; flex-direction: column; gap: 10px; }
+  .alt {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: linear-gradient(145deg, #0f1420, #0a0e18);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .2s cubic-bezier(.34,1.2,.64,1);
+    text-align: left;
+    font-family: inherit;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.55;
+    width: 100%;
+  }
+  .alt:hover:not(:disabled) {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(59,130,246,.15);
+  }
+  .alt:disabled { cursor: default; }
+  .alt-key {
+    flex-shrink: 0;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent-2);
+    transition: all .2s;
+  }
+  .alt:hover:not(:disabled) .alt-key { background: var(--accent); color: #fff; border-color: transparent; }
+  .alt-text { flex: 1; }
+  .alt.selected { border-color: var(--accent); background: rgba(59,130,246,.08); }
+  .alt.selected .alt-key { background: var(--accent); color: #fff; border-color: transparent; }
+  .alt.correct-alt {
+    border-color: var(--ok);
+    background: rgba(16,185,129,.1);
+    box-shadow: 0 0 0 1px var(--ok), 0 8px 20px var(--ok-glow);
+  }
+  .alt.correct-alt .alt-key { background: var(--ok); color: #fff; border-color: transparent; }
+  .alt.wrong-alt {
+    border-color: var(--err);
+    background: rgba(239,68,68,.08);
+    box-shadow: 0 0 0 1px var(--err);
+  }
+  .alt.wrong-alt .alt-key { background: var(--err); color: #fff; border-color: transparent; }
+  .alt-badge {
+    margin-left: 8px;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 999px;
+    letter-spacing: 1px; text-transform: uppercase;
+    font-family: 'Unbounded', sans-serif;
+  }
+  .alt.correct-alt .alt-badge {
+    background: var(--ok); color: #fff;
+  }
+  .alt.wrong-alt .alt-badge {
+    background: var(--err); color: #fff;
+  }
+
+  .confirm-wrap {
+    margin-top: 24px;
+    display: flex; justify-content: center;
+  }
+  .btn-confirm {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff;
+    border: 1px solid transparent;
+    padding: 14px 32px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: .3px;
+    box-shadow: 0 10px 24px var(--accent-glow);
+    transition: all .2s cubic-bezier(.34,1.2,.64,1);
+    min-width: 260px;
+  }
+  .btn-confirm:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px var(--accent-glow);
+  }
+  .btn-confirm:active:not(:disabled) { transform: translateY(0); }
+  .btn-confirm:disabled {
+    background: var(--panel);
+    color: var(--muted);
+    border-color: var(--border);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  .feedback-panel {
+    margin-top: 24px;
+    animation: slideDown .4s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+  .feedback-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .5px;
+  }
+  .feedback-header.correct {
+    background: rgba(16,185,129,.12);
+    border: 1px solid var(--ok);
+    color: var(--ok);
+  }
+  .feedback-header.wrong {
+    background: rgba(239,68,68,.12);
+    border: 1px solid var(--err);
+    color: var(--err);
+  }
+
+  .gabarito-toggle {
+    margin-top: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 12px 18px;
+    border-radius: 10px;
+    color: var(--text);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all .2s;
+  }
+  .gabarito-toggle:hover { border-color: var(--accent); color: var(--accent-2); }
+  .gabarito-toggle svg { transition: transform .3s; }
+  .gabarito-toggle.open svg { transform: rotate(90deg); }
+
+  .gabarito-body {
+    margin-top: 14px;
+    padding: 20px 24px;
+    background: linear-gradient(145deg, rgba(59,130,246,.06), rgba(59,130,246,.02));
+    border: 1px solid rgba(59,130,246,.25);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    line-height: 1.7;
+    font-size: 14.5px;
+    color: #dbeafe;
+    animation: slideDown .3s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .gabarito-body .gab-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .gabarito-body .gab-text p { margin: 0 0 10px; }
+  .gabarito-body .gab-text ul { margin: 0 0 10px; padding-left: 20px; }
+  .gabarito-body .gab-text li { margin: 4px 0; }
+  .gabarito-body .gab-text > :last-child { margin-bottom: 0; }
+  .gabarito-body .gab-text strong { color: #fff; }
+  .gabarito-body .gab-answer {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--ok); margin-bottom: 10px;
+  }
+
+  .nav-buttons {
+    display: flex; justify-content: space-between; gap: 12px;
+    margin-top: 32px;
+    max-width: 820px; margin-left: auto; margin-right: auto;
+  }
+  .nav-btn {
+    flex: 1;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all .2s;
+  }
+  .nav-btn:hover:not(:disabled) { background: var(--panel-2); border-color: var(--border-hover); transform: translateY(-1px); }
+  .nav-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .nav-btn.primary {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; border-color: transparent;
+    box-shadow: 0 8px 20px var(--accent-glow);
+  }
+  .nav-btn.primary:hover:not(:disabled) { transform: translateY(-2px); }
+
+  /* End screen */
+  .end-screen {
+    max-width: 640px; margin: 0 auto; text-align: center;
+    padding-top: 40px;
+    animation: fadeUp .5s cubic-bezier(.34,1.2,.64,1) both;
+  }
+  .end-screen h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 34px; font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: -.5px;
+  }
+  .end-screen .subtitle {
+    color: var(--muted-2); font-size: 15px;
+    margin-bottom: 40px;
+  }
+  .donut {
+    width: 240px; height: 240px;
+    margin: 0 auto 32px; position: relative;
+  }
+  .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .donut .track { fill: none; stroke: var(--panel); stroke-width: 14; }
+  .donut .fill-arc {
+    fill: none; stroke-width: 14; stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s cubic-bezier(.4,.2,.2,1);
+  }
+  .donut .center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .donut .pct {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 56px; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1;
+  }
+  .donut .pct-label {
+    font-size: 11px; color: var(--muted-2);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-top: 4px; font-weight: 600;
+  }
+  .badge {
+    display: inline-flex; padding: 12px 24px;
+    border-radius: 999px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 18px; font-weight: 700;
+    letter-spacing: .5px;
+    margin-bottom: 32px;
+  }
+  .badge.excelente { background: rgba(16,185,129,.15); color: var(--ok); border: 1px solid var(--ok); }
+  .badge.otimo { background: rgba(59,130,246,.15); color: var(--accent-2); border: 1px solid var(--accent); }
+  .badge.regular { background: rgba(245,158,11,.15); color: var(--warn); border: 1px solid var(--warn); }
+  .badge.melhorar { background: rgba(239,68,68,.15); color: var(--err); border: 1px solid var(--err); }
+  .end-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin-bottom: 32px;
+  }
+  .end-stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 16px;
+  }
+  .end-stat .val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 28px; font-weight: 700; line-height: 1;
+  }
+  .end-stat.correct .val { color: var(--ok); }
+  .end-stat.wrong .val { color: var(--err); }
+  .end-stat .lbl {
+    font-size: 11px; color: var(--muted-2);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-top: 8px; font-weight: 600;
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+  @media (max-width: 900px) {
+    aside.sidebar {
+      width: 100%; height: auto;
+      position: relative; top: auto; left: auto;
+      padding: 60px 20px 20px;
+      transform: none;
+    }
+    body.sidebar-hidden aside.sidebar { transform: none; display: none; }
+    .brand h1 { font-size: 26px; }
+    main { padding: 24px 16px 60px; margin-left: 0; }
+    body.sidebar-hidden main { margin-left: 0; }
+    .q-grid { grid-template-columns: repeat(10, 1fr); }
+  }
+
+  /* ==== Abas: Simulado geral / Provas por matéria ==== */
+  .mode-switch {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4px;
+    padding: 4px;
+    margin: 0 0 22px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(15, 20, 32, .7);
+  }
+  .mode-switch a {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 9px 6px 8px;
+    border-radius: 9px;
+    color: var(--muted-2);
+    text-decoration: none;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    text-align: center;
+    line-height: 1.2;
+    transition: color .25s, background .25s, box-shadow .25s, transform .15s;
+  }
+  .mode-switch a small {
+    font-family: 'Albert Sans', sans-serif;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: .7;
+  }
+  .mode-switch a:hover { color: var(--text); background: rgba(59, 130, 246, .1); }
+  .mode-switch a:active { transform: scale(.97); }
+  .mode-switch a.active {
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    box-shadow: 0 6px 18px var(--accent-glow);
+  }
+
+  /* ==== Lista das provas na barra lateral ==== */
+  .tabs-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); padding: 0 12px 10px; font-weight: 600;
+  }
+  .tabs { display: flex; flex-direction: column; gap: 3px; margin-bottom: 22px; }
+  .tab {
+    position: relative;
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted-2);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    text-align: left;
+    cursor: pointer;
+    transition: all .2s cubic-bezier(.4, .2, .2, 1);
+  }
+  .tab:hover { background: var(--panel); color: var(--text); border-color: var(--border); }
+  .tab.active {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent));
+    color: #fff; border-color: transparent;
+    box-shadow: 0 6px 18px var(--accent-glow);
+  }
+  .tab-num {
+    flex: none;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700; font-size: 11px;
+    padding: 2px 7px; border-radius: 6px;
+    background: rgba(255, 255, 255, .06);
+    color: var(--muted-2);
+  }
+  .tab.active .tab-num { background: rgba(255, 255, 255, .2); color: #fff; }
+  .tab-name { flex: 1; min-width: 0; }
+  .prova-kind {
+    display: inline-block;
+    font-style: normal;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 1px 6px; margin-left: 2px;
+    border-radius: 999px;
+    background: rgba(245, 158, 11, .15); color: var(--warn);
+    vertical-align: 1px;
+  }
+  .prova-score {
+    flex: none;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 999px;
+    background: rgba(255, 255, 255, .08); color: var(--muted-2);
+  }
+  .prova-score.good { background: rgba(16, 185, 129, .18); color: var(--ok); }
+  .prova-score.low { background: rgba(239, 68, 68, .16); color: var(--err); }
+  .prova-score.partial { background: rgba(59, 130, 246, .14); color: var(--accent-2); }
+  .tab.active .prova-score { background: rgba(255, 255, 255, .22); color: #fff; }
+
+  /* Discursiva: autoavaliação */
+  .disc-hint { margin-top: 12px; text-align: center; color: var(--muted); font-size: 13px; }
+  .self-check {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px;
+    margin-top: 16px; padding: 16px;
+    border: 1px dashed var(--border); border-radius: 12px;
+    color: var(--muted-2); font-size: 14px;
+  }
+  .self-check .self-ok:hover { border-color: var(--ok); color: var(--ok); }
+  .self-check .self-err:hover { border-color: var(--err); color: var(--err); }
+  .feedback-panel .gabarito-body + .feedback-header { margin-top: 14px; }
+
+  @media (max-width: 900px) {
+    .tabs { flex-direction: row; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .tab { flex-shrink: 0; max-width: 240px; }
+  }
+  .q-fig { margin: 4px 0 22px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .q-fig img { max-width: 100%; max-height: 380px; border-radius: 10px; background: #fff; cursor: zoom-in; border: 1px solid rgba(255,255,255,.12); }
+  .q-fig figcaption { width: 100%; text-align: center; font-size: 13px; opacity: .7; }
+  .q-fig figcaption span { opacity: .7; }
+  .img-zoom { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.88); display: flex; align-items: center; justify-content: center; padding: 16px; cursor: zoom-out; }
+  .img-zoom img { max-width: 100%; max-height: 100%; background: #fff; border-radius: 8px; }
+</style>
+<link rel="stylesheet" href="assets/relatorio.css">
+<link rel="stylesheet" href="assets/efeitos.css">
+</head>
+<body>
+<script>
+  try { if (localStorage.getItem('sidebarHidden') === '1') { document.body.classList.add('sidebar-hidden','no-transition'); requestAnimationFrame(() => document.body.classList.remove('no-transition')); } } catch (e) {}
+</script>
+
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Alternar barra lateral" title="Alternar barra lateral (B)">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+    <rect x="3" y="4" width="18" height="16" rx="2"/>
+    <line x1="9" y1="4" x2="9" y2="20"/>
+  </svg>
+</button>
+
+<aside class="sidebar">
+  <a href="index.html#ac3" class="back-link" title="Voltar ao AC 3">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    <span>AC 3</span>
+  </a>
+  <div class="brand">
+    <h1>SIMULADO</h1>
+    <div class="sub">AC 3 · 50 questões</div>
+  </div>
+  <nav class="mode-switch" aria-label="Tipo de simulado">
+    <a href="simulado_ac3.html" data-sim="1" class="active">Simulado 1<small>50 questões</small></a>
+    <a href="simulado_ac3.html?s=2" data-sim="2">Simulado 2<small>50 questões</small></a>
+  </nav>
+  <div class="q-list-label">Navegação</div>
+  <div class="q-grid" id="qGrid"></div>
+</aside>
+
+<main id="main">
+  <div id="quiz"></div>
+</main>
+
+<script>
+const SIM1 = [
+ {
+  "n": 1,
+  "enunciado": "Homem, 64 anos, com dor precordial há 2 horas em hospital sem hemodinâmica; a transferência para angioplastia levaria cerca de 3 horas. ECG com supra de ST em DII, DIII e aVF. Sem contraindicações. Qual a conduta?",
+  "alternativas": {
+   "A": "AAS 300 mg, ticagrelor 180 mg e transferência para angioplastia primária, mesmo com 3 horas de atraso",
+   "B": "AAS 300 mg e aguardar troponina antes de definir a reperfusão",
+   "C": "AAS 300 mg, clopidogrel 300 mg, enoxaparina 30 mg IV + 1 mg/kg SC e fibrinolítico em até 30 minutos",
+   "D": "Fibrinolítico apenas se a dor persistir após 12 horas"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Sem ICP possível em 120 minutos, a fibrinólise em até 30 minutos da chegada é a estratégia. Com fibrinólise, o P2Y12 é o clopidogrel (300 mg; sem ataque se ≥ 75 anos) e a enoxaparina é o anticoagulante. Não se espera troponina com supra."
+ },
+ {
+  "n": 2,
+  "enunciado": "Mulher, 52 anos, relata há 3 meses 4 a 6 evacuações aquosas diárias, que persistem em jejum e acordam-na à noite. Perdeu 6 kg. Hemograma mostra anemia ferropriva e a calprotectina fecal está elevada. Qual é o próximo passo?",
+  "alternativas": {
+   "A": "Colestiramina empírica por 4 semanas",
+   "B": "Ileocolonoscopia com biópsias",
+   "C": "Restrição de lactose por 2 semanas como teste terapêutico",
+   "D": "Diagnóstico de síndrome do intestino irritável e orientação dietética"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Sinais de alarme (início > 50 anos, diarreia noturna, perda de peso, anemia ferropriva, calprotectina alta) indicam doença orgânica e exigem avaliação endoscópica. Terapias empíricas e diagnóstico de SII só cabem sem alarme."
+ },
+ {
+  "n": 3,
+  "enunciado": "Homem, 56 anos, com dor torácica em aperto há 50 minutos e sudorese. O ECG está abaixo. O hospital tem hemodinâmica disponível 24 h, com tempo estimado até a angioplastia de 60 minutos. Qual o diagnóstico e a conduta?",
+  "alternativas": {
+   "A": "IAM com supra de ST anterior (descendente anterior); AAS, inibidor de P2Y12, heparina e angioplastia primária",
+   "B": "SCA sem supra de ST; anticoagulação e cateterismo em até 72 horas",
+   "C": "Pericardite aguda; AINE e colchicina",
+   "D": "IAM com supra de ST inferior (coronária direita); trombólise imediata com tenecteplase"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Supra de ST de V1 a V4 com infradesnível em DII, DIII e aVF (imagem em espelho) = IAMCSST anterior (DA). Com ICP possível em ≤ 90 min, a angioplastia primária é preferida. Pericardite tem supra difuso sem espelho territorial.",
+  "imgs": [
+   "assets/simulado_ac3/sim1-q3.jpg"
+  ],
+  "cap": "ECG de 12 derivações na admissão."
+ },
+ {
+  "n": 4,
+  "enunciado": "Paciente de 38 anos, 10 dias após iniciar carbamazepina, apresenta febre, erupção cutânea dolorosa e as lesões labiais abaixo, com erosões orais e conjuntivais. Sobre a investigação diagnóstica, é correto:",
+  "alternativas": {
+   "A": "O diagnóstico exige reexposição controlada ao fármaco",
+   "B": "Biópsia com IFD mostrando depósito linear de IgA na membrana basal confirma o diagnóstico",
+   "C": "Eosinofilia, linfócitos atípicos e edema facial são os achados que confirmam o diagnóstico",
+   "D": "Biópsia de pele com imunofluorescência direta, que mostra necrose epidérmica de espessura total com IFD negativa"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — SJS/NET: diagnóstico clínico apoiado pela biópsia (necrose de espessura total, infiltrado discreto, IFD negativa). IgA linear define dermatose bolhosa por IgA; eosinofilia com edema facial e linfadenopatia sugere DRESS. Reexposição é proibida.",
+  "imgs": [
+   "assets/simulado_ac3/sim1-q4.jpg"
+  ],
+  "cap": "Lábios e mucosa oral."
+ },
+ {
+  "n": 5,
+  "enunciado": "Mulher, 80 anos, com síncope. FC 34 bpm, PA 76 × 42 mmHg, confusa. ECG mostra ondas P regulares a 80 bpm sem relação com QRS largos e regulares. Qual a sequência de conduta correta?",
+  "alternativas": {
+   "A": "Aminofilina 250 mg IV e observação",
+   "B": "Atropina 1 mg IV enquanto se posicionam as pás de marca-passo transcutâneo; sem resposta, marca-passo transcutâneo ou adrenalina, depois transvenoso",
+   "C": "Atropina 0,5 mg IV a cada 30 minutos até 5 mg, aguardando resposta antes de preparar marca-passo",
+   "D": "Amiodarona IV para controle do escape ventricular"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — BAVT com escape infranodal e instabilidade: atropina enquanto se prepara o marca-passo (provavelmente falhará), depois transcutâneo/adrenalina 2–10 µg/min e transvenoso. Aminofilina é para BAV no IAM sem instabilidade."
+ },
+ {
+  "n": 6,
+  "enunciado": "Mulher, 52 anos, com angina típica e cateterismo sem lesões obstrutivas (FFR > 0,80). A reserva de fluxo coronariano é 1,6 e o índice de resistência microvascular é 32. O diagnóstico é:",
+  "alternativas": {
+   "A": "Disfunção microvascular coronariana (ANOCA/INOCA)",
+   "B": "Dor torácica não cardíaca",
+   "C": "Angina vasoespástica de Prinzmetal confirmada",
+   "D": "Doença coronariana obstrutiva com lesão funcionalmente significativa"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Angina sem obstrução (FFR > 0,80) com reserva de fluxo < 2,0 e IMR ≥ 25 caracteriza disfunção microvascular. O vasoespasmo é confirmado por teste com acetilcolina."
+ },
+ {
+  "n": 7,
+  "enunciado": "Paciente com bronquiectasias, asma de difícil controle e eosinofilia apresenta bronquiectasias centrais na TC e IgE total muito elevada. Qual o exame direcionado para a etiologia provável?",
+  "alternativas": {
+   "A": "Teste do cloro no suor",
+   "B": "Dosagem de alfa-1-antitripsina como único exame",
+   "C": "Estudo genético de discinesia ciliar primária",
+   "D": "IgE específica para Aspergillus fumigatus"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Asma + bronquiectasias centrais + IgE elevada sugerem aspergilose broncopulmonar alérgica (ABPA), investigada com IgE específica para Aspergillus."
+ },
+ {
+  "n": 8,
+  "enunciado": "Mulher, 33 anos, há 8 meses refere cansaço progressivo, perda de 7 kg, náuseas matinais, tontura ao levantar e vontade de comer sal puro. A pele escureceu, como mostrado abaixo. PA 94 × 60 mmHg deitada e 80 × 50 mmHg em pé. Na⁺ 127 mEq/L e K⁺ 5,8 mEq/L. Qual é o exame inicial mais adequado?",
+  "alternativas": {
+   "A": "Teste de tolerância à insulina como primeiro exame",
+   "B": "Cortisol sérico matinal com ACTH plasmático, colhendo renina e aldosterona na mesma amostra",
+   "C": "Cortisol salivar noturno e teste de supressão com dexametasona 1 mg",
+   "D": "TC de adrenais antes de qualquer dosagem hormonal"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Quadro de insuficiência adrenal primária (hiperpigmentação cutânea e mucosa, avidez por sal, hipotensão postural, hiponatremia com hipercalemia). O primeiro passo é cortisol matinal + ACTH (com renina/aldosterona). Supressão com dexametasona investiga Cushing; ITT é para IA central; TC vem após confirmação, na etiologia.",
+  "imgs": [
+   "assets/simulado_ac3/sim1-q8-1.jpg",
+   "assets/simulado_ac3/sim1-q8-2.jpg"
+  ],
+  "cap": "Aspecto da face. Mucosa oral."
+ },
+ {
+  "n": 9,
+  "enunciado": "Homem, 70 anos, em tratamento de infecção por C. difficile há 2 dias, evolui com parada das evacuações, distensão abdominal importante, febre de 39 °C, PA 84 × 50 mmHg e lactato de 4,1 mmol/L. A radiografia de abdome está abaixo. Qual a conduta?",
+  "alternativas": {
+   "A": "Bezlotoxumabe isolado, já que antibióticos falharam",
+   "B": "Fidaxomicina 200 mg VO 12/12 h e colonoscopia completa para descompressão",
+   "C": "Loperamida suspensa e manutenção da vancomicina 125 mg VO 6/6 h, reavaliando em 72 h",
+   "D": "Vancomicina 500 mg por SNG 6/6 h + vancomicina retal + metronidazol 500 mg IV 8/8 h, com avaliação cirúrgica imediata"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Megacólon tóxico com choque = CDI fulminante: vancomicina em dose alta (enteral e retal no íleo) + metronidazol IV e consulta cirúrgica precoce (colectomia subtotal com preservação do reto se não melhorar). Colonoscopia completa tem risco de perfuração.",
+  "imgs": [
+   "assets/simulado_ac3/sim1-q9.jpg"
+  ],
+  "cap": "Radiografia simples de abdome."
+ },
+ {
+  "n": 10,
+  "enunciado": "Adolescente de 17 anos e familiares apresentam vômitos intensos e cólicas cerca de 3 horas após comerem salgados com recheio de creme numa festa. Estão sem febre e sem sangue nas fezes. O agente mais provável é:",
+  "alternativas": {
+   "A": "Salmonella não tifoide",
+   "B": "Toxina pré-formada de Staphylococcus aureus",
+   "C": "Norovírus",
+   "D": "Escherichia coli enterotoxigênica"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Latência ≤ 6 h com vômitos predominantes indica toxina pré-formada (S. aureus, B. cereus). Norovírus tem incubação de 24–48 h; Salmonella de 8–72 h; ETEC de 1–3 dias."
+ },
+ {
+  "n": 11,
+  "enunciado": "Homem, 45 anos, sem cardiopatia, chega ao PS com FA de alta resposta iniciada há 8 horas. PA 74 × 40 mmHg, sudorese fria, confuso. Qual a conduta?",
+  "alternativas": {
+   "A": "Amiodarona VO 600 mg/dia por 1 semana",
+   "B": "Metoprolol 5 mg IV e reavaliação em 1 hora",
+   "C": "Cardioversão elétrica sincronizada imediata com 200 J bifásico, iniciando anticoagulação o mais rápido possível",
+   "D": "Ecocardiograma transesofágico antes de qualquer conduta"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — FA com instabilidade hemodinâmica (hipotensão, hipoperfusão, rebaixamento) exige cardioversão elétrica sincronizada imediata; não se espera ETE."
+ },
+ {
+  "n": 12,
+  "enunciado": "Homem, 24 anos, tem insuficiência adrenal primária confirmada (cortisol baixo, ACTH muito elevado). O anticorpo anti-21-hidroxilase é negativo e a TC mostra adrenais de tamanho normal. Ele não tem sintomas neurológicos. Qual exame deve ser solicitado a seguir?",
+  "alternativas": {
+   "A": "17-hidroxiprogesterona basal",
+   "B": "Ressonância magnética de sela túrcica",
+   "C": "Biópsia adrenal guiada por TC",
+   "D": "Dosagem de ácidos graxos de cadeia muito longa"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Em todo homem jovem com IA primária e anticorpo negativo, pesquisar adrenoleucodistrofia (AGCML), mesmo sem sinais neurológicos. 17-OHP investiga HAC em crianças; RM de sela é para IA central; biópsia é para adrenais aumentadas."
+ },
+ {
+  "n": 13,
+  "enunciado": "Homem, 53 anos, procura o PS sem dor, relatando episódio de angina intensa na véspera, que melhorou espontaneamente. A troponina está levemente elevada e o ECG é o abaixo. Qual a conduta correta?",
+  "alternativas": {
+   "A": "Considerar as alterações de onda T antigas e dar alta com AAS",
+   "B": "Reconhecer padrão de Wellens (lesão crítica de DA proximal) e indicar cateterismo precoce, sem teste de esforço",
+   "C": "Solicitar teste ergométrico para estratificação antes da alta",
+   "D": "Fibrinólise imediata"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Ondas T bifásicas em V2–V3 no intervalo sem dor (Wellens tipo A) indicam DA proximal prestes a reocluir: teste de esforço é contraindicado e o cateterismo deve ser precoce (< 2 h a < 24 h conforme a persistência dos sintomas).",
+  "imgs": [
+   "assets/simulado_ac3/sim1-q13.jpg"
+  ],
+  "cap": "ECG de 12 derivações, paciente sem dor."
+ },
+ {
+  "n": 14,
+  "enunciado": "Homem, 62 anos, com dor torácica típica. ECG mostra infradesnível de ST de V1 a V3, ondas T positivas e altas e ondas R amplas em V1–V2, sem supra nas derivações habituais. Qual o próximo passo?",
+  "alternativas": {
+   "A": "Realizar derivações direitas V3R–V4R para avaliar infarto de VD",
+   "B": "Tratar como SCA sem supra de ST, com cateterismo em até 72 horas",
+   "C": "Realizar derivações V7–V9, pela suspeita de infarto posterior com indicação de reperfusão",
+   "D": "Repetir troponina em 6 horas antes de decidir"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Infra de ST em V1–V3 com R ampla e T positiva é o espelho do infarto posterior (OCA da circunflexa ou CD); confirma-se com supra > 0,5 mm em V7–V8, e a conduta é reperfusão."
+ },
+ {
+  "n": 15,
+  "enunciado": "Homem, 72 anos, em uso de amiodarona há 6 meses, desenvolve palpitações e perda de peso. TSH suprimido e T4 livre elevado; a cintilografia mostra captação baixa. Qual o mecanismo associado à sobrecarga de iodo que pode causar hipertireoidismo?",
+  "alternativas": {
+   "A": "Efeito Jod-Basedow",
+   "B": "Efeito Wolff-Chaikoff",
+   "C": "Hashitoxicose",
+   "D": "Produção ectópica por struma ovarii"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Iodo em excesso estimulando a síntese em tireoide autônoma ou previamente deficiente causa hipertireoidismo (Jod-Basedow). Wolff-Chaikoff é o bloqueio da TPO com hipotireoidismo."
+ },
+ {
+  "n": 16,
+  "enunciado": "Homem, 57 anos, com dor torácica típica e BRE antigo. O ECG mostra supradesnível de ST de 2 mm concordante com o QRS em V5 e V6. Sobre esse achado:",
+  "alternativas": {
+   "A": "Supra concordante é esperado no BRE pelo princípio da discordância apropriada",
+   "B": "Preenche critério de Sgarbossa modificado e indica oclusão coronária aguda, com reperfusão",
+   "C": "BRE impede qualquer avaliação isquêmica no ECG; aguardar troponina",
+   "D": "Só seria valorizado se o BRE fosse novo"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Supra de ST ≥ 1 mm concordante com o QRS é critério de Sgarbossa modificado (S 91%, E 90%) para oclusão. No BRE, o esperado é discordância; o BRE novo isolado deixou de ser critério de IAM."
+ },
+ {
+  "n": 17,
+  "enunciado": "Idosa de 74 anos, internada há 8 dias com pneumonia em uso de ceftriaxona, começa com 5 evacuações líquidas por dia. Exames: leucócitos 21.000/µL e creatinina 1,9 mg/dL (basal 0,9). PA 118 × 70 mmHg, sem distensão abdominal. A pesquisa por NAAT e toxina A/B nas fezes é positiva. Qual é a classificação e o tratamento indicado?",
+  "alternativas": {
+   "A": "Infecção grave por C. difficile; fidaxomicina 200 mg VO 12/12 h por 10 dias (ou vancomicina 125 mg VO 6/6 h)",
+   "B": "Infecção não grave; metronidazol 500 mg VO 8/8 h por 10 dias como primeira escolha",
+   "C": "Infecção fulminante; vancomicina 500 mg 6/6 h + metronidazol IV e colectomia imediata",
+   "D": "Colonização; não tratar, pois a idosa tem pneumonia como causa da leucocitose"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Leucócitos > 15.000 e/ou creatinina ≥ 1,5 (ou aumento ≥ 50%) definem CDI grave; sem hipotensão, íleo ou megacólon não é fulminante. Fidaxomicina é preferida e vancomicina oral é alternativa; metronidazol saiu da primeira linha."
+ },
+ {
+  "n": 18,
+  "enunciado": "Mulher, 41 anos, 1,62 m, 92 kg, circunferência abdominal 104 cm, hipertensa e com pré-diabetes. Tentou dieta e atividade física por 6 meses sem perda significativa. Relata que sente saciedade apenas quando o estômago está cheio, comendo grandes volumes. Qual é a classificação e a conduta mais adequada?",
+  "alternativas": {
+   "A": "Sobrepeso; apenas orientação dietética",
+   "B": "Obesidade grau I; anfepramona por tempo indeterminado como primeira escolha",
+   "C": "Obesidade grau II; iniciar agonista GLP-1 (semaglutida) associado à mudança de estilo de vida",
+   "D": "Obesidade grau III; indicar cirurgia bariátrica imediata"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — IMC = 92/1,62² ≈ 35,1 = obesidade grau II, com comorbidades e falha do tratamento não farmacológico: indica-se farmacoterapia. O fenótipo de saciedade por distensão gástrica favorece agonista GLP-1 (semaglutida). Anorexígenos catecolaminérgicos têm potencial de abuso."
+ },
+ {
+  "n": 19,
+  "enunciado": "Homem, 68 anos, diabético, com IAM sem supra. Durante a internação, apresenta angina refratária ao nitrato IV e hipotensão (PA 84 × 52 mmHg), com estertores bibasais. Qual a estratégia de estratificação invasiva?",
+  "alternativas": {
+   "A": "Cateterismo em até 72 horas, no próximo dia útil",
+   "B": "Estratificação não invasiva com cintilografia após 48 horas",
+   "C": "Cateterismo em até 24 horas",
+   "D": "Cateterismo imediato, em menos de 2 horas"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Instabilidade hemodinâmica, angina refratária e IC aguda são critérios de muito alto risco: estratificação invasiva imediata (< 2 h)."
+ },
+ {
+  "n": 20,
+  "enunciado": "Mulher, 34 anos, apresenta diarreia aquosa há 2 dias, 4 evacuações/dia, sem sangue, sem febre, com cólica leve. Não viajou, não usou antibiótico, está hidratada e sem comorbidades. Pergunta se precisa de exames e de antibiótico. A melhor orientação é:",
+  "alternativas": {
+   "A": "Hidratação oral, manter a alimentação e não solicitar exames de fezes nem antibiótico",
+   "B": "Pesquisa de toxina de C. difficile, pois toda diarreia aquosa deve ser investigada",
+   "C": "Coprocultura e parasitológico de fezes em 3 amostras antes de qualquer orientação",
+   "D": "Ciprofloxacino 500 mg 12/12 h por 3 dias para encurtar os sintomas"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Diarreia aquosa sem critérios de gravidade (febre ≥ 38,5 °C, hipovolemia, ≥ 6 evacuações/dia, dor intensa), sem hospedeiro de risco e com < 1 semana não exige exame nem antibiótico."
+ },
+ {
+  "n": 21,
+  "enunciado": "Mulher, 29 anos, com palpitações, perda de 6 kg, tremor fino, sudorese, bócio difuso com sopro e exoftalmia bilateral. TSH < 0,01 mUI/L e T4 livre elevado. Ela não está grávida. Qual é o tratamento farmacológico de primeira escolha?",
+  "alternativas": {
+   "A": "Iodo radioativo imediato, sem preparo, pela exoftalmia",
+   "B": "Levotiroxina em dose supressiva",
+   "C": "Metimazol (tiamazol) associado a betabloqueador para os sintomas adrenérgicos",
+   "D": "Propiltiouracil como primeira escolha"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Doença de Graves: metimazol é o antitireoidiano de escolha, com betabloqueador para sintomas. PTU fica para o 1º trimestre da gestação e a crise tireotóxica. O iodo radioativo pode piorar a oftalmopatia ativa."
+ },
+ {
+  "n": 22,
+  "enunciado": "Paciente com NET internado em unidade de queimados, no 6º dia, apresenta temperatura de 35,2 °C, confusão, PA 86 × 50 mmHg e queda da diurese. A procalcitonina é 2,4 ng/mL. A interpretação e a conduta corretas são:",
+  "alternativas": {
+   "A": "Evolução esperada da necrólise; manter apenas o suporte",
+   "B": "Bacteremia provável; colher culturas e iniciar antibiótico dirigido, cobrindo S. aureus e Pseudomonas",
+   "C": "Iniciar talidomida para controlar a resposta inflamatória",
+   "D": "Indicar ventilação não invasiva para melhorar a perfusão"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Sepse é a principal causa de morte na NET; hipotermia, confusão, hipotensão, oligúria e procalcitonina ≥ 1 predizem bacteremia. VNI é contraindicada na NET e talidomida aumentou a mortalidade."
+ },
+ {
+  "n": 23,
+  "enunciado": "Homem, 29 anos, procura o pronto-socorro com 4 dias de evacuações pequenas e frequentes com sangue e muco, cólicas, tenesmo e febre de 38,9 °C. Mora em alojamento coletivo, onde outros colegas tiveram quadro semelhante. Está corado, hidratado, FC 96 bpm, PA 122 × 78 mmHg, abdome doloroso difusamente, sem sinais peritoneais. Qual é a conduta mais adequada?",
+  "alternativas": {
+   "A": "Prescrever loperamida 4 mg seguida de 2 mg após cada evacuação e reavaliar em 48 h",
+   "B": "Aguardar o resultado da coprocultura antes de qualquer antibiótico, pois a doença é autolimitada",
+   "C": "Colher coprocultura e iniciar azitromicina 500 mg VO 1×/dia por 3 dias, com SRO e sem loperamida",
+   "D": "Iniciar metronidazol 500 mg 8/8 h por 10 dias, pois sangue com muco indica amebíase"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Disenteria febril com gravidade (febre ≥ 38,5 °C) em contexto de aglomeração sugere shigelose: antibiótico empírico (azitromicina é preferida na febre/disenteria) e coprocultura. Loperamida é evitada na disenteria sem antibiótico; amebíase cursa com sangue sem leucócitos e incubação de 1–3 semanas."
+ },
+ {
+  "n": 24,
+  "enunciado": "Mulher, 54 anos, com dor torácica iniciada há 5 horas. Troponina ultrassensível (kit Roche) da admissão: 3 ng/L. ECG normal. Exame físico normal. A conduta correta pelo algoritmo 0/1 h é:",
+  "alternativas": {
+   "A": "Indicar cateterismo em até 24 horas",
+   "B": "Internar para 3ª dosagem de troponina, pois há zona de observação",
+   "C": "Repetir a troponina e considerar positivo se houver variação ≥ 20%",
+   "D": "Considerar rule-out com dosagem única, pois a dor começou há mais de 3 horas e o valor é < 5 ng/L"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Dor > 3 h e troponina inicial < 5 ng/L (Roche) permite rule-out com uma dosagem. Nos algoritmos acelerados não se usa variação de 20%, e sim os cortes absolutos do fabricante."
+ },
+ {
+  "n": 25,
+  "enunciado": "Mulher, 77 anos, hipertensa, com FA permanente, ClCr 45 mL/min, peso 58 kg, creatinina 1,3 mg/dL, sem valvopatia. Qual é o anticoagulante e a dose adequados?",
+  "alternativas": {
+   "A": "Apixabana 5 mg 12/12 h",
+   "B": "Dabigatrana 150 mg 12/12 h",
+   "C": "AAS 100 mg/dia, pelo risco de sangramento na idade",
+   "D": "Apixabana 2,5 mg 12/12 h"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — A apixabana só é reduzida para 2,5 mg 12/12 h com ≥ 2 de 3 critérios (idade ≥ 80 anos, peso ≤ 60 kg, Cr ≥ 1,5 mg/dL); ela tem apenas um (peso), então a dose é 5 mg. Dabigatrana 150 mg não é ideal com ClCr 45 e idade avançada; AAS não previne AVC na FA."
+ },
+ {
+  "n": 26,
+  "enunciado": "Mulher, 79 anos, com FA, CHA₂DS₂-VA de 5 e HAS-BLED de 3 (hipertensão não controlada, idade e uso de AINE). A família pergunta se ela deve ficar sem anticoagulante pelo risco de sangramento. A conduta adequada é:",
+  "alternativas": {
+   "A": "Anticoagular apenas se o HAS-BLED cair para zero",
+   "B": "Anticoagular e corrigir os fatores modificáveis (controlar a PA e suspender o AINE)",
+   "C": "Não anticoagular, pois HAS-BLED ≥ 3 é contraindicação",
+   "D": "Substituir o anticoagulante por AAS + clopidogrel"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — HAS-BLED alto não contraindica a anticoagulação (usar o risco de sangramento para não anticoagular é um erro); serve para corrigir fatores modificáveis. Antiplaquetários não previnem AVC na FA."
+ },
+ {
+  "n": 27,
+  "enunciado": "Homem, 67 anos, com DPOC grave, chega com dispneia intensa, FR 30 irpm, uso de musculatura acessória, sonolento porém despertável e colaborativo. Gasometria: pH 7,27, PaCO₂ 70 mmHg, HCO₃⁻ 32. Sem vômitos e com boa proteção de via aérea. Qual o suporte ventilatório inicial?",
+  "alternativas": {
+   "A": "Intubação orotraqueal imediata pela sonolência",
+   "B": "CPAP de 10 cmH₂O",
+   "C": "Cateter de O₂ a 10 L/min e reavaliação em 6 horas",
+   "D": "VNI com dois níveis de pressão (BiPAP), IPAP 15–20 e EPAP ~5 cmH₂O, reavaliando em 30 min a 2 h"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — DPOC exacerbada com acidose respiratória (pH < 7,35) e hipercapnia é a indicação clássica de VNI com BiPAP; a sonolência por narcose hipercápnica não a contraindica. CPAP é a escolha no EAP cardiogênico; O₂ em alto fluxo agrava a hipercapnia."
+ },
+ {
+  "n": 28,
+  "enunciado": "Mulher, 66 anos, com dor torácica há 3 horas, sem dor no momento. ECG abaixo. Troponina ultrassensível discretamente elevada. Qual a interpretação e a conduta?",
+  "alternativas": {
+   "A": "Alteração inespecífica de repolarização; teste ergométrico ambulatorial",
+   "B": "Infra de ST difuso com supra em aVR, sugerindo lesão de tronco/multiarterial; cateterismo em até 2 horas",
+   "C": "Pericardite aguda; AINE e alta",
+   "D": "IAM com supra inferior; fibrinólise imediata"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Infradesnível difuso com supra em aVR indica isquemia subendocárdica circunferencial (tronco, DA proximal, triarterial). No contexto de SCA, estratificação invasiva imediata; não se trombolisa.",
+  "imgs": [
+   "assets/simulado_ac3/sim1-q28.jpg"
+  ],
+  "cap": "ECG de 12 derivações."
+ },
+ {
+  "n": 29,
+  "enunciado": "Mulher, 71 anos, no 4º dia de um IAM inferior, evolui subitamente com dispneia, estertores até ápices e PA 82 × 50 mmHg. Ausculta-se sopro sistólico suave em foco mitral. O cateter de artéria pulmonar mostra onda V gigante na pressão ocluída. A hipótese mais provável é:",
+  "alternativas": {
+   "A": "Ruptura de músculo papilar",
+   "B": "Comunicação interventricular pós-infarto",
+   "C": "Ruptura de parede livre do ventrículo esquerdo",
+   "D": "Infarto de ventrículo direito"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Ruptura de papilar (mais comum no IAM inferior, músculo posteromedial irrigado só pela CD) gera insuficiência mitral aguda com onda V gigante; o sopro pode ser discreto. CIV tem sopro rude com frêmito e salto de saturação AD → VD; parede livre causa tamponamento."
+ },
+ {
+  "n": 30,
+  "enunciado": "Mulher, 47 anos, iniciou alopurinol há 18 dias. Há 2 dias teve febre e dor de garganta e agora apresenta erupção dolorosa com máculas violáceas confluentes, alvos atípicos, bolhas flácidas e descolamento da epiderme (foto), com Nikolsky positivo, além de erosões orais e conjuntivite. A área descolada é estimada em 35% da superfície corporal. FC 124 bpm. Qual a conduta mais importante neste momento?",
+  "alternativas": {
+   "A": "Manter o alopurinol e iniciar prednisona 1 mg/kg",
+   "B": "Suspender o alopurinol e transferir para centro de queimados/UTI, calculando o SCORTEN",
+   "C": "Iniciar antibiótico sistêmico profilático de amplo espectro e manter internação em enfermaria comum",
+   "D": "Iniciar imunoglobulina IV isolada 2 g/kg e aguardar resposta antes de transferir"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Necrólise epidérmica tóxica (> 30% de SC): suspender imediatamente o fármaco culpado e transferir para centro especializado (SC ≥ 10%). Antibiótico profilático não é recomendado; IVIG isolada não é sugerida; corticoide de rotina não tem benefício comprovado.",
+  "imgs": [
+   "assets/simulado_ac3/sim1-q30.jpg"
+  ],
+  "cap": "Lesão cutânea no tronco/membro."
+ },
+ {
+  "n": 31,
+  "enunciado": "Paciente de 62 anos, no PS por TCE grave, apresenta FC 44 bpm, PA 196 × 104 mmHg e respiração irregular. A interpretação correta é:",
+  "alternativas": {
+   "A": "Bradicardia vagal benigna; observar",
+   "B": "BAV avançado; implantar marca-passo transvenoso",
+   "C": "Tríade de Cushing por hipertensão intracraniana; prioridade é o controle da pressão intracraniana",
+   "D": "Intoxicação por betabloqueador; administrar glucagon"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Bradicardia + hipertensão + alteração do ritmo respiratório em paciente neurológico é a tríade de Cushing, sinal de HIC grave; a bradicardia é consequência, não o alvo do tratamento."
+ },
+ {
+  "n": 32,
+  "enunciado": "Homem, 64 anos, 78 kg, ClCr 70 mL/min, com dor em repouso há 2 horas, infra de ST de 1 mm em V4–V6 e troponina ultrassensível com rule-in. GRACE 128, sem sinais de IC. O cateterismo está previsto para as próximas 18 horas no mesmo hospital. Qual a prescrição antitrombótica mais adequada?",
+  "alternativas": {
+   "A": "AAS 300 mg + alteplase IV",
+   "B": "AAS 300 mg + enoxaparina 1 mg/kg SC 12/12 h, deixando o segundo antiagregante para a sala de hemodinâmica",
+   "C": "Apenas AAS, sem anticoagulação, até o cateterismo",
+   "D": "AAS 300 mg + prasugrel 60 mg imediatamente no PS"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — IAMSSST de alto risco (troponina positiva) com cateterismo < 24 h: AAS + anticoagulante parenteral; sem pré- tratamento de rotina com P2Y12 (dar com anatomia conhecida). Pré-tratar com prasugrel é contraindicado; trombolítico não tem papel na SCASSST."
+ },
+ {
+  "n": 33,
+  "enunciado": "Homem, 61 anos, cardiopata, chega ao pronto-socorro após 3 dias de diarreia aquosa profusa. Está letárgico, não consegue beber, com olhos muito fundos, turgor cutâneo muito lento, pulso radial fraco e PA 78 × 40 mmHg. Qual a conduta de hidratação inicial mais adequada?",
+  "alternativas": {
+   "A": "Acesso venoso e Ringer lactato 30 mL/kg em 30 minutos, reavaliando com cautela pela cardiopatia",
+   "B": "SRO após cada evacuação, até 2 L/dia, com reavaliação em 6 horas",
+   "C": "SRO 50–100 mL/kg em 4 horas na unidade, em pequenos goles",
+   "D": "Soro glicosado 5% 1.000 mL em 4 horas, para evitar sobrecarga"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Hipovolemia grave (letargia, incapacidade de beber, pulso fraco) exige reposição IV imediata com cristaloide isotônico (Ringer lactato preferido). SRO é para quem consegue beber; solução hipotônica não repõe volume. A cardiopatia pede reavaliação frequente, não atraso da reposição."
+ },
+ {
+  "n": 34,
+  "enunciado": "Homem, 31 anos, há 1 ano tem dor em cólica no abdome inferior que melhora após evacuar, associada a fezes amolecidas de pequeno volume pela manhã e após refeições, com muco e urgência, piorando em períodos de estresse. Não tem diarreia noturna nem perda de peso. Hemograma, sorologia para doença celíaca e calprotectina são normais. O diagnóstico mais provável é:",
+  "alternativas": {
+   "A": "Diarreia por má absorção de ácidos biliares",
+   "B": "Doença de Crohn ileal",
+   "C": "Síndrome do intestino irritável com predomínio de diarreia",
+   "D": "Colite microscópica"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Dor recorrente que melhora com a evacuação e se associa a mudança de frequência/forma das fezes, sem alarme e com exames de exclusão normais, preenche SII. Colite microscópica é de meia-idade/idosos; Crohn teria calprotectina alta; ácidos biliares pedem antecedente cirúrgico ou radiação."
+ },
+ {
+  "n": 35,
+  "enunciado": "Paciente de 58 anos tratou o primeiro episódio de infecção por C. difficile com vancomicina oral e, 3 semanas após o término, volta a ter diarreia com NAAT e toxina positivos, sem critérios de gravidade. A melhor opção é:",
+  "alternativas": {
+   "A": "Probiótico com Saccharomyces boulardii isoladamente",
+   "B": "Repetir metronidazol VO por 14 dias",
+   "C": "Transplante de microbiota fecal como primeira medida",
+   "D": "Fidaxomicina 200 mg VO 12/12 h por 10 dias (ou esquema estendido)"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Na 1ª recorrência após vancomicina, a fidaxomicina é a escolha (padrão ou estendida); se o inicial foi fidaxomicina, usa-se vancomicina em desmame. FMT/produtos de microbiota entram a partir da 2ª recorrência; probióticos não são recomendados."
+ },
+ {
+  "n": 36,
+  "enunciado": "Homem, 59 anos, recebeu tenecteplase por IAM com supra anterior. Após 90 minutos mantém dor intensa, e o supra de ST não reduziu. Qual a conduta?",
+  "alternativas": {
+   "A": "Repetir a dose de tenecteplase",
+   "B": "Iniciar prasugrel 60 mg e observar",
+   "C": "Encaminhar para angioplastia de resgate imediata",
+   "D": "Aguardar 24 horas para cateterismo eletivo"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Ausência de critérios de reperfusão (dor e supra persistentes) após fibrinólise indica ICP de resgate (idealmente em até 2 h). Quem reperfunde segue estratégia fármaco-invasiva (cateterismo entre 3 e 24 h)."
+ },
+ {
+  "n": 37,
+  "enunciado": "Mulher, 38 anos, com tosse produtiva diária há anos, escarro abundante que se separa em três camadas, infecções respiratórias de repetição e hemoptises ocasionais. Estertores grossos difusos. Qual exame confirma o diagnóstico mais provável?",
+  "alternativas": {
+   "A": "Tomografia computadorizada de tórax de alta resolução",
+   "B": "Espirometria com prova broncodilatadora",
+   "C": "Radiografia de tórax em PA e perfil",
+   "D": "Broncoscopia com lavado broncoalveolar"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Suspeita de bronquiectasias: o diagnóstico é clínico (tosse produtiva crônica/infecções de repetição) + TCAR com dilatação brônquica irreversível (brônquio maior que a artéria, ausência de afilamento). A radiografia é pouco sensível."
+ },
+ {
+  "n": 38,
+  "enunciado": "Mulher, 66 anos, com 6 a 8 evacuações aquosas por dia há 4 meses, de curso intermitente, sem sangue. A colonoscopia mostrou mucosa macroscopicamente normal e não foram colhidas biópsias. A conduta correta é:",
+  "alternativas": {
+   "A": "Encerrar a investigação, pois a colonoscopia normal exclui doença orgânica",
+   "B": "Solicitar endoscopia digestiva alta com biópsia duodenal como primeiro passo",
+   "C": "Repetir a colonoscopia com biópsias do cólon direito e esquerdo, pela suspeita de colite microscópica",
+   "D": "Iniciar mesalazina empírica pela suspeita de retocolite ulcerativa"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — A colite microscópica tem mucosa macroscopicamente normal; o diagnóstico é histológico e exige biópsias de todo o cólon (a lesão é menos intensa no distal)."
+ },
+ {
+  "n": 39,
+  "enunciado": "Mulher, 46 anos, com fadiga, intolerância ao frio, ganho de peso, constipação, pele seca e rouquidão. TSH 22 mUI/L, T4 livre baixo e anti-TPO positivo. Pesa 60 kg e não tem cardiopatia. Qual o tratamento?",
+  "alternativas": {
+   "A": "Levotiroxina 12,5 µg/dia, com aumentos a cada 6 meses",
+   "B": "Imunossupressão com prednisona para interromper a tireoidite",
+   "C": "Liotironina (T3) isolada",
+   "D": "Levotiroxina em dose plena (cerca de 1,6 µg/kg/dia, em jejum), ajustada pelo TSH"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Hipotireoidismo primário por Hashimoto: não há tratamento que interrompa a autoimunidade; repõe-se levotiroxina em dose plena (~1,6 µg/kg) no adulto jovem sem cardiopatia. Doses baixas e titulação lenta são para idosos e cardiopatas."
+ },
+ {
+  "n": 40,
+  "enunciado": "Homem, 54 anos, hipertenso, em uso de anlodipino, chega após ingestão intencional de grande quantidade de verapamil. FC 38 bpm, PA 70 × 40 mmHg, glicemia 210 mg/dL. Além do suporte e do preparo de marca-passo, qual o tratamento específico?",
+  "alternativas": {
+   "A": "Fragmento de anticorpo antidigoxina",
+   "B": "Flumazenil",
+   "C": "Gluconato ou cloreto de cálcio IV; se persistir, insulina em alta dose com glicose e potássio",
+   "D": "Glucagon como primeira e única medida"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Na intoxicação por bloqueador de canal de cálcio, usa-se cálcio IV e, se persistir, insulina em alta dose (1 U/kg + 0,5 U/kg/h). Glucagon é antídoto do betabloqueador; Fab antidigoxina, da digoxina."
+ },
+ {
+  "n": 41,
+  "enunciado": "Paciente com DAC crônica estável, FE 60%, sem ICP ou SCA nos últimos anos, usa AAS, atorvastatina 80 mg e anlodipino. LDL atual 82 mg/dL. Qual ajuste é recomendado?",
+  "alternativas": {
+   "A": "Associar ezetimiba para atingir LDL < 50 mg/dL",
+   "B": "Trocar a atorvastatina por fibrato",
+   "C": "Associar clopidogrel ao AAS para reduzir eventos",
+   "D": "Associar ômega-3 em cápsulas"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Meta de LDL < 50 mg/dL na DAC: estatina de alta potência → + ezetimiba → + iPCSK9/inclisirana. Clopidogrel + AAS sem SCA/ICP recente não é indicado; fibrato e ômega-3 comum não reduzem eventos."
+ },
+ {
+  "n": 42,
+  "enunciado": "Homem, 58 anos, obeso (IMC 33), com angina e IAM prévio, pede um \"remédio para emagrecer\" e cita a sibutramina, que um amigo usa. Sobre a sibutramina neste paciente:",
+  "alternativas": {
+   "A": "É contraindicada apenas em diabéticos",
+   "B": "É a melhor opção, por reduzir a mortalidade cardiovascular",
+   "C": "Pode ser usada sem restrição, pois só causa boca seca",
+   "D": "Deve ser evitada, pois aumentou IAM e AVC em pacientes com doença cardiovascular"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Em pacientes com DCV ou DM2, a sibutramina aumenta o risco de IAM e AVC não fatais; eleva PA e FC. Em cardiopatas deve-se preferir outras opções (por exemplo, agonista GLP-1, orlistate)."
+ },
+ {
+  "n": 43,
+  "enunciado": "Paciente com doença de Addison conhecida, em uso de prednisona e fludrocortisona, chega com 2 dias de vômitos e diarreia, confuso, PA 72 × 40 mmHg, febre de 38,4 °C e dor abdominal difusa. Na⁺ 125 mEq/L e K⁺ 6,0 mEq/L. Qual é a primeira conduta?",
+  "alternativas": {
+   "A": "Hidrocortisona 100 mg IV em bolus imediatamente e SF 0,9% 1 L na primeira hora",
+   "B": "Aguardar cortisol e ACTH para confirmar a crise antes do corticoide",
+   "C": "Laparotomia exploradora pela suspeita de abdome agudo",
+   "D": "Fludrocortisona 0,2 mg VO e SF 0,9% em manutenção"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Crise adrenal: tratar antes de qualquer resultado com hidrocortisona 100 mg IV (depois 50 mg 6/6 h) e volume isotônico. Fludrocortisona é dispensável com HC ≥ 40 mg/dia e demora dias para agir. A crise pode simular abdome agudo, e a laparotomia pode ser catastrófica."
+ },
+ {
+  "n": 44,
+  "enunciado": "Mulher, 28 anos, em uso de anticoncepcional oral combinado, investiga fadiga e hiponatremia leve. O cortisol matinal (imunoensaio antigo) veio 16 µg/dL. Sobre a interpretação, é correto afirmar:",
+  "alternativas": {
+   "A": "O anticoncepcional reduz a CBG, tornando o cortisol falsamente baixo",
+   "B": "O valor exclui insuficiência adrenal, independentemente do anticoncepcional",
+   "C": "Deve-se suspender o anticoncepcional por 48 horas e repetir o exame",
+   "D": "O estrogênio oral eleva a CBG e o cortisol total, podendo mascarar insuficiência adrenal"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — O estrogênio oral aumenta a CBG (cortisol total 1,5–2,2× maior); nesse cenário só cortisol ≤ 3 µg/dL tem valor. Opções: cortisol salivar ou suspender o anticoncepcional por 6–8 semanas e repetir."
+ },
+ {
+  "n": 45,
+  "enunciado": "Homem, 71 anos, com tonturas e episódio de pré-síncope há 1 semana. PA 128 × 76 mmHg, sem dor torácica. O traçado é o abaixo (intervalos PR anotados em ms). Qual o diagnóstico e a conduta?",
+  "alternativas": {
+   "A": "BAV de 2º grau Mobitz I; procurar causas reversíveis e fármacos, observar e investigar sintomas ambulatorialmente",
+   "B": "BAV de 2º grau Mobitz II; internação com monitorização e marca-passo transvenoso imediato",
+   "C": "BAV total; atropina e marca-passo transcutâneo",
+   "D": "Bradicardia sinusal fisiológica; nenhuma investigação"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — PR progressivamente maior até uma P bloqueada (o PR pré-bloqueio é maior que o pós-bloqueio) = Wenckebach, bloqueio supra-hissiano em geral benigno. Mobitz II e BAVT é que exigem internação monitorizada.",
+  "imgs": [
+   "assets/simulado_ac3/sim1-q45.jpg"
+  ],
+  "cap": "Tira de ritmo."
+ },
+ {
+  "n": 46,
+  "enunciado": "Homem, 70 anos, hipertenso e diabético, procura o PS com palpitações iniciadas há cerca de 5 dias. PA 132 × 84 mmHg, sem dispneia ou dor torácica. O traçado de ritmo está abaixo. ClCr 68 mL/min. Ele deseja tentar voltar ao ritmo sinusal. Qual a conduta correta?",
+  "alternativas": {
+   "A": "Cardioversão elétrica imediata sem anticoagulação, pois o paciente está estável",
+   "B": "Cardioversão química com propafenona imediata, sem anticoagulação prévia",
+   "C": "Controlar a FC e fazer ecocardiograma transesofágico; sem trombo, cardioverter sob anticoagulação, mantendo-a por pelo menos 4 semanas",
+   "D": "Prescrever AAS 100 mg e programar cardioversão eletiva em 1 semana"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — FA (RR irregular, sem ondas P) com duração ≥ 24 h: cardioversão exige ETE sem trombo ou 3 semanas de anticoagulação prévia; após, anticoagulação ≥ 4 semanas e depois conforme CHA₂DS₂-VA (aqui ≥ 2, indefinida). AAS não protege.",
+  "imgs": [
+   "assets/simulado_ac3/sim1-q46.jpg"
+  ],
+  "cap": "Traçado de ritmo em DII."
+ },
+ {
+  "n": 47,
+  "enunciado": "Paciente intubado por pneumonia grave, 70 kg de peso predito, em ventilação controlada a volume com VC de 600 mL, PEEP 5 cmH₂O, pressão de pico 38 e pressão de platô 33 cmH₂O. Qual ajuste prioritário?",
+  "alternativas": {
+   "A": "Reduzir a PEEP para zero para diminuir a pressão de platô",
+   "B": "Reduzir o volume corrente para cerca de 6 mL/kg de peso predito (~420 mL), buscando platô < 28 e driving pressure < 15",
+   "C": "Aumentar o volume corrente para melhorar a oxigenação",
+   "D": "Trocar para modo espontâneo com pressão de suporte de 20 cmH₂O"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Platô 33 (> 28) e driving pressure 28 (> 15) indicam risco de lesão induzida pela ventilação; o VC (8,6 mL/kg) deve cair para 6 mL/kg do peso predito."
+ },
+ {
+  "n": 48,
+  "enunciado": "Homem, 68 anos, diabético, com angina aos mínimos esforços (CCS III) apesar de atenolol e isossorbida. ECG com ondas Q inferiores; ecocardiograma com FE 32% e hipocinesia inferolateral. Qual é a melhor estratégia?",
+  "alternativas": {
+   "A": "Cateterismo cardíaco direto, sem teste não invasivo prévio",
+   "B": "Escore de cálcio coronariano",
+   "C": "Angio-TC de coronárias para excluir DAC",
+   "D": "Teste ergométrico para avaliar a capacidade funcional"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Angina CCS III refratária, FE ≤ 35% e área inativa elevam a probabilidade acima de 85%: cateterismo direto. Um teste negativo seria provavelmente falso-negativo e a decisão (possível CRM) depende da anatomia."
+ },
+ {
+  "n": 49,
+  "enunciado": "Homem, 58 anos, com FA persistente e insuficiência cardíaca com FEVE de 30%, sintomático apesar do controle de frequência. Qual antiarrítmico pode ser usado para manutenção do ritmo sinusal?",
+  "alternativas": {
+   "A": "Propafenona",
+   "B": "Verapamil",
+   "C": "Sotalol",
+   "D": "Amiodarona"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Na ICFEr, propafenona (classe IC) e sotalol são contraindicados e os BCC não di-hidropiridínicos são proibidos com FE < 40%; amiodarona é permitida (e a ablação é primeira linha na suspeita de taquicardiomiopatia/ICFEr)."
+ },
+ {
+  "n": 50,
+  "enunciado": "Homem, 55 anos, há 2 meses sente aperto retroesternal ao subir ladeiras, que melhora em 3 a 5 minutos de repouso, sem episódios em repouso. Hipertenso, tabagista, LDL 162 mg/dL. Exame físico e ECG normais, ecocardiograma com FE preservada. A conduta inicial mais adequada é:",
+  "alternativas": {
+   "A": "Encaminhar à emergência para estratificação de SCA",
+   "B": "Iniciar tratamento clínico e solicitar teste não invasivo (angio-TC de coronárias ou imagem funcional de estresse)",
+   "C": "Indicar cateterismo cardíaco direto",
+   "D": "Não investigar, pois a probabilidade pré-teste é muito baixa"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Angina típica estável (CCS II) com probabilidade intermediária (RF-CL 15–50%): teste não invasivo e início da prevenção (AAS, estatina de alta potência, nitrato SL, betabloqueador ou BCC). Cateterismo direto é para > 85%, angina refratária, FE ≤ 35% ou arritmia grave."
+ }
+];
+
+const SIM2 = [
+ {
+  "n": 1,
+  "enunciado": "Paciente com IAM com supra em choque cardiogênico, levado à hemodinâmica, apresenta lesão culpada na DA proximal e lesões graves em CD e circunflexa. Qual a estratégia de revascularização no procedimento?",
+  "alternativas": {
+   "A": "Tratar apenas a lesão culpada no momento agudo",
+   "B": "Indicar apenas balão intra-aórtico, adiando qualquer angioplastia",
+   "C": "Não revascularizar e indicar trombólise",
+   "D": "Revascularizar completamente as três artérias no mesmo procedimento"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — No choque cardiogênico, a angioplastia primária é a escolha e tratar só a lesão culpada teve menor mortalidade do que a revascularização completa imediata."
+ },
+ {
+  "n": 2,
+  "enunciado": "Mulher, 68 anos, internada há 5 dias em uso de amoxicilina-clavulanato, apresenta 4 evacuações líquidas por dia. A colonoscopia, feita por outro motivo, mostrou o aspecto abaixo. O NAAT para C. difficile é positivo e a toxina A/B é negativa. Qual a interpretação?",
+  "alternativas": {
+   "A": "A toxina negativa exclui CDI; investigar doença inflamatória intestinal",
+   "B": "Repetir o NAAT e a toxina em 7 dias antes de tratar",
+   "C": "O resultado indica apenas colonização; não tratar",
+   "D": "Pseudomembranas no contexto clínico indicam CDI apesar da toxina negativa (EIA tem sensibilidade ~75%); tratar"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — NAAT+ com toxina− pode ser portador ou CDI com pouca toxina; a decisão é clínica. Diarreia significativa com fator de risco e pseudomembranas indica CDI verdadeira. Não se repete o teste em 7 dias.",
+  "imgs": [
+   "assets/simulado_ac3/sim2-q2.jpg"
+  ],
+  "cap": "Aspecto endoscópico do cólon."
+ },
+ {
+  "n": 3,
+  "enunciado": "Homem, 45 anos, com diarreia aquosa crônica há 6 meses, episódios de rubor facial, sibilância e sopro cardíaco novo. Qual a hipótese e o exame inicial?",
+  "alternativas": {
+   "A": "Síndrome carcinoide; 5-HIAA urinário de 24 horas",
+   "B": "Hipertireoidismo; TSH e T4 livre",
+   "C": "Insuficiência adrenal; cortisol matinal",
+   "D": "Mastocitose; triptase sérica"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Rubor, sibilância e sopro (valvopatia direita) com diarreia secretória sugerem tumor neuroendócrino com síndrome carcinoide; o 5-HIAA urinário é o exame inicial."
+ },
+ {
+  "n": 4,
+  "enunciado": "Paciente com bronquiectasias tem a primeira cultura de escarro positiva para Pseudomonas aeruginosa (culturas anteriores negativas). Está estável, sem exacerbação. Qual a conduta?",
+  "alternativas": {
+   "A": "Não tratar, pois o paciente está assintomático",
+   "B": "Tentar erradicação com antibiótico anti-pseudomonas sistêmico + inalatório e cultura de controle em 1–4 semanas",
+   "C": "Corticoide inalatório em dose alta",
+   "D": "Iniciar azitromicina contínua isoladamente"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Primoinfecção por Pseudomonas deve ser tratada para erradicação (sistêmico + inalatório). Na infecção crônica (≥ 2 culturas em 12 meses com intervalo ≥ 3 meses), usa-se antibiótico inalatório prolongado."
+ },
+ {
+  "n": 5,
+  "enunciado": "Paciente de 59 anos com SCA sem supra apresenta crise de dor torácica. PA 100 × 60 mmHg; usou tadalafila há 20 horas. Sobre o nitrato:",
+  "alternativas": {
+   "A": "Pode ser usado, pois a tadalafila só interage nas primeiras 6 horas",
+   "B": "É a única droga que reduz a mortalidade e não pode ser omitida",
+   "C": "Está contraindicado pelo uso de inibidor de fosfodiesterase-5 nas últimas 48 horas",
+   "D": "Deve ser dado por via IV em dose dobrada"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Nitrato é contraindicado com sildenafila < 24 h ou tadalafila < 48 h (hipotensão grave) e com PAS < 100; o nitrato não reduz mortalidade na SCASSST."
+ },
+ {
+  "n": 6,
+  "enunciado": "Paciente com bronquiectasias apresenta há 3 dias aumento da tosse, do volume e da purulência do escarro e piora da dispneia. FR 22 irpm, SpO₂ 94%, afebril, sem hemoptise. Qual a conduta?",
+  "alternativas": {
+   "A": "Colher escarro e iniciar antibiótico por 14 dias guiado pelas culturas prévias, intensificando a fisioterapia respiratória",
+   "B": "Antibiótico inalatório isolado",
+   "C": "Antibiótico por 5 dias e alta sem coleta de escarro",
+   "D": "Corticoide sistêmico por 14 dias, sem antibiótico"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Exacerbação (≥ 3 sintomas por ≥ 48 h) sem sinais de gravidade: antibiótico por 14 dias (14–21 nos graves), com coleta prévia de escarro. Corticoide sistêmico só com asma/DPOC associada; inalatório não é recomendado para a exacerbação."
+ },
+ {
+  "n": 7,
+  "enunciado": "Homem, 72 anos, com IAM sem supra e ClCr de 25 mL/min. Qual o ajuste correto da enoxaparina?",
+  "alternativas": {
+   "A": "Contraindicar qualquer heparina e usar fondaparinux",
+   "B": "0,5 mg/kg SC 12/12 h",
+   "C": "1 mg/kg SC 12/12 h, sem ajuste",
+   "D": "1 mg/kg SC uma vez ao dia"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Com ClCr < 30 mL/min, a enoxaparina passa a 1 mg/kg 1×/dia (> 75 anos com função normal: 0,75 mg/kg 12/12 h). Fondaparinux é contraindicado com ClCr < 20 e exige HNF na ICP."
+ },
+ {
+  "n": 8,
+  "enunciado": "Homem, 45 anos, com IAM inferior, desenvolve BAV de 2º grau com QRS estreito. Está estável e assintomático. Qual medida específica pode ser usada?",
+  "alternativas": {
+   "A": "Amiodarona IV",
+   "B": "Aminofilina 250 mg IV em bolus",
+   "C": "Isoproterenol em dose alta",
+   "D": "Marca-passo definitivo imediato"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — No IAM com BAV de 2º/3º grau sem instabilidade, a aminofilina (antagonista da adenosina) é a medida citada. No IAM inferior, o bloqueio é em geral vagal (Bezold-Jarisch) e transitório."
+ },
+ {
+  "n": 9,
+  "enunciado": "Homem, 70 anos, com FA permanente e FE de 55%, mantém FC de repouso de 105 bpm com metoprolol em dose máxima tolerada. Qual a próxima opção para controle da frequência?",
+  "alternativas": {
+   "A": "Indicar ablação do nó AV como primeiro passo",
+   "B": "Trocar o metoprolol por nifedipina",
+   "C": "Associar propafenona",
+   "D": "Associar digoxina"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Sem controle com betabloqueador, associa-se digoxina (segunda linha, em associação) ou BCC não di- hidropiridínico se FE > 40%. Propafenona é antiarrítmico de ritmo; ablação do nó AV + marca-passo é reservada à falha medicamentosa."
+ },
+ {
+  "n": 10,
+  "enunciado": "Homem, 72 anos, com fadiga e dispneia aos esforços há 2 semanas. PA 110 × 70 mmHg, sem sinais de choque. O ECG está abaixo. Ele não usa medicamentos cronotrópicos negativos. Qual a conduta?",
+  "alternativas": {
+   "A": "BAV total; internação com monitorização cardíaca, investigar causas reversíveis e programar marca-passo",
+   "B": "Ritmo sinusal com extrassístoles; Holter ambulatorial",
+   "C": "Fibrilação atrial lenta; anticoagulação e alta",
+   "D": "BAV de 1º grau; nenhuma conduta"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Ondas P com frequência própria, sem relação com QRS regulares e de frequência menor, caracterizam BAVT. Mesmo estável, exige internação monitorizada e marca-passo (transvenoso se escape < 30 bpm com QRS ≥ 120 ms ou sintomas).",
+  "imgs": [
+   "assets/simulado_ac3/sim2-q10.jpg"
+  ],
+  "cap": "ECG de 12 derivações."
+ },
+ {
+  "n": 11,
+  "enunciado": "Homem, 25 anos, 70 kg, retorna de viagem com diarreia aquosa. Está com sede, bebe avidamente, olhos fundos, mucosas secas e pulso rápido, mas alerta e conseguindo ingerir líquidos. Qual o plano de hidratação?",
+  "alternativas": {
+   "A": "SRO apenas após cada evacuação, até 2 L/dia",
+   "B": "SRO 2,2–4 L nas primeiras 4 horas, em pequenos goles, mais reposição das perdas, reavaliando de hora em hora",
+   "C": "Bebida esportiva à vontade, pois equivale à SRO",
+   "D": "Ringer lactato 30 mL/kg em 30 minutos e depois 70 mL/kg em 2 h 30 min"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — \"Alguma desidratação\" (leve a moderada, consegue beber) é tratada com SRO em 4 h na unidade (50–100 mL/kg). A via IV é para hipovolemia grave; bebidas esportivas não têm composição adequada."
+ },
+ {
+  "n": 12,
+  "enunciado": "Mulher, 30 anos, com cansaço há 1 ano, perda de 5 kg e escurecimento progressivo da pele, inclusive de cicatriz recente (foto). O cortisol matinal (ensaio monoclonal) veio 9 µg/dL. Qual é o próximo passo diagnóstico?",
+  "alternativas": {
+   "A": "Teste de estímulo com cosintropina 250 µg, dosando cortisol aos 30 e 60 minutos",
+   "B": "Confirmar insuficiência adrenal sem outros exames, pois o valor é menor que 18",
+   "C": "TC de adrenais",
+   "D": "Excluir insuficiência adrenal, pois o valor é maior que 3"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Cortisol matinal entre 3 e o corte de exclusão do ensaio (13–14 µg/dL nos monoclonais) é indeterminado: faz-se o teste da cosintropina (pico < 14 sugere IA; ≥ 18 exclui). Cicatrizes formadas durante a doença ficam pigmentadas pelo ACTH alto.",
+  "imgs": [
+   "assets/simulado_ac3/sim2-q12.jpg"
+  ],
+  "cap": "Cicatriz recente no antebraço."
+ },
+ {
+  "n": 13,
+  "enunciado": "Mulher, 70 anos, diabética, com angina instável de risco intermediário, aguarda cateterismo. Tem creatinina de 1,7 mg/dL e FE de 50%. Qual medida reduz o risco de nefropatia pelo contraste?",
+  "alternativas": {
+   "A": "Restrição hídrica nas 24 horas anteriores",
+   "B": "Hidratação com SF 0,9% 1 mL/kg/h por 12–24 h antes e depois do procedimento",
+   "C": "Furosemida IV antes do contraste",
+   "D": "Manitol IV após o cateterismo"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Idosos, diabéticos e pacientes com disfunção renal devem receber hidratação venosa contínua (1 mL/kg/h) antes e depois; bicarbonato 8,4% diluído é alternativa quando o procedimento é precoce ou há restrição hídrica."
+ },
+ {
+  "n": 14,
+  "enunciado": "Mulher, 36 anos, com diarreia crônica leve, flatulência, distensão e anemia ferropriva refratária ao ferro oral. Apresenta lesões vesiculares pruriginosas em cotovelos e joelhos. Qual a investigação diagnóstica?",
+  "alternativas": {
+   "A": "Antitransglutaminase IgA seguida de endoscopia alta com biópsia duodenal",
+   "B": "Teste respiratório do hidrogênio expirado com lactose",
+   "C": "Colonoscopia com biópsia de íleo terminal como primeiro exame",
+   "D": "Dosagem de 5-HIAA urinário de 24 horas"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Anemia ferropriva refratária, má absorção e dermatite herpetiforme apontam doença celíaca: sorologia (antitransglutaminase) e biópsia duodenal confirmam. 5-HIAA investiga síndrome carcinoide."
+ },
+ {
+  "n": 15,
+  "enunciado": "Paciente de 63 anos está no 3º episódio de infecção por C. difficile (2ª recorrência), sem critérios de gravidade. Já usou vancomicina e fidaxomicina. Qual é a melhor estratégia?",
+  "alternativas": {
+   "A": "Probiótico contínuo, sem antibiótico",
+   "B": "Antibiótico (fidaxomicina ou vancomicina em desmame) seguido de produto de microbiota fecal ou transplante de microbiota fecal",
+   "C": "Colectomia subtotal eletiva",
+   "D": "Metronidazol oral por 14 dias, isoladamente"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — A partir da 2ª recorrência, após o curso antibiótico, associa-se produto de microbiota fecal ou FMT. Metronidazol não é opção para recorrências; probióticos não são recomendados."
+ },
+ {
+  "n": 16,
+  "enunciado": "Homem, 74 anos, hipertenso e diabético, com FA paroxística e AVC isquêmico há 1 ano. Qual o CHA₂DS₂-VA e a conduta?",
+  "alternativas": {
+   "A": "2 pontos; considerar anticoagulação apenas se a FA for permanente",
+   "B": "4 pontos; observação sem antitrombótico",
+   "C": "5 pontos; anticoagulação com ACOD",
+   "D": "3 pontos; AAS 100 mg"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — HAS (1) + DM (1) + idade 65–74 (1) + AVC (2) = 5. Escore ≥ 2 indica anticoagulação, independentemente de a FA ser paroxística ou permanente; ACOD é preferível à varfarina."
+ },
+ {
+  "n": 17,
+  "enunciado": "Paciente internado com suspeita de infecção por C. difficile aguarda o resultado do exame. Sobre as medidas de controle de infecção, é correto:",
+  "alternativas": {
+   "A": "Instituir precauções de contato desde a suspeita e higienizar as mãos com água e sabão",
+   "B": "Higienizar as mãos com álcool gel, que elimina os esporos",
+   "C": "Iniciar isolamento apenas após confirmação laboratorial",
+   "D": "Suspender o isolamento assim que a diarreia cessar"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Precauções de contato devem ser preemptivas; os esporos resistem ao álcool, por isso usa-se água e sabão. O isolamento é mantido ≥ 48 h após a resolução da diarreia."
+ },
+ {
+  "n": 18,
+  "enunciado": "Mulher, 56 anos, com estenose mitral reumática moderada e FA permanente. Qual o anticoagulante indicado?",
+  "alternativas": {
+   "A": "AAS + clopidogrel",
+   "B": "Apixabana 5 mg 12/12 h",
+   "C": "Varfarina com RNI entre 2 e 3",
+   "D": "Rivaroxabana 20 mg/dia"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Estenose mitral moderada/grave e prótese mecânica exigem varfarina; os ACODs não devem ser usados na doença reumática com estenose mitral."
+ },
+ {
+  "n": 19,
+  "enunciado": "Homem, 40 anos, após um churrasco com hambúrgueres malpassados, apresenta há 2 dias cólicas e diarreia com sangue vivo, sem febre. Outros convidados têm quadro semelhante. Está estável e hidratado. Qual a conduta mais adequada enquanto aguarda os exames?",
+  "alternativas": {
+   "A": "Iniciar ciprofloxacino 500 mg 12/12 h por 3 dias",
+   "B": "Prescrever loperamida para reduzir a perda de volume",
+   "C": "Iniciar ceftriaxona 2 g IM, pelo sangue nas fezes",
+   "D": "Solicitar pesquisa de toxina Shiga e hemograma, e não prescrever antibiótico até afastar STEC"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Sangue visível sem febre após carne moída/surto sugere E. coli produtora de toxina Shiga; o antibiótico não reduz sintomas e se associa a síndrome hemolítico-urêmica (sobretudo beta-lactâmicos). Hemograma vigia plaquetopenia."
+ },
+ {
+  "n": 20,
+  "enunciado": "Homem, 66 anos, em uso de rivaroxabana para FA, apresenta hemorragia digestiva com instabilidade e risco de morte, tendo tomado a última dose há 6 horas. Além de suporte e suspensão do anticoagulante, qual reversão específica é indicada?",
+  "alternativas": {
+   "A": "Hemodiálise de urgência para remover a rivaroxabana",
+   "B": "Idarucizumabe",
+   "C": "Andexanete alfa (ou concentrado de complexo protrombínico se indisponível/sem resposta)",
+   "D": "Carvão ativado"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Andexanete reverte inibidores do fator Xa; idarucizumabe é específico da dabigatrana, a única dialisável. Carvão ativado não é indicado na hemorragia digestiva."
+ },
+ {
+  "n": 21,
+  "enunciado": "Homem, 52 anos, 3 dias após iniciar amoxicilina, apresenta pústulas puntiformes não foliculares sobre eritema em dobras axilares e inguinais, febre e leucocitose com neutrofilia. Não há acometimento de mucosas nem descolamento epidérmico. O diagnóstico mais provável é:",
+  "alternativas": {
+   "A": "Necrólise epidérmica tóxica",
+   "B": "Pustulose exantemática generalizada aguda (PEGA)",
+   "C": "DRESS",
+   "D": "Eritema multiforme maior"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Pústulas puntiformes intertriginosas em 1–11 dias, após beta-lactâmico, com neutrofilia e sem mucosite/descolamento caracterizam PEGA. DRESS tem latência de 2–6 semanas, edema facial, eosinofilia e acometimento visceral."
+ },
+ {
+  "n": 22,
+  "enunciado": "Homem, 33 anos, HSH, apresenta há 10 dias diarreia com sangue e muco, cólicas e tenesmo, sem febre. A microscopia de fezes frescas mostra trofozoítos com hemácias fagocitadas e poucos leucócitos. O tratamento indicado é:",
+  "alternativas": {
+   "A": "Albendazol 400 mg em dose única",
+   "B": "Vancomicina 125 mg VO 6/6 h por 10 dias",
+   "C": "Metronidazol 500–750 mg VO 3×/dia por 7–10 dias, seguido de agente intraluminal",
+   "D": "Azitromicina 1 g em dose única"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Trofozoíto com hemácias fagocitadas comprova amebíase invasiva (a ameba destrói leucócitos, daí sangue sem leucócitos). Trata-se com metronidazol seguido de agente intraluminal para erradicar os cistos."
+ },
+ {
+  "n": 23,
+  "enunciado": "Homem, 74 anos, com edema agudo de pulmão cardiogênico, FR 34 irpm, SpO₂ 86% com máscara, PA 176 × 98 mmHg, consciente e colaborativo. Além do tratamento farmacológico, qual suporte ventilatório é o mais indicado?",
+  "alternativas": {
+   "A": "Cateter nasal de O₂ a 2 L/min",
+   "B": "CPAP em torno de 10 cmH₂O (PEEP 8–10)",
+   "C": "Intubação orotraqueal imediata",
+   "D": "BiPAP com IPAP 25 e EPAP 0"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — No EAP cardiogênico, a VNI (CPAP ~10 cmH₂O) reduz o trabalho respiratório, melhora a oxigenação e diminui pré e pós-carga; IOT é para falha da VNI ou contraindicação."
+ },
+ {
+  "n": 24,
+  "enunciado": "Mulher, 50 anos, com insuficiência adrenal primária e hipotireoidismo primário recém-diagnosticados simultaneamente (TSH 9 mUI/L). Qual a sequência correta do tratamento?",
+  "alternativas": {
+   "A": "Iniciar a levotiroxina primeiro, pois o hipotireoidismo agrava a astenia",
+   "B": "Tratar apenas o hipotireoidismo, pois o TSH alto explica o cortisol baixo",
+   "C": "Iniciar o glicocorticoide primeiro e só depois a levotiroxina, reavaliando o TSH",
+   "D": "Iniciar ambos em doses plenas no mesmo dia, sem ordem definida"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Levotiroxina isolada acelera o metabolismo do cortisol e pode precipitar crise adrenal; além disso, TSH levemente alto na IA primária pode normalizar com o glicocorticoide."
+ },
+ {
+  "n": 25,
+  "enunciado": "Homem, 79 anos, com IAM com supra de ST há 2 horas em hospital sem hemodinâmica, sem possibilidade de transferência em 120 minutos. Sem contraindicação a fibrinolítico. Qual a terapia antitrombótica adequada à idade?",
+  "alternativas": {
+   "A": "AAS 300 mg + clopidogrel 75 mg sem dose de ataque + enoxaparina 0,75 mg/kg SC 12/12 h sem bolus IV",
+   "B": "AAS 300 mg + ticagrelor 180 mg + fondaparinux",
+   "C": "AAS 300 mg + clopidogrel 300 mg + enoxaparina 30 mg IV + 1 mg/kg SC",
+   "D": "AAS 300 mg + prasugrel 60 mg + heparina não fracionada"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Na fibrinólise em ≥ 75 anos, o clopidogrel é dado sem ataque e a enoxaparina sem bolus, em 0,75 mg/kg. Prasugrel é contraindicado ≥ 75 anos e não é droga de PS."
+ },
+ {
+  "n": 26,
+  "enunciado": "Gestante de 28 semanas apresenta febre de 38,7 °C, mialgia, cefaleia e diarreia 2 dias após comer queijo fresco não pasteurizado e embutidos. Qual agente deve obrigatoriamente ser considerado e qual exame pedir?",
+  "alternativas": {
+   "A": "Norovírus; pesquisa viral nas fezes e apenas hidratação",
+   "B": "C. perfringens; nenhum exame, pois é autolimitado",
+   "C": "Listeria monocytogenes; hemoculturas, com antibiótico que cubra Listeria",
+   "D": "Giardia lamblia; parasitológico de fezes em 3 amostras"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Febre com sintomas sistêmicos e gastrintestinais em gestante exposta a laticínios/embutidos sugere listeriose (risco ~20× na gestação), que pode ser invasiva e causar perda fetal: hemoculturas e antibiótico ativo contra Listeria."
+ },
+ {
+  "n": 27,
+  "enunciado": "Homem, 60 anos, com DAC crônica e angina estável CCS II, usa AAS e atorvastatina 80 mg. Tem asma moderada, FC 88 bpm e PA 138 × 86 mmHg. Qual antianginoso iniciar?",
+  "alternativas": {
+   "A": "Clopidogrel",
+   "B": "Ivabradina isolada",
+   "C": "Propranolol",
+   "D": "Anlodipino ou diltiazem"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Na asma, prefere-se bloqueador de canal de cálcio aos betabloqueadores (sobretudo os não seletivos). Ivabradina não é primeira linha e só se usa em ritmo sinusal com FE reduzida/IC; clopidogrel não é antianginoso."
+ },
+ {
+  "n": 28,
+  "enunciado": "Homem, 39 anos, IMC 34 kg/m², relata que come por ansiedade e que fuma e bebe para \"se sentir saciado\"; tem desejo intenso por recompensa. Qual o fármaco mais alinhado a esse fenótipo?",
+  "alternativas": {
+   "A": "Liraglutida",
+   "B": "Sibutramina",
+   "C": "Bupropiona/naltrexona",
+   "D": "Orlistate"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — O fenótipo de recompensa/compulsão (álcool, cigarro, via dopaminérgica) favorece bupropiona/naltrexona; o de distensão gástrica, agonista GLP-1; o de desejo por doces (serotonina), sibutramina."
+ },
+ {
+  "n": 29,
+  "enunciado": "Paciente com dor torácica típica há 3 horas e supra de ST em V1–V4 apresenta PA 210 × 120 mmHg e história de AVC isquêmico há 2 meses. O hospital não tem hemodinâmica. Sobre a reperfusão:",
+  "alternativas": {
+   "A": "Deve-se trombolisar imediatamente, pois o benefício supera qualquer risco",
+   "B": "Basta reduzir a dose do fibrinolítico pela metade",
+   "C": "A fibrinólise está indicada após controle pressórico, pois AVC isquêmico não é contraindicação",
+   "D": "A fibrinólise está contraindicada pelo AVC isquêmico há menos de 3 meses; providenciar transferência para angioplastia"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — AVC isquêmico nos últimos 3 meses é contraindicação absoluta ao fibrinolítico (PA > 180/110 é relativa). A alternativa é a ICP, mesmo com transferência."
+ },
+ {
+  "n": 30,
+  "enunciado": "Paciente com DAC multiarterial (lesão triarterial proximal), diabético, com FE de 45% e angina limitante. O Heart Team discute a revascularização. A melhor opção é:",
+  "alternativas": {
+   "A": "Tratamento clínico isolado, pois a revascularização não traz benefício",
+   "B": "Angioplastia com stent farmacológico em todas as lesões como primeira escolha",
+   "C": "Cirurgia de revascularização miocárdica",
+   "D": "Angioplastia apenas da lesão mais grave"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Diabético multiarterial: a CRM reduz IAM e mortalidade e é a preferência; a ICP fica para risco cirúrgico muito alto."
+ },
+ {
+  "n": 31,
+  "enunciado": "Mulher, 76 anos, com tontura e uma síncope. O traçado de ritmo está abaixo, com QRS largo e PR constante nos batimentos conduzidos. Qual o diagnóstico e a conduta?",
+  "alternativas": {
+   "A": "BAV de 2º grau Mobitz II; internação com monitorização, avaliação do cardiologista e indicação de marca- passo",
+   "B": "Bradicardia sinusal; suspender café",
+   "C": "Extrassístoles atriais bloqueadas; nenhuma conduta",
+   "D": "BAV de 2º grau Mobitz I; observação ambulatorial"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — PR constante com P bloqueada de forma súbita e QRS largo indica bloqueio infra-hissiano (Mobitz II), com risco de evoluir para BAVT: internação monitorizada e marca-passo.",
+  "imgs": [
+   "assets/simulado_ac3/sim2-q31.jpg"
+  ],
+  "cap": "Tira de ritmo."
+ },
+ {
+  "n": 32,
+  "enunciado": "Mulher, 38 anos, com dor cervical anterior, febre baixa e palpitações após uma infecção de vias aéreas. TSH suprimido e T4 livre elevado; a cintilografia mostra captação muito baixa. O diagnóstico é:",
+  "alternativas": {
+   "A": "Doença de Graves",
+   "B": "Tireoidite subaguda com tireotoxicose sem hipertireoidismo",
+   "C": "Bócio multinodular tóxico",
+   "D": "Adenoma tóxico (doença de Plummer)"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Tireotoxicose com captação baixa indica liberação de hormônio pré-formado (tireoidite) ou ingestão exógena, e não aumento de síntese. Graves, Plummer e BMN tóxico têm captação aumentada."
+ },
+ {
+  "n": 33,
+  "enunciado": "Mulher, 61 anos, com angina e probabilidade pré-teste de DAC intermediária, tem BRE no ECG de repouso e artrose de joelhos que a impede de caminhar na esteira. O exame funcional mais adequado é:",
+  "alternativas": {
+   "A": "Holter de 24 horas",
+   "B": "Teste ergométrico em esteira",
+   "C": "Teste ergométrico em bicicleta, pois o BRE não interfere",
+   "D": "Ecocardiograma ou cintilografia com estresse farmacológico"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — BRE torna o ECG de esforço não interpretável e ela não consegue se exercitar: exame com imagem e estresse farmacológico (dobutamina, dipiridamol)."
+ },
+ {
+  "n": 34,
+  "enunciado": "Paciente de 58 anos, transplantado cardíaco há 3 anos, apresenta bradicardia sintomática com hipotensão. Qual medida NÃO deve ser usada?",
+  "alternativas": {
+   "A": "Atropina",
+   "B": "Marca-passo transcutâneo",
+   "C": "Adrenalina",
+   "D": "Dopamina"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — O coração transplantado é desnervado, e a atropina (que atua bloqueando o vago) não deve ser usada; recorre-se a beta-agonistas (adrenalina/dopamina) e marca-passo."
+ },
+ {
+  "n": 35,
+  "enunciado": "Mulher, 40 anos, 5 semanas após iniciar carbamazepina, desenvolve febre, exantema extenso, edema facial importante, linfadenopatia generalizada, eosinofilia, linfócitos atípicos e elevação de transaminases. Mucosas pouco acometidas, sem descolamento em lençol. O diagnóstico é:",
+  "alternativas": {
+   "A": "Síndrome de Stevens-Johnson",
+   "B": "DRESS (reação a fármaco com eosinofilia e sintomas sistêmicos)",
+   "C": "Síndrome da pele escaldada estafilocócica",
+   "D": "Lúpus cutâneo agudo"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — Latência de 2–6 semanas, edema facial, linfadenopatia, eosinofilia, linfócitos atípicos e hepatite definem DRESS; mucosite grave e descolamento epidérmico não fazem parte do quadro."
+ },
+ {
+  "n": 36,
+  "enunciado": "Mulher, 42 anos, com Addison autoimune recém-diagnosticado, aldosterona baixa e renina elevada. Qual o esquema de reposição de manutenção mais adequado?",
+  "alternativas": {
+   "A": "Dexametasona 0,75 mg à noite, sem mineralocorticoide",
+   "B": "Fludrocortisona 0,1 mg isolada",
+   "C": "Hidrocortisona 15–25 mg/dia em 2–3 tomadas (maior dose ao acordar) + fludrocortisona 0,05–0,1 mg pela manhã, sem restrição de sal",
+   "D": "Hidrocortisona 100 mg/dia, para prevenir crises"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Na IA primária a reposição é dupla (glico + mineralocorticoide) e imita o ritmo circadiano; dexametasona deve ser evitada; doses suprafisiológicas aumentam morbimortalidade. Na prática brasileira, prednisona/prednisolona em baixa dose também são usadas."
+ },
+ {
+  "n": 37,
+  "enunciado": "Homem, 63 anos, com IAM sem supra de ST e fibrilação atrial em uso de apixabana. Será submetido a angioplastia com stent. Qual o inibidor de P2Y12 preferido na terapia combinada?",
+  "alternativas": {
+   "A": "Clopidogrel",
+   "B": "Nenhum, apenas apixabana e AAS",
+   "C": "Ticagrelor em dose de 90 mg 12/12 h com AAS indefinidamente",
+   "D": "Prasugrel"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Em quem usa anticoagulante oral, o clopidogrel é o P2Y12 preferido (menos sangramento); tripla terapia por ~1 semana e depois dupla (ACOD + clopidogrel) até 12 meses após SCA."
+ },
+ {
+  "n": 38,
+  "enunciado": "Homem, 50 anos, chega sem dor após episódio de angina prolongada no dia anterior. A troponina está discretamente elevada e o ECG é o abaixo. Qual a conduta inadequada neste paciente?",
+  "alternativas": {
+   "A": "Internar com dupla antiagregação e anticoagulação",
+   "B": "Prescrever estatina de alta potência",
+   "C": "Indicar estratificação invasiva precoce",
+   "D": "Solicitar teste ergométrico antes de decidir o cateterismo"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Ondas T invertidas, profundas e simétricas nas precordiais após angina (Wellens tipo B) indicam lesão crítica da DA proximal; teste de esforço pode precipitar infarto e é contraindicado. As demais condutas são adequadas.",
+  "imgs": [
+   "assets/simulado_ac3/sim2-q38.jpg"
+  ],
+  "cap": "ECG de 12 derivações, paciente sem dor."
+ },
+ {
+  "n": 39,
+  "enunciado": "Paciente em ventilação mecânica há 6 dias por pneumonia, já com a infecção controlada, hemodinamicamente estável sem vasopressor, FiO₂ 30% e PEEP 5 cmH₂O, desperto e com tosse eficaz. Qual a próxima etapa?",
+  "alternativas": {
+   "A": "Realizar teste de respiração espontânea e, se tolerado, extubar",
+   "B": "Manter sedação profunda por mais 72 horas",
+   "C": "Aumentar a PEEP para 12 cmH₂O antes de qualquer desmame",
+   "D": "Realizar traqueostomia imediatamente"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Resolução da causa, estabilidade hemodinâmica e oxigenação com FiO₂/PEEP baixas permitem o teste de respiração espontânea; em alto risco de reintubação, considerar VNI preventiva após a extubação."
+ },
+ {
+  "n": 40,
+  "enunciado": "Mulher, 68 anos, no 5º dia de IAM anterior, apresenta piora súbita com hipotensão e sopro holossistólico rude com frêmito na borda esternal esquerda baixa. Ao cateterismo direito há salto de saturação de O₂ entre o átrio e o ventrículo direitos. O diagnóstico e a conduta são:",
+  "alternativas": {
+   "A": "Ruptura de músculo papilar; apenas diurético e observação",
+   "B": "Comunicação interventricular pós-infarto; suporte hemodinâmico (inotrópico, balão intra-aórtico) e cirurgia de emergência",
+   "C": "Aneurisma de VE; anticoagulação e alta",
+   "D": "Pericardite de Dressler; AINE"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — CIV pós-IAM: sopro rude com frêmito e salto oximétrico AD → VD, confirmados por eco. A mortalidade cirúrgica (40– 50%) é bem menor que a do tratamento clínico (~80% em 30 dias)."
+ },
+ {
+  "n": 41,
+  "enunciado": "Homem, 34 anos, sem cardiopatia estrutural, tem episódios infrequentes de FA paroxística sintomática, que duram horas. Já fez a primeira dose supervisionada no hospital sem intercorrências. Qual estratégia ambulatorial para as crises é adequada?",
+  "alternativas": {
+   "A": "Propafenona isolada, sem bloqueador do nó AV, para não causar bradicardia",
+   "B": "Amiodarona 1.200 mg VO em dose única a cada crise",
+   "C": "\"Pill-in-the-pocket\": propafenona 600 mg VO em dose única, precedida de betabloqueador ou BCC",
+   "D": "Digoxina 0,25 mg a cada crise"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Em coração normal com crises infrequentes, a propafenona em dose única reverte 56–94%; o betabloqueador/BCC prévio evita flutter IC com condução 1:1."
+ },
+ {
+  "n": 42,
+  "enunciado": "Paciente com síndrome de Stevens-Johnson admitido em centro de referência há 24 horas, com SCORTEN 3, sem contraindicações. Sobre a terapia imunomoduladora adjunta, é correto:",
+  "alternativas": {
+   "A": "A ciclosporina 3–5 mg/kg/dia, iniciada precocemente, é a opção sugerida, além do suporte",
+   "B": "A talidomida reduz a mortalidade e deve ser usada",
+   "C": "Corticoide em pulso é obrigatório em todos os casos",
+   "D": "A imunoglobulina IV em monoterapia é a primeira escolha"
+  },
+  "correta": "A",
+  "explicacao": "Alternativa A — Não há terapia comprovada; a ciclosporina é sugerida e o etanercepte é alternativa. IVIG isolada não é sugerida, talidomida aumentou mortalidade e corticoide de rotina não é recomendado."
+ },
+ {
+  "n": 43,
+  "enunciado": "Homem, 60 anos, com TSH suprimido, T3 e T4 normais, nódulo único de 3 cm à ultrassonografia e anticorpos antitireoidianos negativos. A cintilografia mostra nódulo hipercaptante com supressão do restante da glândula. O tratamento definitivo de escolha é:",
+  "alternativas": {
+   "A": "Levotiroxina para suprimir o nódulo",
+   "B": "Observação, pois o T4 é normal",
+   "C": "Propiltiouracil por tempo indeterminado",
+   "D": "Iodo radioativo"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Adenoma tóxico (Plummer): o tratamento definitivo é o iodo radioativo (cirurgia em nódulos volumosos). Antitireoidiano não induz remissão."
+ },
+ {
+  "n": 44,
+  "enunciado": "Mulher, 49 anos, foi submetida a colecistectomia há 3 meses e desde então tem 5 a 6 evacuações aquosas diárias, que cessam em jejum, sem sangue, sem diarreia noturna e sem perda de peso. Hemograma, TSH, sorologia para doença celíaca e calprotectina são normais. A conduta mais adequada é:",
+  "alternativas": {
+   "A": "Colonoscopia com biópsias imediatamente",
+   "B": "Prednisona 40 mg/dia",
+   "C": "Prova terapêutica com colestiramina, separando dos demais medicamentos, e reavaliação em 4–6 semanas",
+   "D": "Retirada do glúten da dieta"
+  },
+  "correta": "C",
+  "explicacao": "Alternativa C — Diarreia por ácidos biliares pós-colecistectomia, sem alarme: terapia empírica com resina (colestiramina), tomando os outros fármacos ≥ 1 h antes ou 4–6 h depois. Sem resposta ou com alarme, prosseguir para colonoscopia."
+ },
+ {
+  "n": 45,
+  "enunciado": "Paciente com doença de Addison bem controlado desenvolve amigdalite com febre de 38,5 °C, mas está aceitando a via oral e sem vômitos. A orientação correta é:",
+  "alternativas": {
+   "A": "Dobrar a dose de fludrocortisona",
+   "B": "Dobrar ou triplicar a dose do glicocorticoide por cerca de 3 dias, mantendo a fludrocortisona",
+   "C": "Manter a dose habitual e usar apenas antitérmico",
+   "D": "Aplicar hidrocortisona 100 mg IM e procurar o PS imediatamente"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — \"Regra 3×3\" para doença febril com via oral preservada; o mineralocorticoide não é alterado. A injeção IM e o PS são para vômitos/diarreia que impedem a via oral ou sinais de crise."
+ },
+ {
+  "n": 46,
+  "enunciado": "Homem, 48 anos, tabagista, com dor torácica iniciada há 40 minutos. As derivações V2–V3 estão abaixo; não há supra de ST significativo. Qual a interpretação?",
+  "alternativas": {
+   "A": "Repolarização precoce benigna",
+   "B": "ECG normal; alta após uma troponina negativa",
+   "C": "Hipercalemia, sem relação com isquemia",
+   "D": "Ondas T hiperagudas, sinal precoce de oclusão coronária aguda; repetir ECG seriado e considerar reperfusão"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — T amplas, simétricas e de base larga, desproporcionais ao QRS, são sinal precoce de OCA (geralmente DA). Com dor típica, o ECG deve ser repetido a cada 15 min e a reperfusão considerada.",
+  "imgs": [
+   "assets/simulado_ac3/sim2-q46.jpg"
+  ],
+  "cap": "Derivações V2 e V3."
+ },
+ {
+  "n": 47,
+  "enunciado": "Homem, 66 anos, com dor torácica há 1 hora, PA 86 × 54 mmHg, FC 52 bpm e pulmões limpos. O ECG está abaixo. Qual a conduta mais adequada antes da reperfusão?",
+  "alternativas": {
+   "A": "Iniciar metoprolol IV para reduzir o consumo de O₂",
+   "B": "Realizar V3R–V4R pela suspeita de infarto de VD, evitar nitrato e expandir volume",
+   "C": "Administrar furosemida IV pela hipotensão",
+   "D": "Administrar dinitrato de isossorbida sublingual para aliviar a dor"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — IAM inferior com supra em DIII > DII e hipotensão com pulmões limpos sugere infarto de VD (CD proximal): nitrato é contraindicado e a hipotensão responde a volume. Betabloqueador está contraindicado (FC < 60, PAS < 90).",
+  "imgs": [
+   "assets/simulado_ac3/sim2-q47.jpg"
+  ],
+  "cap": "ECG de 12 derivações."
+ },
+ {
+  "n": 48,
+  "enunciado": "Mulher, 45 anos, IMC 31 kg/m², hipertensa. Iniciou semaglutida associada a dieta e exercício. Após 1 mês perdeu 2,5 kg. Sobre a resposta e o seguimento:",
+  "alternativas": {
+   "A": "Trocar por anfepramona, mais eficaz",
+   "B": "Falha terapêutica; associar sibutramina imediatamente",
+   "C": "Suspender, pois a perda deveria ser de pelo menos 10% no primeiro mês",
+   "D": "Boa resposta inicial; manter, com meta de perda sustentada de 5–10% em 6 meses e acompanhamento nutricional"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — Perda de ~2 kg no 1º mês é boa resposta; a meta é 5–10% em 6 meses e o sucesso é perda sustentada de 10% em 1 ano. O nutricionista garante proteína adequada para preservar massa magra."
+ },
+ {
+  "n": 49,
+  "enunciado": "Homem, 50 anos, assintomático, com LDL 198 mg/dL e pai com IAM aos 48 anos, pergunta se deve \"fazer um exame do coração\". Qual exame é o mais adequado para pesquisar aterosclerose subclínica?",
+  "alternativas": {
+   "A": "Teste ergométrico",
+   "B": "Escore de cálcio coronariano",
+   "C": "Cateterismo cardíaco",
+   "D": "Cintilografia de perfusão miocárdica"
+  },
+  "correta": "B",
+  "explicacao": "Alternativa B — No assintomático, procura-se placa com exame anatômico (escore de cálcio preferencial); o teste funcional vem normal mesmo com placa não obstrutiva. Teste de isquemia de rotina em assintomático não é recomendado."
+ },
+ {
+  "n": 50,
+  "enunciado": "Mulher, 34 anos, com 8 semanas de gestação, recebe diagnóstico de doença de Graves com tireotoxicose franca. Qual antitireoidiano é preferido neste momento?",
+  "alternativas": {
+   "A": "Iodo radioativo",
+   "B": "Metimazol",
+   "C": "Levotiroxina associada a metimazol",
+   "D": "Propiltiouracil"
+  },
+  "correta": "D",
+  "explicacao": "Alternativa D — No 1º trimestre prefere-se o PTU, porque o metimazol se associa a malformações (aplasia cútis). Iodo radioativo é contraindicado na gestação."
+ }
+];
+
+const SIMS = {
+  1: { q: SIM1, key: 'simuladoAC3', nome: 'Simulado 1' },
+  2: { q: SIM2, key: 'simuladoAC3_s2', nome: 'Simulado 2' }
+};
+const SIM_ID = new URLSearchParams(location.search).get('s') === '2' ? 2 : 1;
+const QUESTIONS = SIMS[SIM_ID].q;
+const STORE_KEY = SIMS[SIM_ID].key;
+document.querySelectorAll('.mode-switch a[data-sim]').forEach(a => a.classList.toggle('active', a.dataset.sim === String(SIM_ID)));
+document.querySelector('.brand .sub').textContent = 'AC 3 · ' + SIMS[SIM_ID].nome;
+document.title = SIMS[SIM_ID].nome + ' AC3 · Sétimo Período';
+
+const TAGS = {"1": {"1": ["IAM com supra de ST", "Fibrinólise"], "2": ["Diarreia crônica", "Sinais de alarme"], "3": ["IAM com supra de ST", "ECG: IAM anterior"], "4": ["Stevens-Johnson / NET", "Diagnóstico"], "5": ["Bradicardias", "Bradicardia instável"], "6": ["DAC crônica", "ANOCA/INOCA"], "7": ["Bronquiectasia", "Etiologia"], "8": ["Doença de Addison", "Diagnóstico"], "9": ["C. difficile", "CDI fulminante"], "10": ["Diarreia aguda", "Toxina pré-formada"], "11": ["Fibrilação atrial", "FA instável"], "12": ["Doença de Addison", "Etiologia"], "13": ["SCA sem supra de ST", "Wellens"], "14": ["IAM com supra de ST", "IAM posterior"], "15": ["Tireoide", "Hipertireoidismo por amiodarona"], "16": ["IAM com supra de ST", "BRE e Sgarbossa"], "17": ["C. difficile", "Tratamento do episódio"], "18": ["Obesidade", "Classificação e fármacos"], "19": ["SCA sem supra de ST", "Estratificação invasiva"], "20": ["Diarreia aguda", "Conduta sem gravidade"], "21": ["Tireoide", "Doença de Graves"], "22": ["Stevens-Johnson / NET", "Complicações"], "23": ["Diarreia aguda", "Disenteria e antibiótico"], "24": ["SCA sem supra de ST", "Troponina e rule-out"], "25": ["Fibrilação atrial", "Dose de ACOD"], "26": ["Fibrilação atrial", "Anticoagulação e HAS-BLED"], "27": ["Ventilação mecânica", "VNI"], "28": ["SCA sem supra de ST", "ECG: infra difuso com supra em aVR"], "29": ["IAM com supra de ST", "Complicações mecânicas"], "30": ["Stevens-Johnson / NET", "Conduta inicial"], "31": ["Bradicardias", "Causas extrínsecas"], "32": ["SCA sem supra de ST", "Prescrição inicial"], "33": ["Diarreia aguda", "Hidratação venosa"], "34": ["Diarreia crônica", "Síndrome do intestino irritável"], "35": ["C. difficile", "Recorrência"], "36": ["IAM com supra de ST", "Angioplastia de resgate"], "37": ["Bronquiectasia", "Diagnóstico"], "38": ["Diarreia crônica", "Colite microscópica"], "39": ["Tireoide", "Hipotireoidismo"], "40": ["Bradicardias", "Intoxicações"], "41": ["DAC crônica", "Prevenção secundária"], "42": ["Obesidade", "Fármacos e risco CV"], "43": ["Doença de Addison", "Crise adrenal"], "44": ["Doença de Addison", "Interpretação do cortisol"], "45": ["Bradicardias", "BAV de 2º grau"], "46": ["Fibrilação atrial", "Cardioversão e anticoagulação"], "47": ["Ventilação mecânica", "Ventilação protetora"], "48": ["DAC crônica", "Indicação de cateterismo"], "49": ["Fibrilação atrial", "Controle de ritmo"], "50": ["DAC crônica", "Investigação"]}, "2": {"1": ["IAM com supra de ST", "Choque cardiogênico"], "2": ["C. difficile", "Diagnóstico"], "3": ["Diarreia crônica", "Síndrome carcinoide"], "4": ["Bronquiectasia", "Pseudomonas"], "5": ["SCA sem supra de ST", "Nitrato"], "6": ["Bronquiectasia", "Exacerbação"], "7": ["SCA sem supra de ST", "Anticoagulação na DRC"], "8": ["IAM com supra de ST", "Bradiarritmias no IAM"], "9": ["Fibrilação atrial", "Controle de frequência"], "10": ["Bradicardias", "BAV total"], "11": ["Diarreia aguda", "Reidratação oral"], "12": ["Doença de Addison", "Diagnóstico"], "13": ["SCA sem supra de ST", "Nefropatia por contraste"], "14": ["Diarreia crônica", "Doença celíaca"], "15": ["C. difficile", "Recorrência"], "16": ["Fibrilação atrial", "CHA₂DS₂-VA"], "17": ["C. difficile", "Precauções"], "18": ["Fibrilação atrial", "FA valvar"], "19": ["Diarreia aguda", "STEC"], "20": ["Fibrilação atrial", "Sangramento com ACOD"], "21": ["Stevens-Johnson / NET", "Diagnóstico diferencial"], "22": ["Diarreia aguda", "Amebíase"], "23": ["Ventilação mecânica", "VNI"], "24": ["Doença de Addison", "Reposição hormonal"], "25": ["IAM com supra de ST", "Fibrinólise no idoso"], "26": ["Diarreia aguda", "Listeria na gestação"], "27": ["DAC crônica", "Tratamento antianginoso"], "28": ["Obesidade", "Fenótipo e fármacos"], "29": ["IAM com supra de ST", "Contraindicações à fibrinólise"], "30": ["DAC crônica", "Revascularização"], "31": ["Bradicardias", "BAV de 2º grau"], "32": ["Tireoide", "Tireoidite subaguda"], "33": ["DAC crônica", "Investigação"], "34": ["Bradicardias", "Coração transplantado"], "35": ["Stevens-Johnson / NET", "Diagnóstico diferencial"], "36": ["Doença de Addison", "Reposição hormonal"], "37": ["SCA sem supra de ST", "Terapia antitrombótica com ACO"], "38": ["SCA sem supra de ST", "Wellens"], "39": ["Ventilação mecânica", "Desmame"], "40": ["IAM com supra de ST", "Complicações mecânicas"], "41": ["Fibrilação atrial", "Pill-in-the-pocket"], "42": ["Stevens-Johnson / NET", "Tratamento"], "43": ["Tireoide", "Adenoma tóxico"], "44": ["Diarreia crônica", "Diarreia por ácidos biliares"], "45": ["Doença de Addison", "Ajuste em doença intercorrente"], "46": ["IAM com supra de ST", "ECG: T hiperagudas"], "47": ["IAM com supra de ST", "Infarto de VD"], "48": ["Obesidade", "Metas de perda de peso"], "49": ["DAC crônica", "Paciente assintomático"], "50": ["Tireoide", "Graves na gestação"]}};
+QUESTIONS.forEach(q => { const t = (TAGS[SIM_ID] || {})[q.n]; if (t) { q.tema = t[0]; q.sub = t[1]; } });
+
+const state = {
+  index: 0,
+  answers: {},   // { n: 'A'|'B'|'C'|'D' }  — respostas confirmadas
+  pending: {},   // { n: 'A'|'B'|'C'|'D' }  — selecao antes de confirmar
+  showGabarito: {},
+  finished: false
+};
+
+const $main = document.getElementById('quiz');
+const $grid = document.getElementById('qGrid');
+
+/* Persistencia */
+function saveState() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    Object.assign(state, s);
+  } catch (e) {}
+}
+loadState();
+
+function toggleSidebar() {
+  const hidden = document.body.classList.toggle('sidebar-hidden');
+  try { localStorage.setItem('sidebarHidden', hidden ? '1' : '0'); } catch (e) {}
+}
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'b' || e.key === 'B') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    const t = e.target; const tag = (t && t.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || (t && t.isContentEditable)) return;
+    toggleSidebar();
+  }
+});
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+function renderGrid() {
+  $grid.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const cell = document.createElement('button');
+    cell.className = 'q-cell';
+    cell.textContent = String(q.n).padStart(2,'0');
+    if (i === state.index) cell.classList.add('current');
+    const a = state.answers[q.n];
+    if (a) {
+      if (a === q.correta) cell.classList.add('correct');
+      else cell.classList.add('wrong');
+    }
+    cell.onclick = () => { state.index = i; state.finished = false; saveState(); render(); };
+    $grid.appendChild(cell);
+  });
+}
+
+function selectAlt(n, key) {
+  if (state.answers[n]) return; // ja confirmada
+  state.pending[n] = key;
+  saveState();
+  render();
+}
+
+function confirmAnswer(n) {
+  const sel = state.pending[n];
+  if (!sel || state.answers[n]) return;
+  state.answers[n] = sel;
+  delete state.pending[n];
+  saveState();
+  render();
+}
+
+function toggleGab(n) {
+  state.showGabarito[n] = !state.showGabarito[n];
+  saveState();
+  render();
+}
+
+function next() {
+  if (state.index < QUESTIONS.length - 1) {
+    state.index++;
+    saveState();
+    render();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  } else {
+    state.finished = true;
+    saveState();
+    render();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+function prev() {
+  if (state.finished) {
+    state.finished = false;
+    saveState(); render();
+    return;
+  }
+  if (state.index > 0) {
+    state.index--;
+    saveState();
+    render();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function resetQuiz() {
+  if (!confirm('Reiniciar simulado? Suas respostas serão apagadas.')) return;
+  state.index = 0;
+  state.answers = {};
+  state.showGabarito = {};
+  state.finished = false;
+  saveState();
+  render();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function classify(pct) {
+  if (pct >= 90) return { key: 'excelente', label: 'Excelente' };
+  if (pct >= 75) return { key: 'otimo', label: 'Ótimo' };
+  if (pct >= 60) return { key: 'regular', label: 'Regular' };
+  return { key: 'melhorar', label: 'Precisa Melhorar' };
+}
+
+function render() {
+  renderGrid();
+  if (state.finished) { renderEnd(); return; }
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[state.index];
+  const answered = !!state.answers[q.n];
+  const userAns = state.answers[q.n];
+  const pending = state.pending[q.n];
+  const correct = userAns === q.correta;
+  const progress = ((state.index + 1) / QUESTIONS.length) * 100;
+  const gabOpen = !!state.showGabarito[q.n];
+
+  const alts = ['A','B','C','D'].map(k => {
+    let cls = 'alt';
+    let badge = '';
+    if (answered) {
+      if (k === q.correta) { cls += ' correct-alt'; badge = '<span class="alt-badge">Correta</span>'; }
+      else if (k === userAns) { cls += ' wrong-alt'; badge = '<span class="alt-badge">Sua resposta</span>'; }
+    } else if (pending === k) {
+      cls += ' selected';
+    }
+    const disabled = answered ? 'disabled' : '';
+    return '<button class="'+cls+'" '+disabled+' onclick="selectAlt('+q.n+', \''+k+'\')">' +
+      '<div class="alt-key">'+k+'</div>' +
+      '<div class="alt-text">'+esc(q.alternativas[k])+' '+badge+'</div>' +
+      '</button>';
+  }).join('');
+
+  // Botão de confirmar (só antes de responder)
+  let confirmBtn = '';
+  if (!answered) {
+    const disabled = pending ? '' : 'disabled';
+    confirmBtn = '<div class="confirm-wrap">' +
+      '<button class="btn-confirm" '+disabled+' onclick="confirmAnswer('+q.n+')">' +
+        (pending ? 'Confirmar resposta ('+pending+')' : 'Selecione uma alternativa para responder') +
+      '</button>' +
+    '</div>';
+  }
+
+  let feedback = '';
+  if (answered) {
+    const iconOk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><polyline points="20 6 9 17 4 12"/></svg>';
+    const iconErr = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    const headerCls = correct ? 'correct' : 'wrong';
+    const headerTxt = correct
+      ? 'Você acertou!'
+      : 'Você errou — a resposta correta é ' + q.correta;
+    const chevron = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>';
+    feedback = '<div class="feedback-panel">' +
+      '<div class="feedback-header '+headerCls+'">' +
+        (correct ? iconOk : iconErr) +
+        '<span>'+headerTxt+'</span>' +
+      '</div>' +
+      '<button class="gabarito-toggle '+(gabOpen?'open':'')+'" onclick="toggleGab('+q.n+')">' +
+        chevron +
+        '<span>'+(gabOpen ? 'Ocultar gabarito comentado' : 'Ver gabarito comentado')+'</span>' +
+      '</button>' +
+      (gabOpen ? (
+        '<div class="gabarito-body">' +
+          '<div class="gab-title">Gabarito Comentado</div>' +
+          '<div class="gab-answer">Resposta: '+q.correta+'</div>' +
+          '<div class="gab-text">'+(q.explicacaoHtml || esc(q.explicacao))+'</div>' +
+        '</div>'
+      ) : '') +
+      '</div>';
+  }
+
+  const answeredCount = Object.keys(state.answers).length;
+
+  $main.innerHTML =
+    '<div class="toolbar">' +
+      '<div class="crumb">Questão '+q.n+' de '+QUESTIONS.length+' · Respondidas: '+answeredCount+'</div>' +
+      '<div class="actions">' +
+        '<button class="btn" onclick="resetQuiz()">Reiniciar</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="progress-bar"><div class="fill" style="width:'+progress+'%"></div></div>' +
+    '<div class="question-card">' +
+      '<div class="q-number">Questão '+String(q.n).padStart(2,'0')+'</div>' +
+      '<div class="q-enun">'+esc(q.enunciado)+'</div>' +
+      (q.imgs ? '<figure class="q-fig">'+q.imgs.map(s => '<img src="'+s+'" alt="Imagem da questão" onclick="zoomImg(this.src)">').join('')+(q.cap ? '<figcaption>'+esc(q.cap)+' <span>· toque para ampliar</span></figcaption>' : '')+'</figure>' : '') +
+      '<div class="alts">'+alts+'</div>' +
+      confirmBtn +
+      feedback +
+    '</div>' +
+    '<div class="nav-buttons">' +
+      '<button class="nav-btn" onclick="prev()" '+(state.index===0?'disabled':'')+'>← Anterior</button>' +
+      '<button class="nav-btn primary" onclick="next()">'+(state.index===QUESTIONS.length-1?'Ver resultado':'Próxima →')+'</button>' +
+    '</div>';
+}
+
+function zoomImg(src) {
+  const o = document.createElement('div'); o.className = 'img-zoom';
+  o.innerHTML = '<img src="'+src+'" alt="Imagem ampliada">';
+  o.onclick = () => o.remove(); document.body.appendChild(o);
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.img-zoom').forEach(o => o.remove()); });
+
+/* Relatório: voltar a uma questão errada */
+function relGoTo(i) { state.index = i; state.finished = false; saveState(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+function renderEnd() {
+  let correct = 0, wrong = 0;
+  QUESTIONS.forEach(q => {
+    const a = state.answers[q.n];
+    if (!a) return;
+    if (a === q.correta) correct++;
+    else wrong++;
+  });
+  const total = QUESTIONS.length;
+  const answered = correct + wrong;
+  const pct = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+  const cls = classify(pct);
+
+  const r = 100;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - pct/100);
+  const colorFor = {
+    excelente: 'var(--ok)',
+    otimo: 'var(--accent)',
+    regular: 'var(--warn)',
+    melhorar: 'var(--err)'
+  }[cls.key];
+
+  $main.innerHTML =
+    '<div class="end-screen">' +
+      '<h2>Simulado Concluído</h2>' +
+      '<div class="subtitle">'+SIMS[SIM_ID].nome+' · '+QUESTIONS.length+' questões · AC 3 · 7º Período</div>' +
+      '<div class="donut">' +
+        '<svg viewBox="0 0 240 240">' +
+          '<circle class="track" cx="120" cy="120" r="'+r+'"></circle>' +
+          '<circle class="fill-arc" cx="120" cy="120" r="'+r+'"' +
+            ' stroke="'+colorFor+'"' +
+            ' stroke-dasharray="'+circ+'"' +
+            ' stroke-dashoffset="'+circ+'"' +
+            ' id="arc"></circle>' +
+        '</svg>' +
+        '<div class="center">' +
+          '<div class="pct">'+pct+'%</div>' +
+          '<div class="pct-label">Acertos</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="badge '+cls.key+'">'+cls.label+'</div>' +
+      '<div class="end-stats">' +
+        '<div class="end-stat correct"><div class="val">'+correct+'</div><div class="lbl">Acertos</div></div>' +
+        '<div class="end-stat wrong"><div class="val">'+wrong+'</div><div class="lbl">Erros</div></div>' +
+        '<div class="end-stat"><div class="val">'+answered+'/'+total+'</div><div class="lbl">Respondidas</div></div>' +
+      '</div>' +
+      Relatorio.html(QUESTIONS, state.answers) +
+      '<div class="nav-buttons">' +
+        '<button class="nav-btn" onclick="prev()">← Ver questões</button>' +
+        '<button class="nav-btn primary" onclick="resetQuiz()">Recomeçar simulado</button>' +
+      '</div>' +
+    '</div>';
+
+  requestAnimationFrame(() => {
+    const arc = document.getElementById('arc');
+    if (arc) arc.style.strokeDashoffset = offset;
+  });
+}
+
+render();
+</script>
+<script src="assets/relatorio.js"></script>
+<script src="assets/efeitos.js"></script>
+</body>
+</html>
